@@ -1,0 +1,5 @@
+﻿<Project>
+  <PropertyGroup>
+    <OutputPath>$(AppData)/OuterWildsModManager/OWML/Mods/JohnCorby.QSB2</OutputPath>
+  </PropertyGroup>
+</Project>
