@@ -9,15 +9,12 @@ namespace QSB2.QObject;
 public abstract class QObject : MonoBehaviour
 {
     public int ID;
-    public MonoBehaviour UnityComponent;
-    /// <summary>
-    /// for player and probe. created uhh jfsafgasgksagksl
-    /// </summary>
-    public bool OwnsUnityObject;
+    public Component UnityComponent;
 
     protected virtual void Start()
     {
         DontDestroyOnLoad(gameObject);
+        gameObject.name = $"QObject_{GetType().Name}";
 
         if (!QObjectManager.Entries.TryGetValue(GetType().FullName.GetHashCode(), out var entry))
             entry = new();
@@ -28,18 +25,13 @@ public abstract class QObject : MonoBehaviour
     protected virtual void OnDestroy()
     {
         QObjectManager.Entries[GetType().FullName.GetHashCode()].QObjects.Remove(ID);
-        
-        if (OwnsUnityObject) Destroy(UnityComponent.gameObject);
     }
 
+    // syntax sugar
     public void SendMessage(QObjectMessage message, int to = -1)
     {
         message.Type = GetType().FullName.GetHashCode();
         message.ID = ID;
         message.Send(to);
-    }
-
-    public virtual void OnReceiveMessage(QObjectMessage message, int from, int to)
-    {
     }
 }

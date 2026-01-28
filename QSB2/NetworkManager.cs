@@ -63,6 +63,6 @@ public static class NetworkManager
     }
 
     public static readonly List<int> _serverClients = new();
-    public static readonly List<int> Clients = new();
     public static int LocalID = -1;
+    public static readonly Dictionary<int, Connection> Connections = new();
 }

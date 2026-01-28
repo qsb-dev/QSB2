@@ -11,6 +11,8 @@ public abstract class QObjectMessage : Message
     public override void OnReceive(int from, int to)
     {
         var qObject = QObjectManager.Entries[Type].QObjects[ID];
-        qObject.OnReceiveMessage(this, from, to);
+        OnReceive(qObject, from, to);
     }
+
+    public abstract void OnReceive(QObject.QObject qObject, int from, int to);
 }

@@ -1,28 +1,46 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using QSB2.Authority;
+using QSB2.PositionSync;
+using UnityEngine;
 
 namespace QSB2.Player;
 
-// players are special in that they can be removed mid game
+// players are special in that they create/destroy their linked object, and they can be created and destroyed mid game
+
+// TODO: still figuring out whether i wanna keep these across reloads to hold all player state, or whether to match the lifecycle of the actual player object
 
 public class Player : QObject.QObject
 {
-    public static Player LocalInstance;
-
-    public static readonly Dictionary<int, Player> Players = new();
-    public static event Action OnPlayerAdded, OnPlayerRemoved;
+    public Connection Connection;
 
     protected override void Start()
     {
-        base.Start();
+        gameObject.AddComponent<PositionSync.PositionSync>();
+        gameObject.AddComponent<RelativeToSector>();
+        
+        gameObject.GetComponent<HasOwner>().Owner = Connection.ID;
 
-        Players.Add(ID, this);
-        OnPlayerAdded?.Invoke();
+        base.Start();
+        // TODO: do terrible things and match object id with player id. or just separate player state this object (see above todo)
+
+        if (NetworkManager.LocalID == Connection.ID)
+        {
+            // we own. grab local guy
+            UnityComponent = Locator.GetPlayerTransform();
+        }
+        else
+        {
+            // create player object
+            var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            UnityComponent = go.GetComponent<Transform>();
+        }
     }
 
     protected override void OnDestroy()
     {
-        OnPlayerRemoved?.Invoke();
-        Players.Remove(ID);
+        base.OnDestroy();
+
+        if (NetworkManager.LocalID == Connection.ID) return;
+        // remove player object
+        Destroy(UnityComponent.gameObject);
     }
 }

@@ -16,10 +16,11 @@ public class JoinMessage : Message
         if (QSBVersion != QSB2.QSBVersion) leave = true;
         if (GameVersion != QSB2.GameVersion) leave = true;
         if (DLCInstalled != QSB2.DLCInstalled) leave = true;
+        var conn = new Connection(ID);
         NetworkManager.LocalID = ID;
         if (leave) NetworkManager.Disconnect();
-        
-        NetworkManager.Clients.Add(ID);
+
+        NetworkManager.Connections.Add(ID, new(ID));
         Logger.Log($"{ID} connected");
     }
 }
