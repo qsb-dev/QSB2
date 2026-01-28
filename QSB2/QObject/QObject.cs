@@ -10,7 +10,7 @@ public abstract class QObject : MonoBehaviour
     {
         DontDestroyOnLoad(gameObject);
 
-        if (!QObjectManager.Entries.TryGetValue(GetType().GetHashCode(), out var entry))
+        if (!QObjectManager.Entries.TryGetValue(GetType().FullName.GetHashCode(), out var entry))
             entry = new();
         ID = entry.NextId++;
         entry.Objects.Add(ID, this);
@@ -18,6 +18,6 @@ public abstract class QObject : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        QObjectManager.Entries[GetType().GetHashCode()].Objects.Remove(ID);
+        QObjectManager.Entries[GetType().FullName.GetHashCode()].Objects.Remove(ID);
     }
 }

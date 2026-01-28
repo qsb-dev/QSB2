@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using MessagePack;
+using QSB2.Utility;
 
 namespace QSB2.Messaging;
 
 public static class MessageManager
 {
     private static readonly Dictionary<int, Type> _hashToType = new();
+
+    static MessageManager()
+    {
+        foreach (var type in typeof(Message).GetDerivedTypes())
+        {
+            _hashToType.Add(type.FullName.GetHashCode(), type);
+        }
+    }
 
     public static void OnData(ArraySegment<byte> data)
     {
@@ -53,7 +62,7 @@ public abstract class Message
         {
             From = NetworkManager.LocalID,
             To = to,
-            Type = GetType().GetHashCode(),
+            Type = GetType().FullName.GetHashCode(),
             Message = MessagePackSerializer.Serialize(GetType(), this),
         };
 
