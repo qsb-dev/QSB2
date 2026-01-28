@@ -1,0 +1,25 @@
+﻿using MessagePack;
+
+namespace QSB2.Messaging;
+
+[MessagePackObject]
+public class JoinMessage : Message
+{
+    [Key(0)] public required string QSBVersion;
+    [Key(1)] public required string GameVersion;
+    [Key(2)] public required bool DLCInstalled;
+    [Key(3)] public required int ID;
+
+    public override void OnReceive(int from, int to)
+    {
+        var leave = false;
+        if (QSBVersion != QSB2.QSBVersion) leave = true;
+        if (GameVersion != QSB2.GameVersion) leave = true;
+        if (DLCInstalled != QSB2.DLCInstalled) leave = true;
+        NetworkManager.LocalID = ID;
+        if (leave) NetworkManager.Disconnect();
+        
+        NetworkManager.Clients.Add(ID);
+        Logger.Log($"{ID} connected");
+    }
+}
