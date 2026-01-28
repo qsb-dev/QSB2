@@ -26,7 +26,7 @@ public class Player : QObject.QObject
             // we own. grab local guy
             UnityComponent = Locator.GetPlayerTransform();
             
-            Logger.Log($"local player {Connection.ID} synced");
+            Logger.Log($"local player {Connection.ID} created");
         }
         else
         {
@@ -34,7 +34,7 @@ public class Player : QObject.QObject
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityComponent = go.GetComponent<Transform>();
             
-            Logger.Log($"remote player {Connection.ID} synced");
+            Logger.Log($"remote player {Connection.ID} created");
         }
     }
 

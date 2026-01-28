@@ -27,11 +27,11 @@ public class PositionSync : MonoBehaviour
         transform.position = Reference.ToRelPos(_qObject.UnityComponent.transform.position);
         transform.rotation = Reference.ToRelRot(_qObject.UnityComponent.transform.rotation);
         
-        new PositionMessage
+        _qObject.SendMessage(new PositionMessage
         {
             Position = transform.position,
             Rotation = transform.rotation,
-        }.Send(-2);
+        }, -2);
     }
 
     public void Receive(Vector3 position, Quaternion rotation)
