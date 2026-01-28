@@ -15,16 +15,17 @@ public abstract class Message
             Message = MessagePackSerializer.Serialize(GetType(), this),
         };
 
-        var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
         if (this is JoinMessage or LeaveMessage)
         {
             // special broadcast message hack since we might not have _client yet
+            rawMessage.From = -1;
+            var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
             foreach (var id in NetworkManager._serverClients)
                 NetworkManager._server.Send(id, data);
         }
         else
         {
-            NetworkManager._client.Send(data);
+            NetworkManager._client.Send(new(MessagePackSerializer.Serialize(rawMessage)));
         }
     }
 
