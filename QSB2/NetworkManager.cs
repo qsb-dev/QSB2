@@ -10,12 +10,11 @@ public static class NetworkManager
     public static readonly Client _client = new(1024);
     public static readonly Server _server = new(1024);
 
-    public static bool Connected = _client.Connected;
-    public static bool IsHost = _server.Active;
+    public static bool Connected => _client.Connected;
+    public static bool IsHost => _server.Active;
 
     public static void Host()
     {
-        IsHost = true;
         _server.Start(1337);
         Connect();
 
@@ -38,8 +37,8 @@ public static class NetworkManager
         Application.runInBackground = true;
 
         _client.Connect("localhost", 1337);
-        _client.OnConnected = () => Connected = true;
-        _client.OnDisconnected = () => Connected = false;
+        _client.OnConnected = () => { };
+        _client.OnDisconnected = () => { };
         _client.OnData = MessageManager.OnData;
     }
 
