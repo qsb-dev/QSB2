@@ -27,7 +27,6 @@ public static class NetworkManager
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
-                ID = id,
             }.Send(id);
         };
         _server.OnDisconnected = id => ServerClients.Remove(id);

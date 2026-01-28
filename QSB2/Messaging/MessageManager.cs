@@ -59,8 +59,15 @@ public abstract class Message
         };
 
         var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
-        if (NetworkManager.IsHost) MessageManager.OnServerData(NetworkManager.LocalID, data);
-        else NetworkManager._client.Send(data);
+        if (this is JoinMessage)
+        {
+            // special bc cuz we dont have a local id or _client yet
+            NetworkManager._server.Send(to, data);
+        }
+        else
+        {
+            NetworkManager._client.Send(data);
+        }
     }
 
     public abstract void OnReceive();
@@ -75,13 +82,12 @@ public class JoinMessage : Message
     [Key(0)] public required string QSBVersion;
     [Key(1)] public required string GameVersion;
     [Key(2)] public required bool DLCInstalled;
-    [Key(3)] public required int ID;
 
     public override void OnReceive()
     {
         if (QSBVersion != QSB2.QSBVersion) return;
         if (GameVersion != QSB2.GameVersion) return;
         if (DLCInstalled != QSB2.DLCInstalled) return;
-        NetworkManager.LocalID = ID;
+        NetworkManager.LocalID = To;
     }
 }
