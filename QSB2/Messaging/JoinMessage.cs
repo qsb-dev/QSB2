@@ -12,14 +12,18 @@ public class JoinMessage : Message
 
     public override void OnReceive(int from, int to)
     {
-        var leave = false;
-        if (QSBVersion != QSB2.QSBVersion) leave = true;
-        if (GameVersion != QSB2.GameVersion) leave = true;
-        if (DLCInstalled != QSB2.DLCInstalled) leave = true;
-        var conn = new Connection(ID);
-        NetworkManager.LocalID = ID;
-        if (leave) NetworkManager.Disconnect();
+        if (ID == to)
+        {
+            var leave = false;
+            if (QSBVersion != QSB2.QSBVersion) leave = true;
+            if (GameVersion != QSB2.GameVersion) leave = true;
+            if (DLCInstalled != QSB2.DLCInstalled) leave = true;
+            NetworkManager.LocalID = ID;
+            Logger.Log($"local id is {ID}");
+            if (leave) NetworkManager.Disconnect();
+        }
 
+        // TODO: this adds even if local player kicks themselves above. this might be a problem
         NetworkManager.Connections.Add(ID, new(ID));
         Logger.Log($"{ID} connected");
     }

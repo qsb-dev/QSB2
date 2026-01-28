@@ -6,8 +6,6 @@ using UnityEngine;
 
 namespace QSB2.PositionSync;
 
-[RequireComponent(typeof(QObject.QObject))]
-[RequireComponent(typeof(HasOwner))]
 public class PositionSync : MonoBehaviour
 {
     public Transform Reference;

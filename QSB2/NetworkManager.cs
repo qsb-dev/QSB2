@@ -28,6 +28,8 @@ public static class NetworkManager
                 DLCInstalled = QSB2.DLCInstalled,
                 ID = id,
             }.Send();
+            
+            // TODO: new players need connections of all the old players
         };
         _server.OnDisconnected = id =>
         {

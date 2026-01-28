@@ -17,7 +17,11 @@ public abstract class QObject : MonoBehaviour
         gameObject.name = $"QObject_{GetType().Name}";
 
         if (!QObjectManager.Entries.TryGetValue(GetType().FullName.GetHashCode(), out var entry))
+        {
             entry = new();
+            QObjectManager.Entries.Add(GetType().FullName.GetHashCode(), entry);
+        }
+
         ID = entry.NextId++;
         entry.QObjects.Add(ID, this);
     }

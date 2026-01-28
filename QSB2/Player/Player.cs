@@ -16,8 +16,7 @@ public class Player : QObject.QObject
     {
         gameObject.AddComponent<PositionSync.PositionSync>();
         gameObject.AddComponent<RelativeToSector>();
-        
-        gameObject.GetComponent<HasOwner>().Owner = Connection.ID;
+        gameObject.AddComponent<HasOwner>().Owner = Connection.ID;
 
         base.Start();
         // TODO: do terrible things and match object id with player id. or just separate player state this object (see above todo)
@@ -26,12 +25,16 @@ public class Player : QObject.QObject
         {
             // we own. grab local guy
             UnityComponent = Locator.GetPlayerTransform();
+            
+            Logger.Log("local player synced");
         }
         else
         {
             // create player object
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             UnityComponent = go.GetComponent<Transform>();
+            
+            Logger.Log("remote player synced");
         }
     }
 
