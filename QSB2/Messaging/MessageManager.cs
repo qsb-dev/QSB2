@@ -37,10 +37,9 @@ public static class MessageManager
 [MessagePackObject]
 public struct ServerMessage
 {
-    [Key(0)] public required int From;
-    [Key(1)] public required int To;
-    [Key(2)] public required int Type;
-    [Key(3)] public required byte[] Message;
+    [Key(0)] public required int To;
+    [Key(1)] public required int Type;
+    [Key(2)] public required byte[] Message;
 }
 
 public abstract class Message
@@ -54,13 +53,14 @@ public abstract class Message
         To = to;
         var rawMessage = new ServerMessage
         {
-            From = From,
-            To = To,
+            To = to,
             Type = GetType().GetHashCode(),
             Message = MessagePackSerializer.Serialize(GetType(), this),
         };
 
-        NetworkManager._client.Send(new(MessagePackSerializer.Serialize(rawMessage)));
+        var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
+        if (NetworkManager.IsHost) MessageManager.OnServerData(NetworkManager.LocalID, data);
+        else NetworkManager._client.Send(data);
     }
 
     public abstract void OnReceive();
