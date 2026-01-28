@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QSB2", "QSB2\QSB2.csproj", "{0353B1C0-CB86-4F06-A056-BFAE44090B62}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telepathy", "Telepathy\Telepathy.csproj", "{846733B9-F9B5-4C92-A242-1D27C521A420}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0353B1C0-CB86-4F06-A056-BFAE44090B62}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0353B1C0-CB86-4F06-A056-BFAE44090B62}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0353B1C0-CB86-4F06-A056-BFAE44090B62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{846733B9-F9B5-4C92-A242-1D27C521A420}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{846733B9-F9B5-4C92-A242-1D27C521A420}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{846733B9-F9B5-4C92-A242-1D27C521A420}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{846733B9-F9B5-4C92-A242-1D27C521A420}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

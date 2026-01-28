@@ -1,0 +1,87 @@
+﻿using System;
+using System.Collections.Generic;
+using MessagePack;
+
+namespace QSB2.Messaging;
+
+public static class MessageManager
+{
+    private static readonly Dictionary<int, Type> _hashToType = new();
+
+    public static void OnData(ArraySegment<byte> data)
+    {
+        var serverMessage = MessagePackSerializer.Deserialize<ServerMessage>(data);
+        var type = _hashToType[serverMessage.Type];
+        var message = (Message)MessagePackSerializer.Deserialize(type, serverMessage.Message);
+        message.OnReceive();
+    }
+
+    public static void OnServerData(int fromID, ArraySegment<byte> data)
+    {
+        var serverMessage = MessagePackSerializer.Deserialize<ServerMessage>(data);
+        if (serverMessage.To == -1)
+        {
+            foreach (var toID in NetworkManager.ServerClients)
+            {
+                if (fromID == toID) continue;
+                NetworkManager._server.Send(toID, data);
+            }
+        }
+        else
+        {
+            NetworkManager._server.Send(serverMessage.To, data);
+        }
+    }
+}
+
+[MessagePackObject]
+public struct ServerMessage
+{
+    [Key(0)] public required int From;
+    [Key(1)] public required int To;
+    [Key(2)] public required int Type;
+    [Key(3)] public required byte[] Message;
+}
+
+public abstract class Message
+{
+    [IgnoreMember] public int From;
+    [IgnoreMember] public int To;
+
+    public void Send(int to = -1)
+    {
+        From = NetworkManager.LocalID;
+        To = to;
+        var rawMessage = new ServerMessage
+        {
+            From = From,
+            To = To,
+            Type = GetType().GetHashCode(),
+            Message = MessagePackSerializer.Serialize(GetType(), this),
+        };
+
+        NetworkManager._client.Send(new(MessagePackSerializer.Serialize(rawMessage)));
+    }
+
+    public abstract void OnReceive();
+}
+
+/// <summary>
+/// host sends. we validate
+/// </summary>
+[MessagePackObject]
+public class JoinMessage : Message
+{
+    [Key(0)] public required string QSBVersion;
+    [Key(1)] public required string GameVersion;
+    [Key(2)] public required bool DLCInstalled;
+    [Key(3)] public required int ID;
+
+    public override void OnReceive()
+    {
+        if (QSBVersion != QSB2.QSBVersion) return;
+        if (GameVersion != QSB2.GameVersion) return;
+        if (DLCInstalled != QSB2.DLCInstalled) return;
+        NetworkManager.LocalID = ID;
+    }
+}
