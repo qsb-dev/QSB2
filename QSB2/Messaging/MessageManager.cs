@@ -40,6 +40,8 @@ public struct ServerMessage
     [Key(0)] public required int To;
     [Key(1)] public required int Type;
     [Key(2)] public required byte[] Message;
+    // in case message does bs, we dont need to deal with that when forwarding from the server
+    // also keeps it open instead of closed union
 }
 
 public abstract class Message
