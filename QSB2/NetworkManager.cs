@@ -20,15 +20,23 @@ public static class NetworkManager
 
         _server.OnConnected = (id, _) =>
         {
-            ServerClients.Add(id);
+            _serverClients.Add(id);
             new JoinMessage
             {
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
-            }.Send(id);
+                ID = id,
+            }.Send();
         };
-        _server.OnDisconnected = id => ServerClients.Remove(id);
+        _server.OnDisconnected = id =>
+        {
+            _serverClients.Remove(id);
+            new LeaveMessage
+            {
+                ID = id
+            }.Send();
+        };
         _server.OnData = MessageManager.OnServerData;
     }
 
@@ -54,6 +62,7 @@ public static class NetworkManager
         _server.Tick(100);
     }
 
-    public static readonly List<int> ServerClients = new();
+    public static readonly List<int> _serverClients = new();
+    public static readonly List<int> Clients = new();
     public static int LocalID = -1;
 }
