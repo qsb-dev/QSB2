@@ -20,20 +20,28 @@ public static class NetworkManager
 
         _server.OnConnected = (id, _) =>
         {
+            Logger.Log($"server connected {id}");
+
             _serverClients.Add(id);
-            new JoinMessage
+            new IdentifyMessage
             {
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
-                ID = id,
-            }.Send();
-            
-            // TODO: new players need connections of all the old players
+            }.Send(id);
+
+            // new player knows nothing. fill them in
+            new SyncMessage
+            {
+                IDs = _serverClients
+            }.Send(id);
         };
         _server.OnDisconnected = id =>
         {
+            Logger.Log($"server disconnected {id}");
+
             _serverClients.Remove(id);
+            // they cant say they left because they left. so we do it
             new LeaveMessage
             {
                 ID = id
@@ -47,8 +55,8 @@ public static class NetworkManager
         Application.runInBackground = true;
 
         _client.Connect("localhost", 1337);
-        _client.OnConnected = () => { };
-        _client.OnDisconnected = () => { };
+        _client.OnConnected = () => Logger.Log("client connected");
+        _client.OnDisconnected = () => Logger.Log("client disconnected");
         _client.OnData = MessageManager.OnData;
     }
 

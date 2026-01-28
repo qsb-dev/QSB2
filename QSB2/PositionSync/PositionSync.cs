@@ -26,6 +26,12 @@ public class PositionSync : MonoBehaviour
         // owner - sync from unity component
         transform.position = Reference.ToRelPos(_qObject.UnityComponent.transform.position);
         transform.rotation = Reference.ToRelRot(_qObject.UnityComponent.transform.rotation);
+        
+        new PositionMessage
+        {
+            Position = transform.position,
+            Rotation = transform.rotation,
+        }.Send(-2);
     }
 
     public void Receive(Vector3 position, Quaternion rotation)
@@ -47,8 +53,8 @@ public class PositionSync : MonoBehaviour
 [MessagePackObject]
 public class PositionMessage : QObjectMessage
 {
-    [Key(2)] public Vector3 Position;
-    [Key(3)] public Quaternion Rotation;
+    [Key(2)] public required Vector3 Position;
+    [Key(3)] public required Quaternion Rotation;
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {

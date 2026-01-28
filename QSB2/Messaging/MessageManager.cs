@@ -7,8 +7,6 @@ namespace QSB2.Messaging;
 
 public static class MessageManager
 {
-    private static bool Receiving;
-    
     private static readonly Dictionary<int, Type> _hashToType = new();
 
     static MessageManager()
@@ -24,9 +22,7 @@ public static class MessageManager
         var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
         var type = _hashToType[rawMessage.Type];
         var message = (Message)MessagePackSerializer.Deserialize(type, rawMessage.Message)!;
-        Receiving = true;
         message.OnReceive(rawMessage.From, rawMessage.To);
-        Receiving = false;
     }
 
     public static void OnServerData(int fromID, ArraySegment<byte> data)
@@ -34,10 +30,17 @@ public static class MessageManager
         var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
         if (rawMessage.To == -1)
         {
-            foreach (var toID in NetworkManager._serverClients)
+            foreach (var id in NetworkManager._serverClients)
             {
-                if (fromID == toID) continue;
-                NetworkManager._server.Send(toID, data);
+                NetworkManager._server.Send(id, data);
+            }
+        }
+        else if (rawMessage.To == -2)
+        {
+            foreach (var id in NetworkManager._serverClients)
+            {
+                if (fromID == id) continue;
+                NetworkManager._server.Send(id, data);
             }
         }
         else
