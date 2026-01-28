@@ -10,16 +10,16 @@ public static class MessageManager
 
     public static void OnData(ArraySegment<byte> data)
     {
-        var serverMessage = MessagePackSerializer.Deserialize<ServerMessage>(data);
-        var type = _hashToType[serverMessage.Type];
-        var message = (Message)MessagePackSerializer.Deserialize(type, serverMessage.Message);
-        message.OnReceive();
+        var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
+        var type = _hashToType[rawMessage.Type];
+        var message = (Message)MessagePackSerializer.Deserialize(type, rawMessage.Message)!;
+        message.OnReceive(rawMessage.From, rawMessage.To);
     }
 
     public static void OnServerData(int fromID, ArraySegment<byte> data)
     {
-        var serverMessage = MessagePackSerializer.Deserialize<ServerMessage>(data);
-        if (serverMessage.To == -1)
+        var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
+        if (rawMessage.To == -1)
         {
             foreach (var toID in NetworkManager.ServerClients)
             {
@@ -29,32 +29,29 @@ public static class MessageManager
         }
         else
         {
-            NetworkManager._server.Send(serverMessage.To, data);
+            NetworkManager._server.Send(rawMessage.To, data);
         }
     }
 }
 
 [MessagePackObject]
-public struct ServerMessage
+public struct RawMessage
 {
-    [Key(0)] public required int To;
-    [Key(1)] public required int Type;
-    [Key(2)] public required byte[] Message;
+    [Key(0)] public required int From;
+    [Key(1)] public required int To;
+    [Key(2)] public required int Type;
+    [Key(3)] public required byte[] Message;
     // in case message does bs, we dont need to deal with that when forwarding from the server
     // also keeps it open instead of closed union
 }
 
 public abstract class Message
 {
-    [IgnoreMember] public int From;
-    [IgnoreMember] public int To;
-
     public void Send(int to = -1)
     {
-        From = NetworkManager.LocalID;
-        To = to;
-        var rawMessage = new ServerMessage
+        var rawMessage = new RawMessage
         {
+            From = NetworkManager.LocalID,
             To = to,
             Type = GetType().GetHashCode(),
             Message = MessagePackSerializer.Serialize(GetType(), this),
@@ -72,7 +69,7 @@ public abstract class Message
         }
     }
 
-    public abstract void OnReceive();
+    public abstract void OnReceive(int from, int to);
 }
 
 /// <summary>
@@ -85,11 +82,11 @@ public class JoinMessage : Message
     [Key(1)] public required string GameVersion;
     [Key(2)] public required bool DLCInstalled;
 
-    public override void OnReceive()
+    public override void OnReceive(int from, int to)
     {
         if (QSBVersion != QSB2.QSBVersion) return;
         if (GameVersion != QSB2.GameVersion) return;
         if (DLCInstalled != QSB2.DLCInstalled) return;
-        NetworkManager.LocalID = To;
+        NetworkManager.LocalID = to;
     }
 }
