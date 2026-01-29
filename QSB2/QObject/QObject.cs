@@ -44,8 +44,15 @@ public abstract class QObject
         message.ID = ID;
         message.Send(to);
     }
+
+    public void Send<T>(QObjectMessage<T> message, int to) where T : QObject, new()
+    {
+        message.ID = ID;
+        message.Send(to);
+    }
 }
 
+// convenience thing
 public abstract class QObject<T> : QObject where T : Component
 {
     public new T Component
