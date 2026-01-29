@@ -20,6 +20,8 @@ public class RelativeToSector(QObject.QObject qObject)
             {
                 SectorID = QSector.ID,
             }, -2);
+            
+            qObject.PositionSync.Reference = sector.transform;
         }
         else
         {
