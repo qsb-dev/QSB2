@@ -16,6 +16,7 @@ public class Player : QObject<Transform>, ITickable
     {
         PositionSync = new(this);
         RelativeToSector = new(this);
+        RelativeToSector.SectorDetector = Locator.GetPlayerSectorDetector();
         HasOwner = new(this);
         HasOwner.Owner = Connection.ID;
 

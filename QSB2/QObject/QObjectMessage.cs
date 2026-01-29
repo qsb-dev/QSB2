@@ -19,7 +19,7 @@ public abstract class QObjectMessage : Message
 }
 
 // more compact cuz not sending the type
-public abstract class QObjectMessage<T> : Message where T : QObject
+public abstract class QObjectMessage<T> : Message where T : QObject, new() // non abstract
 {
     [Key(0)] public int ID;
 

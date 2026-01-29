@@ -7,13 +7,14 @@ namespace QSB2.PositionSync;
 
 public class RelativeToSector(QObject.QObject qObject)
 {
+    public SectorDetector SectorDetector;
     public QSector QSector;
 
     public void Tick()
     {
         if (qObject.HasOwner.DoWeOwn)
         {
-            var sector = Locator.GetPlayerSectorDetector().GetLastEnteredSector();
+            var sector = SectorDetector.GetLastEnteredSector();
             if (sector == null) return;
             QSector = (QSector)QObjectManager._componentToObject[sector];
 
