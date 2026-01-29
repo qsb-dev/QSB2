@@ -1,4 +1,5 @@
-﻿using QSB2.QObject;
+﻿using System.Linq;
+using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
 
@@ -25,7 +26,7 @@ public class QSectorManager
 
     public static void Destroy()
     {
-        foreach (var qObject in QObjectManager.Entries[typeof(QSector).Hash()].QObjects.Values)
+        foreach (var qObject in QObjectManager.Entries[typeof(QSector).Hash()].QObjects.Values.ToList()) // we modify = copy
         {
             qObject.Destroy();
         }
