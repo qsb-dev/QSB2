@@ -58,7 +58,7 @@ public class QObjectsCreatedMessage : Message
     {
         var entry = QObjectManager.Entries[Type];
 
-        Logger.Log($"qobjects type {entry.Type} created = {Created} for {from}");
+        Logger.Log($"qobjects type {entry.Type} created = {Created} for {from}", MessageType.Info);
         if (Created) entry.CreatedFor.Add(from);
         else entry.CreatedFor.Remove(from);
 
