@@ -14,7 +14,7 @@ public static class Logger
     [HarmonyPrefix, HarmonyPatch(typeof(ModSocketOutput), nameof(ModSocketOutput.WriteLine), typeof(string), typeof(MessageType), typeof(string))]
     public static void ModSocketOutput_WriteLine(ref string line, MessageType type, string senderType)
     {
-        line = $"[{ProcessInstanceId}] " + line;
+        line = $"[{NetworkManager.LocalID}] " + line;
     }
 
     public static void Log(string msg, MessageType type = MessageType.Message) => QSB2.Instance.ModHelper.Console.WriteLine(msg, type);

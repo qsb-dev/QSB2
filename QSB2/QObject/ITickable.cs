@@ -16,7 +16,7 @@ public static class TickableManager
     
     public static void Tick()
     {
-        if (!WakeUpManager.QObjectsReady) return;
+        if (!WakeUpManager.AllQObjectsCreated) return;
         
         foreach (var tickable in Tickables)
         {

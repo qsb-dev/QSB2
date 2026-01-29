@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace QSB2;
 
-// BUG: disconnect and connect broken
 public static class NetworkManager
 {
     public static readonly Client _client = new(1024);
@@ -15,11 +14,8 @@ public static class NetworkManager
     public static bool IsConnected => _client.Connected;
     public static bool IsHost => _server.Active;
 
-    public static void Host()
+    static NetworkManager()
     {
-        _server.Start(1337);
-        Connect();
-
         _server.OnConnected = (id, _) =>
         {
             Logger.Log($"server connected {id}");
@@ -50,13 +46,8 @@ public static class NetworkManager
             }.Send(-1);
         };
         _server.OnData = MessageManager.OnServerData;
-    }
 
-    public static void Connect()
-    {
-        Application.runInBackground = true;
 
-        _client.Connect("localhost", 1337);
         _client.OnConnected = () =>
         {
             Logger.Log("client connected");
@@ -70,10 +61,24 @@ public static class NetworkManager
         _client.OnData = MessageManager.OnData;
     }
 
+    public static void Host()
+    {
+        _server.Start(1337);
+        Connect();
+    }
+
+    public static void Connect()
+    {
+        Application.runInBackground = true;
+        _client.Connect("localhost", 1337);
+    }
+
     public static void Disconnect()
     {
         _client.Disconnect();
         _server.Stop();
+        // we disconnect = wont receive leave messages that clears this, so we gotta do it here
+        Connections.Clear();
     }
 
     public static void Tick()

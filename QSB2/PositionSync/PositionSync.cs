@@ -14,6 +14,8 @@ public class PositionSync(QObject.QObject qObject)
 
     public void Tick()
     {
+        if (Reference == null) return; // will result in thing floating around for a bit. maybe make invisible while thats happening
+        
         if (qObject.HasOwner.DoWeOwn)
         {
             // owner - sync from unity component

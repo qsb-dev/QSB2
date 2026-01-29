@@ -12,6 +12,8 @@ public class VelocitySync(QObject.QObject qObject)
 
     public void Tick()
     {
+        if (qObject.PositionSync.Reference == null) return;
+        
         var refBody = qObject.PositionSync.Reference.GetAttachedOWRigidbody();
         var body = qObject.Component.GetAttachedOWRigidbody();
 

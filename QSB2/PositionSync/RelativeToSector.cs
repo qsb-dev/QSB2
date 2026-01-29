@@ -27,7 +27,9 @@ public class RelativeToSector(QObject.QObject qObject)
         }
         else
         {
-            var sector = (Sector)QSector.Component;
+            if (QSector == null) return;
+            
+            var sector = QSector.Component;
             qObject.PositionSync.Reference = sector.transform;
         }
     }

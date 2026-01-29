@@ -15,6 +15,6 @@ public class JoinMessage : Message
     {
         NetworkManager.Connections.Add(ID, new(ID));
         Event?.SafeInvoke(ID);
-        Logger.Log($"{ID} connected");
+        Logger.Log($"{ID} joined");
     }
 }
