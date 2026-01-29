@@ -24,7 +24,7 @@ public class Player : QObject<Transform>, ITickable
         if (HasOwner.DoWeOwn)
         {
             // we own. grab local guy
-            Component = Locator.GetPlayerTransform();
+            Component = Locator.GetPlayerCameraController().transform;
 
             Logger.Log($"local player {Connection.ID} created");
         }
