@@ -1,4 +1,5 @@
 ﻿using QSB2.Messaging;
+using QSB2.SectorSync;
 using UnityEngine;
 
 namespace QSB2;
@@ -13,6 +14,8 @@ public class Connection(int id)
         // TODO: dumb. move
         LoadManager.OnStartSceneLoad += (scene, loadScene) =>
         {
+            if (scene != OWScene.SolarSystem) return;
+            
             foreach (var connection in NetworkManager.Connections.Values)
             {
                 // TODO: currently we just do not tell other players at all whether we exist yet.
@@ -20,17 +23,23 @@ public class Connection(int id)
                 if (connection.Player) GameObject.Destroy(connection.Player.gameObject);
                 connection.Player = null;
             }
+            
+            QSectorManager.Uninit();
         };
 
         LoadManager.OnCompleteSceneLoad += (scene, loadScene) =>
         {
             // TODO: i think good lifecycle is to wait for late init done before touching anything
 
+            if (loadScene != OWScene.SolarSystem) return;
+            
             foreach (var connection in NetworkManager.Connections.Values)
             {
                 connection.Player = new GameObject().AddComponent<Player.Player>();
                 connection.Player.Connection = connection;
             }
+            
+            QSectorManager.Init();
         };
 
     }

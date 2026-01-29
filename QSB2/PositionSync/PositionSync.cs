@@ -17,11 +17,14 @@ public class PositionSync : MonoBehaviour
     {
         _qObject = GetComponent<QObject.QObject>();
         _hasOwner = GetComponent<HasOwner>();
+        
+        // give it some sane value
+        Reference = CenterOfTheUniverse.s_instance._staticReferenceFrame.transform;
     }
 
     private void Update()
     {
-        if (_hasOwner.Owner != NetworkManager.LocalID) return;
+        if (!_hasOwner.DoWeOwn) return;
 
         // owner - sync from unity component
         transform.position = Reference.ToRelPos(_qObject.UnityComponent.transform.position);

@@ -18,9 +18,6 @@ public class Player : QObject.QObject
         gameObject.AddComponent<RelativeToSector>();
         gameObject.AddComponent<HasOwner>().Owner = Connection.ID;
 
-        base.Start();
-        // TODO: do terrible things and match object id with player id. or just separate player state this object (see above todo)
-
         if (NetworkManager.LocalID == Connection.ID)
         {
             // we own. grab local guy
@@ -36,6 +33,8 @@ public class Player : QObject.QObject
             
             Logger.Log($"remote player {Connection.ID} created");
         }
+        
+        base.Start();
     }
 
     protected override void OnDestroy()

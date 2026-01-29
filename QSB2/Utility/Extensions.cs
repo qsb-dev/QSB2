@@ -29,4 +29,8 @@ public static class Extensions
             .Where(x => !x.IsInterface && !x.IsAbstract && type.IsAssignableFrom(x))
             .OrderBy(x => x.FullName);
     }
+
+    public static IEnumerable<T> GetAllComponents<T>() where T : Component
+        => Resources.FindObjectsOfTypeAll<T>()
+            .Where(x => x.gameObject.scene.name is not (null or "DontDestroyOnLoad"));
 }

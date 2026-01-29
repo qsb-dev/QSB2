@@ -6,6 +6,7 @@ namespace QSB2.QObject;
 /// <summary>
 /// network object that links to an in-game unity component
 /// </summary>
+// TODO: dont use unity here, we can just include fields for additional behavior classes
 public abstract class QObject : MonoBehaviour
 {
     public int ID;
@@ -24,11 +25,13 @@ public abstract class QObject : MonoBehaviour
 
         ID = entry.NextId++;
         entry.QObjects.Add(ID, this);
+        QObjectManager._componentToObject.Add(UnityComponent, this);
     }
 
     protected virtual void OnDestroy()
     {
         QObjectManager.Entries[GetType().FullName.GetHashCode()].QObjects.Remove(ID);
+        QObjectManager._componentToObject.Remove(UnityComponent);
     }
 
     // syntax sugar
