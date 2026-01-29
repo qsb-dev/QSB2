@@ -45,7 +45,7 @@ public static class NetworkManager
             new LeaveMessage
             {
                 ID = id
-            }.Send();
+            }.Send(-1);
         };
         _server.OnData = MessageManager.OnServerData;
     }

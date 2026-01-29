@@ -31,10 +31,10 @@ public class RelativeToSector : MonoBehaviour
         if (sector == null) return;
         QSector = (QSector)QObjectManager._componentToObject[sector];
 
-        _qObject.SendMessage(new SectorMessage
+        _qObject.Send(new SectorMessage
         {
             SectorID = QSector.ID,
-        });
+        }, -2);
     }
 
     public void Receive(int id)

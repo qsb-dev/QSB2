@@ -30,7 +30,7 @@ public class PositionSync : MonoBehaviour
         transform.position = Reference.ToRelPos(_qObject.UnityComponent.transform.position);
         transform.rotation = Reference.ToRelRot(_qObject.UnityComponent.transform.rotation);
         
-        _qObject.SendMessage(new PositionMessage
+        _qObject.Send(new PositionMessage
         {
             Position = transform.position,
             Rotation = transform.rotation,

@@ -4,7 +4,7 @@ namespace QSB2.Messaging;
 
 public abstract class Message
 {
-    public void Send(int to = -1)
+    public void Send(int to)
     {
         var rawMessage = new RawMessage
         {
