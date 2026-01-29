@@ -1,5 +1,5 @@
 ﻿using OWML.Common;
-using QSB2.Utility;
+using OWML.Utils;
 
 namespace QSB2;
 
@@ -22,12 +22,12 @@ public static class QSceneManager
         LoadManager.OnStartSceneLoad += (originalScene, loadScene) =>
         {
             Logger.Log($"PRE SCENE LOAD ({originalScene} -> {loadScene})", MessageType.Info);
-            OnPreSceneLoad?.QSafeInvoke(originalScene, loadScene);
+            OnPreSceneLoad?.SafeInvoke(originalScene, loadScene);
         };
         LoadManager.OnCompleteSceneLoad += (originalScene, loadScene) =>
         {
             Logger.Log($"POST SCENE LOAD ({originalScene} -> {loadScene})", MessageType.Info);
-            OnPostSceneLoad?.QSafeInvoke(originalScene, loadScene);
+            OnPostSceneLoad?.SafeInvoke(originalScene, loadScene);
         };
     }
 

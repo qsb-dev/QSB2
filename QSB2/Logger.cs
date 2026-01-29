@@ -1,17 +1,21 @@
 ﻿using System.Diagnostics;
+using HarmonyLib;
 using OWML.Common;
+using OWML.Logging;
 
 namespace QSB2;
 
+[HarmonyPatch]
 public static class Logger
 {
     public static readonly int ProcessInstanceId = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName)
         .IndexOf(x => x.Id == Process.GetCurrentProcess().Id);
 
-    public static void Log(string msg, MessageType type = MessageType.Message)
+    [HarmonyPrefix, HarmonyPatch(typeof(ModSocketOutput), nameof(ModSocketOutput.WriteLine), typeof(string), typeof(MessageType), typeof(string))]
+    public static void ModSocketOutput_WriteLine(ref string line, MessageType type, string senderType)
     {
-        msg = $"[{ProcessInstanceId}] " + msg;
-
-        QSB2.Instance.ModHelper.Console.WriteLine(msg, type);
+        line = $"[{ProcessInstanceId}] " + line;
     }
+
+    public static void Log(string msg, MessageType type = MessageType.Message) => QSB2.Instance.ModHelper.Console.WriteLine(msg, type);
 }
