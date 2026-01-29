@@ -1,6 +1,6 @@
 ﻿using System;
 using MessagePack;
-using OWML.Utils;
+using QSB2.Utility;
 
 namespace QSB2.Messaging;
 
@@ -14,7 +14,7 @@ public class JoinMessage : Message
     public override void OnReceive(int from, int to)
     {
         NetworkManager.Connections.Add(ID, new(ID));
-        Event?.SafeInvoke(ID);
+        Event?.QSafeInvoke(ID);
         Logger.Log($"{ID} connected");
     }
 }

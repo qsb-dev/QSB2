@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+using OWML.Common;
 using QSB2.Messaging;
 using QSB2.QObject;
 using Telepathy;
@@ -56,8 +59,16 @@ public static class NetworkManager
         Application.runInBackground = true;
 
         _client.Connect("localhost", 1337);
-        _client.OnConnected = () => Logger.Log("client connected");
-        _client.OnDisconnected = () => Logger.Log("client disconnected");
+        _client.OnConnected = () =>
+        {
+            Logger.Log("client connected");
+            QSB2.Harmony.PatchAll(Assembly.GetExecutingAssembly());
+        };
+        _client.OnDisconnected = () =>
+        {
+            Logger.Log("client disconnected");
+            QSB2.Harmony.UnpatchSelf();
+        };
         _client.OnData = MessageManager.OnData;
     }
 

@@ -17,7 +17,7 @@ public static class MessageManager
         {
             _hashToType.Add(type.Hash(), type);
         }
-        
+
         MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithResolver(UnityResolver.InstanceWithStandardResolver);
     }
 

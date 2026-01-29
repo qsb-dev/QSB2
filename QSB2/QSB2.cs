@@ -1,16 +1,22 @@
 ﻿using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
+using QSB2.Player;
+using QSB2.SectorSync;
+using QSB2.ShipSync;
+using QSB2.Utility;
 using UnityEngine;
+using Gizmos = Popcron.Gizmos;
 
 namespace QSB2;
 
 public class QSB2 : ModBehaviour
 {
     public static QSB2 Instance;
+    public static Harmony Harmony;
 
+    #region versioning
 
     public static string QSBVersion => Instance.ModHelper.Manifest.Version;
 
@@ -20,31 +26,42 @@ public class QSB2 : ModBehaviour
 
     public static bool DLCInstalled => EntitlementsManager.IsDlcOwned() == EntitlementsManager.AsyncOwnershipStatus.Owned;
 
+    #endregion
 
     public void Awake()
     {
         Instance = this;
-        // You won't be able to access OWML's mod helper in Awake.
-        // So you probably don't want to do anything here.
-        // Use Start() instead.
+        Harmony = new Harmony("JohnCorby.QSB2");
+
+        Gizmos.CameraFilter = _ => true;
+
+
+        QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
+        {
+            if (!NetworkManager.Connected) return;
+            if (!originalScene.IsInGameScene()) return;
+
+            PlayerManager.Destroy();
+            QShipManager.Destroy();
+            QSectorManager.Destroy();
+        };
+        QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
+        {
+            if (!NetworkManager.Connected) return;
+            if (!loadScene.IsInGameScene()) return;
+
+            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
+            {
+                PlayerManager.Create();
+                QShipManager.Create();
+                QSectorManager.Create();
+            });
+        };
     }
 
     public void Start()
     {
-        // Starting here, you'll have access to OWML's mod helper.
-        ModHelper.Console.WriteLine($"My mod {nameof(QSB2)} is loaded!", MessageType.Success);
-
-        new Harmony("JohnCorby.QSB2").PatchAll(Assembly.GetExecutingAssembly());
-
-        // Example of accessing game code.
-        OnCompleteSceneLoad(OWScene.TitleScreen, OWScene.TitleScreen); // We start on title screen
-        LoadManager.OnCompleteSceneLoad += OnCompleteSceneLoad;
-    }
-
-    public void OnCompleteSceneLoad(OWScene previousScene, OWScene newScene)
-    {
-        if (newScene != OWScene.SolarSystem) return;
-        ModHelper.Console.WriteLine("Loaded into solar system!", MessageType.Success);
+        Logger.Log("qsb loaded", MessageType.Success);
     }
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)

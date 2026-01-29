@@ -1,6 +1,6 @@
 ﻿using System;
 using MessagePack;
-using OWML.Utils;
+using QSB2.Utility;
 
 namespace QSB2.Messaging;
 
@@ -13,7 +13,7 @@ public class LeaveMessage : Message
 
     public override void OnReceive(int from, int to)
     {
-        Event?.SafeInvoke(ID);
+        Event?.QSafeInvoke(ID);
         NetworkManager.Connections.Remove(ID);
         Logger.Log($"{ID} disconnected");
     }

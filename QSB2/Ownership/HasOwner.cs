@@ -11,6 +11,7 @@ public class HasOwner(QObject.QObject qObject)
 
     public int Owner = -1;
     // optional. we can just set owner once and never touch it again
+    // BUG: if 2 clients send messages at the same time, what happens? do they arrive in the same order on both ends? else this would get desynced
     public readonly List<int> OwnerQueue = new();
 }
 
