@@ -22,8 +22,8 @@ public class PositionSync(QObject.QObject qObject)
 
             qObject.Send(new PositionMessage
             {
-                Position = RelPos,
-                Rotation = RelRot,
+                RelPos = RelPos,
+                RelRot = RelRot,
             }, -2);
         }
         else
@@ -43,12 +43,12 @@ public class PositionSync(QObject.QObject qObject)
 [MessagePackObject]
 public class PositionMessage : QObjectMessage
 {
-    [Key(2)] public required Vector3 Position;
-    [Key(3)] public required Quaternion Rotation;
+    [Key(2)] public required Vector3 RelPos;
+    [Key(3)] public required Quaternion RelRot;
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        qObject.PositionSync.RelPos = Position;
-        qObject.PositionSync.RelRot = Rotation;
+        qObject.PositionSync.RelPos = RelPos;
+        qObject.PositionSync.RelRot = RelRot;
     }
 }

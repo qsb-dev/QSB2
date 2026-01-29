@@ -1,5 +1,50 @@
-﻿namespace QSB2.PositionSync;
+﻿using MessagePack;
+using QSB.Utility;
+using QSB2.QObject;
+using UnityEngine;
+
+namespace QSB2.PositionSync;
 
 public class VelocitySync(QObject.QObject qObject)
 {
+    public Vector3 RelVel;
+    public Vector3 RelAngVel;
+
+    public void Tick()
+    {
+        var refBody = qObject.PositionSync.Reference.GetAttachedOWRigidbody();
+        var body = qObject.Component.GetAttachedOWRigidbody();
+
+        if (qObject.HasOwner.DoWeOwn)
+        {
+            // owner - sync from unity component
+            RelVel = refBody.ToRelVel(body.GetVelocity(), body.GetPosition());
+            RelAngVel = refBody.ToRelAngVel(body.GetAngularVelocity());
+
+            qObject.Send(new VelocityMessage
+            {
+                RelVel = RelVel,
+                RelAngVel = RelAngVel
+            }, -2);
+        }
+        else
+        {
+            // non owner - sync to unity component
+            body.SetVelocity(refBody.FromRelVel(RelVel, body.GetPosition()));
+            body.SetAngularVelocity(refBody.FromRelAngVel(RelAngVel));
+        }
+    }
+}
+
+[MessagePackObject]
+public class VelocityMessage : QObjectMessage
+{
+    [Key(2)] public required Vector3 RelVel;
+    [Key(3)] public required Vector3 RelAngVel;
+
+    public override void OnReceive(QObject.QObject qObject, int from, int to)
+    {
+        qObject.VelocitySync.RelVel = RelVel;
+        qObject.VelocitySync.RelAngVel = RelAngVel;
+    }
 }

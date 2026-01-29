@@ -20,6 +20,7 @@ public class QShip : QObject<Transform>, ITickable
         Instance = this;
 
         PositionSync = new(this);
+        VelocitySync = new(this);
         RelativeToSector = new(this);
         RelativeToSector.SectorDetector = Locator.GetShipTransform().GetComponentInChildren<SectorDetector>();
         HasOwner = new(this);
@@ -45,6 +46,7 @@ public class QShip : QObject<Transform>, ITickable
     {
         RelativeToSector.Tick();
         PositionSync.Tick();
+        VelocitySync.Tick();
     }
 
     private void WeAreFlying(bool value)
