@@ -1,7 +1,7 @@
 using MessagePack;
-using QSB2.QObject;
+using QSB2.Messaging;
 
-namespace QSB2.Messaging;
+namespace QSB2.QObject;
 
 public abstract class QObjectMessage : Message
 {
@@ -14,7 +14,7 @@ public abstract class QObjectMessage : Message
         OnReceive(qObject, from, to);
     }
 
-    public abstract void OnReceive(QObject.QObject qObject, int from, int to);
+    public abstract void OnReceive(QObject qObject, int from, int to);
 }
 
 /// <summary>

@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using QSB2.Messaging;
 using QSB2.QObject;
 using QSB2.SectorSync;
 

@@ -1,6 +1,6 @@
 ﻿using MessagePack;
 using QSB.Utility;
-using QSB2.Messaging;
+using QSB2.QObject;
 using UnityEngine;
 
 namespace QSB2.PositionSync;
