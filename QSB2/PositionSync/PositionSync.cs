@@ -1,23 +1,16 @@
 ﻿using MessagePack;
 using QSB.Utility;
 using QSB2.Messaging;
-using QSB2.QObject;
 using UnityEngine;
 
 namespace QSB2.PositionSync;
 
-public class PositionSync(QObject.QObject qObject) : ITickable
+public class PositionSync(QObject.QObject qObject)
 {
     public Transform Reference;
 
     public Vector3 RelPos;
     public Quaternion RelRot;
-
-    public void Create()
-    {
-        // give it some sane value
-        Reference = CenterOfTheUniverse.s_instance._staticReferenceFrame.transform;
-    }
 
     public void Tick()
     {

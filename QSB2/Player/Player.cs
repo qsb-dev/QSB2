@@ -8,19 +8,18 @@ namespace QSB2.Player;
 /// <summary>
 /// for actual player in the world
 /// </summary>
-public class Player : QObject.QObject
+public class Player : QObject.QObject, ITickable
 {
     public Connection Connection;
 
     public override void Create()
     {
         PositionSync = new(this);
-        TickableManager.Tickables.Add(PositionSync);
-        PositionSync.Create();
         RelativeToSector = new(this);
-        TickableManager.Tickables.Add(RelativeToSector);
         HasOwner = new(this);
         HasOwner.Owner = Connection.ID;
+
+        TickableManager.Tickables.Add(this);
 
         if (HasOwner.DoWeOwn)
         {
@@ -45,13 +44,18 @@ public class Player : QObject.QObject
     {
         base.Destroy();
 
-        TickableManager.Tickables.Remove(PositionSync);
-        TickableManager.Tickables.Remove(RelativeToSector);
+        TickableManager.Tickables.Remove(this);
 
         if (HasOwner.DoWeOwn)
         {
             // remove player object
             GameObject.Destroy(UnityComponent.gameObject);
         }
+    }
+
+    public void Tick()
+    {
+        RelativeToSector?.Tick();
+        PositionSync?.Tick();
     }
 }

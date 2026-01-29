@@ -21,13 +21,14 @@ public abstract class QObjectMessage : Message
 /// signal that weve built these specific qobjects
 /// </summary>
 [MessagePackObject]
-public class QObjectsBuiltMessage<T> : Message where T : QObject.QObject
+public class QObjectsBuiltMessage : Message
 {
+    [Key(0)] public int Type;
     [Key(1)] public bool Built;
 
     public override void OnReceive(int from, int to)
     {
-        var entry = QObjectManager.Entries[typeof(T).FullName.GetHashCode()];
+        var entry = QObjectManager.Entries[Type];
 
         if (Built) entry.BuiltFor.Add(from);
         else entry.BuiltFor.Remove(from);

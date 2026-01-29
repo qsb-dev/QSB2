@@ -1,7 +1,5 @@
-﻿using JetBrains.Annotations;
-using QSB2.Messaging;
-using QSB2.SectorSync;
-using UnityEngine;
+﻿using QSB2.SectorSync;
+using QSB2.Utility;
 
 namespace QSB2;
 
@@ -19,8 +17,6 @@ public class Connection(int id)
             
             foreach (var connection in NetworkManager.Connections.Values)
             {
-                // TODO: currently we just do not tell other players at all whether we exist yet.
-                //       im hoping with the lifecycle plans thatll be okay because all players MUST exist in game and be loaded before things happen
                 connection.Player?.Destroy();
                 connection.Player = null;
             }
@@ -30,18 +26,19 @@ public class Connection(int id)
 
         LoadManager.OnCompleteSceneLoad += (scene, loadScene) =>
         {
-            // TODO: i think good lifecycle is to wait for late init done before touching anything
-
             if (loadScene != OWScene.SolarSystem) return;
             
-            foreach (var connection in NetworkManager.Connections.Values)
+            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
             {
-                connection.Player = new();
-                connection.Player.Create();
-                connection.Player.Connection = connection;
-            }
+                foreach (var connection in NetworkManager.Connections.Values)
+                {
+                    connection.Player = new();
+                    connection.Player.Connection = connection;
+                    connection.Player.Create();
+                }
             
-            QSectorManager.Create();
+                QSectorManager.Create();
+            });
         };
 
     }

@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using OWML.Common;
 
 namespace QSB2.QObject;
 
@@ -15,7 +17,14 @@ public static class TickableManager
     {
         foreach (var tickable in Tickables)
         {
-            tickable.Tick();
+            try
+            {
+                tickable.Tick();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.ToString(), MessageType.Error);
+            }
         }
     }
 }

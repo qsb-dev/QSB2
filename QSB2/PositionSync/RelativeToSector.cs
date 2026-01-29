@@ -5,19 +5,19 @@ using QSB2.SectorSync;
 
 namespace QSB2.PositionSync;
 
-public record RelativeToSector(QObject.QObject QObject) : ITickable
+public class RelativeToSector(QObject.QObject qObject)
 {
     public QSector QSector;
 
     public void Tick()
     {
-        if (QObject.HasOwner.DoWeOwn)
+        if (qObject.HasOwner.DoWeOwn)
         {
             var sector = Locator.GetPlayerSectorDetector().GetLastEnteredSector();
             if (sector == null) return;
             QSector = (QSector)QObjectManager._componentToObject[sector];
 
-            QObject.Send(new SectorMessage
+            qObject.Send(new SectorMessage
             {
                 SectorID = QSector.ID,
             }, -2);
@@ -25,7 +25,7 @@ public record RelativeToSector(QObject.QObject QObject) : ITickable
         else
         {
             var sector = (Sector)QSector.UnityComponent;
-            QObject.PositionSync.Reference = sector.transform;
+            qObject.PositionSync.Reference = sector.transform;
         }
     }
 }
