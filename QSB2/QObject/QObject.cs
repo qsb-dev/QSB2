@@ -1,4 +1,6 @@
-﻿using QSB2.Messaging;
+﻿using QSB2.Authority;
+using QSB2.Messaging;
+using QSB2.PositionSync;
 using UnityEngine;
 
 namespace QSB2.QObject;
@@ -6,24 +8,25 @@ namespace QSB2.QObject;
 /// <summary>
 /// network object that links to an in-game unity component
 /// </summary>
-// TODO: dont use unity here, we can just include fields for additional behavior classes
-public abstract class QObject : MonoBehaviour
+public abstract class QObject
 {
     public int ID;
     public Component UnityComponent;
 
-    protected virtual void Start()
-    {
-        DontDestroyOnLoad(gameObject);
-        gameObject.name = $"QObject_{GetType().Name}";
+    public PositionSync.PositionSync PositionSync;
+    public VelocitySync VelocitySync;
+    public HasOwner HasOwner;
+    public RelativeToSector RelativeToSector;
 
+    public virtual void Create()
+    {
         var entry = QObjectManager.Entries[GetType().FullName.GetHashCode()];
         ID = entry.NextId++;
         entry.QObjects.Add(ID, this);
         QObjectManager._componentToObject.Add(UnityComponent, this);
     }
 
-    protected virtual void OnDestroy()
+    public virtual void Destroy()
     {
         QObjectManager.Entries[GetType().FullName.GetHashCode()].QObjects.Remove(ID);
         QObjectManager._componentToObject.Remove(UnityComponent);

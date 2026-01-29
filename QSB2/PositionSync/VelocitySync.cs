@@ -1,8 +1,5 @@
-﻿using UnityEngine;
+﻿namespace QSB2.PositionSync;
 
-namespace QSB2.PositionSync;
-
-public class VelocitySync : MonoBehaviour
+public class VelocitySync(QObject.QObject qObject)
 {
-    
 }

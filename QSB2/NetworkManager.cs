@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using QSB2.Messaging;
+using QSB2.QObject;
 using Telepathy;
 using UnityEngine;
 
@@ -68,6 +69,7 @@ public static class NetworkManager
 
     public static void Tick()
     {
+        TickableManager.Tick();
         _client.Tick(100);
         _server.Tick(100);
     }

@@ -3,11 +3,10 @@ using UnityEngine;
 
 namespace QSB2.Authority;
 
-[RequireComponent(typeof(QObject.QObject))]
-public class HasOwner : MonoBehaviour
+public class HasOwner(QObject.QObject qObject)
 {
     public bool DoWeOwn => Owner == NetworkManager.LocalID;
-    
+
     public int Owner;
     public List<int> OwnerQueue = new();
 }

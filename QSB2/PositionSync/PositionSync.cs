@@ -1,50 +1,44 @@
 ﻿using MessagePack;
 using QSB.Utility;
-using QSB2.Authority;
 using QSB2.Messaging;
+using QSB2.QObject;
 using UnityEngine;
 
 namespace QSB2.PositionSync;
 
-public class PositionSync : MonoBehaviour
+public class PositionSync(QObject.QObject qObject) : ITickable
 {
     public Transform Reference;
 
-    private QObject.QObject _qObject;
-    private HasOwner _hasOwner;
+    public Vector3 RelPos;
+    public Quaternion RelRot;
 
-    private void Start()
+    public void Create()
     {
-        _qObject = GetComponent<QObject.QObject>();
-        _hasOwner = GetComponent<HasOwner>();
-        
         // give it some sane value
         Reference = CenterOfTheUniverse.s_instance._staticReferenceFrame.transform;
     }
 
-    private void Update()
+    public void Tick()
     {
-        if (!_hasOwner.DoWeOwn) return;
-
-        // owner - sync from unity component
-        transform.position = Reference.ToRelPos(_qObject.UnityComponent.transform.position);
-        transform.rotation = Reference.ToRelRot(_qObject.UnityComponent.transform.rotation);
-        
-        _qObject.Send(new PositionMessage
+        if (qObject.HasOwner.DoWeOwn)
         {
-            Position = transform.position,
-            Rotation = transform.rotation,
-        }, -2);
-    }
+            // owner - sync from unity component
+            RelPos = Reference.ToRelPos(qObject.UnityComponent.transform.position);
+            RelRot = Reference.ToRelRot(qObject.UnityComponent.transform.rotation);
 
-    public void Receive(Vector3 position, Quaternion rotation)
-    {
-        // non owner - sync to unity component
-        transform.position = position;
-        transform.rotation = rotation;
-
-        _qObject.UnityComponent.transform.position = Reference.FromRelPos(transform.position);
-        _qObject.UnityComponent.transform.rotation = Reference.FromRelRot(transform.rotation);
+            qObject.Send(new PositionMessage
+            {
+                Position = RelPos,
+                Rotation = RelRot,
+            }, -2);
+        }
+        else
+        {
+            // non owner - sync to unity component
+            qObject.UnityComponent.transform.position = Reference.FromRelPos(RelPos);
+            qObject.UnityComponent.transform.rotation = Reference.FromRelRot(RelRot);
+        }
     }
 
     public void Teleport()
@@ -61,6 +55,7 @@ public class PositionMessage : QObjectMessage
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        qObject.GetComponent<PositionSync>().Receive(Position, Rotation);
+        qObject.PositionSync.RelPos = Position;
+        qObject.PositionSync.RelRot = Rotation;
     }
 }

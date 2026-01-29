@@ -6,19 +6,22 @@ namespace QSB2.SectorSync;
 
 public class QSectorManager
 {
-    public static void Init()
+    public static void Create()
     {
         foreach (var sector in Extensions.GetAllComponents<Sector>())
         {
-            new GameObject().AddComponent<QSector>().UnityComponent = sector;
+            new QSector
+            {
+                UnityComponent = sector
+            }.Create();
         }
     }
 
-    public static void Uninit()
+    public static void Destroy()
     {
         foreach (var qObject in QObjectManager.Entries[typeof(QSector).FullName.GetHashCode()].QObjects.Values)
         {
-            GameObject.Destroy(qObject.gameObject);
+            qObject.Destroy();
         }
     }
 }

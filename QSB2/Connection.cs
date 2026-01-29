@@ -1,4 +1,5 @@
-﻿using QSB2.Messaging;
+﻿using JetBrains.Annotations;
+using QSB2.Messaging;
 using QSB2.SectorSync;
 using UnityEngine;
 
@@ -20,11 +21,11 @@ public class Connection(int id)
             {
                 // TODO: currently we just do not tell other players at all whether we exist yet.
                 //       im hoping with the lifecycle plans thatll be okay because all players MUST exist in game and be loaded before things happen
-                if (connection.Player) GameObject.Destroy(connection.Player.gameObject);
+                connection.Player?.Destroy();
                 connection.Player = null;
             }
             
-            QSectorManager.Uninit();
+            QSectorManager.Destroy();
         };
 
         LoadManager.OnCompleteSceneLoad += (scene, loadScene) =>
@@ -35,11 +36,12 @@ public class Connection(int id)
             
             foreach (var connection in NetworkManager.Connections.Values)
             {
-                connection.Player = new GameObject().AddComponent<Player.Player>();
+                connection.Player = new();
+                connection.Player.Create();
                 connection.Player.Connection = connection;
             }
             
-            QSectorManager.Init();
+            QSectorManager.Create();
         };
 
     }
