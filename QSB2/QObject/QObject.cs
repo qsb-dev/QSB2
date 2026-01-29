@@ -15,6 +15,7 @@ public abstract class QObject
 
     #region mixins
 
+    // TODO: this is already dumb, combine into one thing with a buncha flags probably. there is a DAG of these guys depending on each other already
     public PositionSync.PositionSync PositionSync;
     public VelocitySync VelocitySync;
     public HasOwner HasOwner;
