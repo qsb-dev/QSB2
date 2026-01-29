@@ -1,7 +1,6 @@
-﻿using HarmonyLib;
+﻿using System.Collections.Generic;
+using HarmonyLib;
 using OWML.Utils;
-using QSB.Patches;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace QSB.Utility.Deterministic;

@@ -1,8 +1,10 @@
-﻿using HarmonyLib;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using HarmonyLib;
+using QSB2;
 using UnityEngine;
+using Logger = QSB2.Logger;
 
 namespace QSB.Utility.Deterministic;
 
@@ -21,9 +23,9 @@ public static class DeterministicManager
 
 	public static void Init()
 	{
-		QSBSceneManager.OnPreSceneLoad += (_, _) =>
+		QSceneManager.OnPreSceneLoad += (_, _) =>
 		{
-			DebugLog.DebugWrite("cleared deterministic parent cache");
+			Logger.Log("cleared deterministic parent cache");
 			ParentCache.Clear();
 			
 			if (!_patched)
