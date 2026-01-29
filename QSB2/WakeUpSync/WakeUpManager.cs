@@ -1,4 +1,8 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
+using OWML.Common;
+using QSB2.QObject;
+using QSB2.Utility;
 using UnityEngine;
 
 namespace QSB2.WakeUpSync;
@@ -8,9 +12,42 @@ public static class WakeUpManager
 {
     public static float TimeScale = 1;
 
+    public static bool QObjectsReady;
+
+    static WakeUpManager()
+    {
+        QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
+        {
+            if (!NetworkManager.IsConnected) return;
+            if (!loadScene.IsGameScene()) return;
+
+            // we start paused
+            QObjectsReady = false;
+            TimeScale = 0;
+
+            Delay.RunWhen(() => QObjectManager.Entries.Values.All(x => x.CreatedFor.Count == NetworkManager.Connections.Count), () =>
+            {
+                Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
+                QObjectsReady = true;
+                TimeScale = 1;
+            });
+        };
+    }
+
+    public static void Init()
+    {
+    }
+
+    public static void Tick()
+    {
+        Time.timeScale = TimeScale;
+    }
+
+    /*
     [HarmonyPrefix, HarmonyPatch(typeof(Time), nameof(Time.timeScale), MethodType.Setter)]
     public static void Time_timeScale_Setter(ref float value)
     {
         value = TimeScale;
     }
+*/
 }

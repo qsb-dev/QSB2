@@ -12,7 +12,7 @@ public static class QObjectManager
 {
     public class Entry(Type type)
     {
-        public Type Type = type;
+        public readonly Type Type = type;
         public int NextId;
         public readonly Dictionary<int, QObject> QObjects = new();
         public readonly HashSet<int> CreatedFor = new();
@@ -31,8 +31,8 @@ public static class QObjectManager
 
         QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
         {
-            if (!NetworkManager.Connected) return;
-            if (!originalScene.IsInGameScene()) return;
+            if (!NetworkManager.IsConnected) return;
+            if (!originalScene.IsGameScene()) return;
 
             PlayerManager.Destroy();
             QShipManager.Destroy();
@@ -40,8 +40,8 @@ public static class QObjectManager
         };
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
-            if (!NetworkManager.Connected) return;
-            if (!loadScene.IsInGameScene()) return;
+            if (!NetworkManager.IsConnected) return;
+            if (!loadScene.IsGameScene()) return;
 
             Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
             {
@@ -49,6 +49,12 @@ public static class QObjectManager
                 QShipManager.Create();
                 QSectorManager.Create();
             });
+        };
+
+        // leave if not in game scene
+        QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
+        {
+            if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
     }
 

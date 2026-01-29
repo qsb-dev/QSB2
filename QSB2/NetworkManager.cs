@@ -1,20 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Reflection;
-using OWML.Common;
 using QSB2.Messaging;
-using QSB2.QObject;
 using Telepathy;
 using UnityEngine;
 
 namespace QSB2;
 
+// BUG: disconnect and connect broken
 public static class NetworkManager
 {
     public static readonly Client _client = new(1024);
     public static readonly Server _server = new(1024);
 
-    public static bool Connected => _client.Connected;
+    public static bool IsConnected => _client.Connected;
     public static bool IsHost => _server.Active;
 
     public static void Host()
@@ -80,7 +78,6 @@ public static class NetworkManager
 
     public static void Tick()
     {
-        TickableManager.Tick();
         _client.Tick(100);
         _server.Tick(100);
     }

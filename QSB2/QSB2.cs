@@ -3,6 +3,7 @@ using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
 using QSB2.QObject;
+using QSB2.WakeUpSync;
 using UnityEngine;
 using Gizmos = Popcron.Gizmos;
 
@@ -33,6 +34,7 @@ public class QSB2 : ModBehaviour
         Gizmos.CameraFilter = _ => true;
 
         QObjectManager.Init();
+        WakeUpManager.Init();
     }
 
     public void Start()
@@ -48,6 +50,8 @@ public class QSB2 : ModBehaviour
 
     private void Update()
     {
+        TickableManager.Tick();
         NetworkManager.Tick();
+        WakeUpManager.Tick();
     }
 }

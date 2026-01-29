@@ -42,7 +42,7 @@ public class OwnerQueueMessage : QObjectMessage
         }
 
         // empty queue = defer to host
-        qObject.HasOwner.Owner = ownerQueue.Count != 0 ? ownerQueue[0] : NetworkManager.Connections.Values.First().ID;
+        qObject.HasOwner.Owner = ownerQueue.Count != 0 ? ownerQueue[0] : NetworkManager.Connections.Keys.Min();
     }
 }
 

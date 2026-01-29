@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using OWML.Common;
+using QSB2.WakeUpSync;
 
 namespace QSB2.QObject;
 
@@ -15,6 +16,8 @@ public static class TickableManager
     
     public static void Tick()
     {
+        if (!WakeUpManager.QObjectsReady) return;
+        
         foreach (var tickable in Tickables)
         {
             try

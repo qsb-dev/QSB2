@@ -31,5 +31,5 @@ public static class QSceneManager
         };
     }
 
-    public static bool IsInGameScene(this OWScene scene) => scene is OWScene.SolarSystem or OWScene.EyeOfTheUniverse;
+    public static bool IsGameScene(this OWScene scene) => scene is OWScene.SolarSystem or OWScene.EyeOfTheUniverse;
 }
