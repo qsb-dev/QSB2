@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using QSB2.Authority;
+using QSB2.Messaging;
 using QSB2.QObject;
 using UnityEngine;
 
@@ -13,6 +14,19 @@ public class QShip : QObject<Transform>, ITickable
     {
         GlobalMessenger<OWRigidbody>.AddListener("EnterFlightConsole", _ => Instance?.WeAreFlying(true));
         GlobalMessenger.AddListener("ExitFlightConsole", () => Instance?.WeAreFlying(false));
+
+        LeaveMessage.Event += id =>
+        {
+            if (NetworkManager.IsHost)
+            {
+                // leaving player = left the seat. host does this since the player left
+                Instance?.Send(new OwnerQueueMessage
+                {
+                    PlayerID = id,
+                    Action = OwnerQueueAction.Remove
+                }, -1);
+            }
+        };
     }
 
     public override void Create()
@@ -53,7 +67,8 @@ public class QShip : QObject<Transform>, ITickable
     {
         Send(new OwnerQueueMessage
         {
-            Action = value ? OwnerQueueAction.Force : OwnerQueueAction.Remove
+            PlayerID = NetworkManager.LocalID,
+            Action = value ? OwnerQueueAction.Force : OwnerQueueAction.Remove,
         }, -1);
     }
 }

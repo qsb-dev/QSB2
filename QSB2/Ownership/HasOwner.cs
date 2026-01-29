@@ -17,7 +17,8 @@ public class HasOwner(QObject.QObject qObject)
 [MessagePackObject]
 public class OwnerQueueMessage : QObjectMessage
 {
-    [Key(2)] public required OwnerQueueAction Action;
+    [Key(2)] public required int PlayerID;
+    [Key(3)] public required OwnerQueueAction Action;
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
@@ -26,16 +27,16 @@ public class OwnerQueueMessage : QObjectMessage
         switch (Action)
         {
             case OwnerQueueAction.Add:
-                ownerQueue.SafeAdd(from);
+                ownerQueue.SafeAdd(PlayerID);
                 break;
 
             case OwnerQueueAction.Remove:
-                ownerQueue.Remove(from);
+                ownerQueue.Remove(PlayerID);
                 break;
 
             case OwnerQueueAction.Force:
-                ownerQueue.Remove(from);
-                ownerQueue.Insert(0, from);
+                ownerQueue.Remove(PlayerID);
+                ownerQueue.Insert(0, PlayerID);
                 break;
         }
 

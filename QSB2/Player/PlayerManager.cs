@@ -1,10 +1,21 @@
-﻿using QSB2.QObject;
+﻿using QSB2.Messaging;
+using QSB2.QObject;
 using QSB2.Utility;
 
 namespace QSB2.Player;
 
 public class PlayerManager
 {
+    static PlayerManager()
+    {
+        LeaveMessage.Event += id =>
+        {
+            var connection = NetworkManager.Connections[id];
+            connection.Player.Destroy();
+            connection.Player = null;
+        };
+    }
+    
     public static void Create()
     {
         foreach (var connection in NetworkManager.Connections.Values)

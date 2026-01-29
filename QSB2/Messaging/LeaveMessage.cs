@@ -13,8 +13,8 @@ public class LeaveMessage : Message
 
     public override void OnReceive(int from, int to)
     {
-        NetworkManager.Connections.Remove(ID);
         Event?.SafeInvoke(ID);
+        NetworkManager.Connections.Remove(ID);
         Logger.Log($"{ID} disconnected");
     }
 }

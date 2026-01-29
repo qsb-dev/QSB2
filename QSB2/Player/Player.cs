@@ -47,6 +47,7 @@ public class Player : QObject<Transform>, ITickable
         base.Destroy();
 
         TickableManager.Tickables.Remove(this);
+        Logger.Log($"player {ID} destroyed");
 
         if (HasOwner.DoWeOwn)
         {
