@@ -2,10 +2,7 @@
 using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
-using QSB2.Player;
-using QSB2.SectorSync;
-using QSB2.ShipSync;
-using QSB2.Utility;
+using QSB2.QObject;
 using UnityEngine;
 using Gizmos = Popcron.Gizmos;
 
@@ -35,28 +32,7 @@ public class QSB2 : ModBehaviour
 
         Gizmos.CameraFilter = _ => true;
 
-
-        QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
-        {
-            if (!NetworkManager.Connected) return;
-            if (!originalScene.IsInGameScene()) return;
-
-            PlayerManager.Destroy();
-            QShipManager.Destroy();
-            QSectorManager.Destroy();
-        };
-        QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
-        {
-            if (!NetworkManager.Connected) return;
-            if (!loadScene.IsInGameScene()) return;
-
-            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
-            {
-                PlayerManager.Create();
-                QShipManager.Create();
-                QSectorManager.Create();
-            });
-        };
+        QObjectManager.Init();
     }
 
     public void Start()

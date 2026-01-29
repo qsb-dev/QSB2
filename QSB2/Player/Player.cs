@@ -47,12 +47,13 @@ public class Player : QObject<Transform>, ITickable
         base.Destroy();
 
         TickableManager.Tickables.Remove(this);
-        Logger.Log($"player {ID} destroyed");
 
-        if (HasOwner.DoWeOwn)
+        if (!HasOwner.DoWeOwn)
         {
             // remove player object
             GameObject.Destroy(Component.gameObject);
+
+            Logger.Log($"remote player {ID} destroyed");
         }
     }
 
