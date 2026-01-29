@@ -10,7 +10,7 @@ public static class QObjectManager
     {
         public int NextId;
         public readonly Dictionary<int, QObject> QObjects = new();
-        public List<int> BuiltFor;
+        public List<int> CreatedFor;
     }
 
     public static readonly Dictionary<int, Entry> Entries = new();
@@ -21,7 +21,7 @@ public static class QObjectManager
     {
         foreach (var type in typeof(QObject).GetDerivedTypes())
         {
-            Entries.Add(type.FullName.GetHashCode(), new());
+            Entries.Add(type.Hash(), new());
         }
     }
 }

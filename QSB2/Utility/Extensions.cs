@@ -33,4 +33,6 @@ public static class Extensions
     public static IEnumerable<T> GetAllComponents<T>() where T : Component
         => Resources.FindObjectsOfTypeAll<T>()
             .Where(x => x.gameObject.scene.name is not (null or "DontDestroyOnLoad"));
+
+    public static int Hash(this Type type) => type.FullName.GetHashCode();
 }

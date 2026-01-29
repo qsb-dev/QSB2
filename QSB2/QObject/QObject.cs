@@ -1,6 +1,6 @@
 ﻿using QSB2.Authority;
-using QSB2.Messaging;
 using QSB2.PositionSync;
+using QSB2.Utility;
 using UnityEngine;
 
 namespace QSB2.QObject;
@@ -11,32 +11,45 @@ namespace QSB2.QObject;
 public abstract class QObject
 {
     public int ID;
-    public Component UnityComponent;
+    public Component Component;
+
+    #region mixins
 
     public PositionSync.PositionSync PositionSync;
     public VelocitySync VelocitySync;
     public HasOwner HasOwner;
     public RelativeToSector RelativeToSector;
 
+    #endregion
+
     public virtual void Create()
     {
-        var entry = QObjectManager.Entries[GetType().FullName.GetHashCode()];
+        var entry = QObjectManager.Entries[GetType().Hash()];
         ID = entry.NextId++;
         entry.QObjects.Add(ID, this);
-        QObjectManager._componentToObject.Add(UnityComponent, this);
+        QObjectManager._componentToObject.Add(Component, this);
     }
 
     public virtual void Destroy()
     {
-        QObjectManager.Entries[GetType().FullName.GetHashCode()].QObjects.Remove(ID);
-        QObjectManager._componentToObject.Remove(UnityComponent);
+        QObjectManager.Entries[GetType().Hash()].QObjects.Remove(ID);
+        QObjectManager._componentToObject.Remove(Component);
     }
 
     // syntax sugar
     public void Send(QObjectMessage message, int to)
     {
-        message.Type = GetType().FullName.GetHashCode();
+        message.Type = GetType().Hash();
         message.ID = ID;
         message.Send(to);
+    }
+}
+
+public abstract class QObject<T> : QObject where T : Component
+{
+    public new T Component
+    {
+        get => (T)base.Component;
+        set => base.Component = value;
     }
 }

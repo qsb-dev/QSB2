@@ -17,8 +17,8 @@ public class PositionSync(QObject.QObject qObject)
         if (qObject.HasOwner.DoWeOwn)
         {
             // owner - sync from unity component
-            RelPos = Reference.ToRelPos(qObject.UnityComponent.transform.position);
-            RelRot = Reference.ToRelRot(qObject.UnityComponent.transform.rotation);
+            RelPos = Reference.ToRelPos(qObject.Component.transform.position);
+            RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
 
             qObject.Send(new PositionMessage
             {
@@ -29,8 +29,8 @@ public class PositionSync(QObject.QObject qObject)
         else
         {
             // non owner - sync to unity component
-            qObject.UnityComponent.transform.position = Reference.FromRelPos(RelPos);
-            qObject.UnityComponent.transform.rotation = Reference.FromRelRot(RelRot);
+            qObject.Component.transform.position = Reference.FromRelPos(RelPos);
+            qObject.Component.transform.rotation = Reference.FromRelRot(RelRot);
         }
     }
 

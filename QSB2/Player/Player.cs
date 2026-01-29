@@ -8,7 +8,7 @@ namespace QSB2.Player;
 /// <summary>
 /// for actual player in the world
 /// </summary>
-public class Player : QObject.QObject, ITickable
+public class Player : QObject<Transform>, ITickable
 {
     public Connection Connection;
 
@@ -24,7 +24,7 @@ public class Player : QObject.QObject, ITickable
         if (HasOwner.DoWeOwn)
         {
             // we own. grab local guy
-            UnityComponent = Locator.GetPlayerTransform();
+            Component = Locator.GetPlayerTransform();
 
             Logger.Log($"local player {Connection.ID} created");
         }
@@ -33,7 +33,7 @@ public class Player : QObject.QObject, ITickable
             // create player object
             var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
             GameObject.Destroy(go.GetComponent<Collider>());
-            UnityComponent = go.GetComponent<Transform>();
+            Component = go.GetComponent<Transform>();
 
             Logger.Log($"remote player {Connection.ID} created");
         }
@@ -50,7 +50,7 @@ public class Player : QObject.QObject, ITickable
         if (HasOwner.DoWeOwn)
         {
             // remove player object
-            GameObject.Destroy(UnityComponent.gameObject);
+            GameObject.Destroy(Component.gameObject);
         }
     }
 

@@ -15,7 +15,7 @@ public static class MessageManager
     {
         foreach (var type in typeof(Message).GetDerivedTypes())
         {
-            _hashToType.Add(type.FullName.GetHashCode(), type);
+            _hashToType.Add(type.Hash(), type);
         }
         
         MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithResolver(UnityResolver.InstanceWithStandardResolver);

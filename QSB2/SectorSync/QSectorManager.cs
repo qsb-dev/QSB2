@@ -12,16 +12,28 @@ public class QSectorManager
         {
             new QSector
             {
-                UnityComponent = sector
+                Component = sector
             }.Create();
         }
+
+        new QObjectsCreatedMessage
+        {
+            Type = typeof(QSector).Hash(),
+            Created = true
+        }.Send(-1);
     }
 
     public static void Destroy()
     {
-        foreach (var qObject in QObjectManager.Entries[typeof(QSector).FullName.GetHashCode()].QObjects.Values)
+        foreach (var qObject in QObjectManager.Entries[typeof(QSector).Hash()].QObjects.Values)
         {
             qObject.Destroy();
         }
+
+        new QObjectsCreatedMessage
+        {
+            Type = typeof(QSector).Hash(),
+            Created = false
+        }.Send(-1);
     }
 }

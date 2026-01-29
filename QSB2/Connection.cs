@@ -1,4 +1,5 @@
-﻿using QSB2.SectorSync;
+﻿using QSB2.Player;
+using QSB2.SectorSync;
 using QSB2.Utility;
 
 namespace QSB2;
@@ -15,12 +16,7 @@ public class Connection(int id)
         {
             if (scene != OWScene.SolarSystem) return;
             
-            foreach (var connection in NetworkManager.Connections.Values)
-            {
-                connection.Player?.Destroy();
-                connection.Player = null;
-            }
-            
+            PlayerManager.Destroy();
             QSectorManager.Destroy();
         };
 
@@ -30,13 +26,7 @@ public class Connection(int id)
             
             Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
             {
-                foreach (var connection in NetworkManager.Connections.Values)
-                {
-                    connection.Player = new();
-                    connection.Player.Connection = connection;
-                    connection.Player.Create();
-                }
-            
+                PlayerManager.Create();
                 QSectorManager.Create();
             });
         };

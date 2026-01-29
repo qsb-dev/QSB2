@@ -1,3 +1,5 @@
-﻿namespace QSB2.SectorSync;
+﻿using QSB2.QObject;
 
-public class QSector : QObject.QObject;
+namespace QSB2.SectorSync;
+
+public class QSector : QObject<Sector>;

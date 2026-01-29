@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using QSB2.Utility;
 
 namespace QSB2.Messaging;
 
@@ -10,7 +11,7 @@ public abstract class Message
         {
             From = NetworkManager.LocalID,
             To = to,
-            Type = GetType().FullName.GetHashCode(),
+            Type = GetType().Hash(),
             Message = MessagePackSerializer.Serialize(GetType(), this),
         };
 

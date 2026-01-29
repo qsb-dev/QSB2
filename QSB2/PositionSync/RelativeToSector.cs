@@ -1,6 +1,7 @@
 ﻿using MessagePack;
 using QSB2.QObject;
 using QSB2.SectorSync;
+using QSB2.Utility;
 
 namespace QSB2.PositionSync;
 
@@ -16,7 +17,7 @@ public class RelativeToSector(QObject.QObject qObject)
             if (sector == null) return;
             QSector = (QSector)QObjectManager._componentToObject[sector];
 
-            qObject.Send(new SectorMessage
+            qObject.Send(new ChangeSectorMessage
             {
                 SectorID = QSector.ID,
             }, -2);
@@ -25,19 +26,19 @@ public class RelativeToSector(QObject.QObject qObject)
         }
         else
         {
-            var sector = (Sector)QSector.UnityComponent;
+            var sector = (Sector)QSector.Component;
             qObject.PositionSync.Reference = sector.transform;
         }
     }
 }
 
 [MessagePackObject]
-public class SectorMessage : QObjectMessage
+public class ChangeSectorMessage : QObjectMessage
 {
     [Key(2)] public required int SectorID;
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        qObject.RelativeToSector.QSector = (QSector)QObjectManager.Entries[typeof(QSector).FullName.GetHashCode()].QObjects[SectorID];
+        qObject.RelativeToSector.QSector = (QSector)QObjectManager.Entries[typeof(QSector).Hash()].QObjects[SectorID];
     }
 }
