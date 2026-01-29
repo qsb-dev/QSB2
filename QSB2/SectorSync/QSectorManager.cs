@@ -19,7 +19,7 @@ public class QSectorManager
 
     public static void Destroy()
     {
-        foreach (var qObject in QObjectManager.Entries[typeof(QSector).FullName.GetHashCode()].QObjects.Values)
+        foreach (var qObject in QObjectManager.Entries[typeof(QSector)].QObjects.Values)
         {
             qObject.Destroy();
         }

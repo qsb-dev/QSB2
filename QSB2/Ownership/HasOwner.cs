@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace QSB2.Authority;
 
-public class HasOwner(QObject.QObject qObject)
+public class HasOwner<T>(T qObject) where T : QObject.QObject<T>
 {
     public bool DoWeOwn => Owner == NetworkManager.LocalID;
 

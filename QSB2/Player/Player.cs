@@ -1,4 +1,5 @@
-﻿using QSB2.QObject;
+﻿using QSB2.PositionSync;
+using QSB2.QObject;
 using UnityEngine;
 
 namespace QSB2.Player;
@@ -8,7 +9,7 @@ namespace QSB2.Player;
 /// <summary>
 /// for actual player in the world
 /// </summary>
-public class Player : QObject.QObject
+public class Player : QObject.QObject<Player>
 {
     public Connection Connection;
 

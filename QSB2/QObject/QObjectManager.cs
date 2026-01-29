@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using QSB2.Utility;
 using UnityEngine;
 
@@ -9,19 +10,19 @@ public static class QObjectManager
     public class Entry
     {
         public int NextId;
-        public readonly Dictionary<int, QObject> QObjects = new();
+        public readonly Dictionary<int, IQObject> QObjects = new();
         public List<int> BuiltFor;
     }
 
-    public static readonly Dictionary<int, Entry> Entries = new();
+    public static readonly Dictionary<Type, Entry> Entries = new();
 
-    public static readonly Dictionary<Component, QObject> _componentToObject = new();
+    public static readonly Dictionary<Component, IQObject> _componentToObject = new();
 
     static QObjectManager()
     {
-        foreach (var type in typeof(QObject).GetDerivedTypes())
+        foreach (var type in typeof(IQObject).GetDerivedTypes())
         {
-            Entries.Add(type.FullName.GetHashCode(), new());
+            Entries.Add(type, new());
         }
     }
 }

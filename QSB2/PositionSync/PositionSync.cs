@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace QSB2.PositionSync;
 
-public class PositionSync(QObject.QObject qObject) : ITickable
+public class PositionSync<T>(T qObject) : ITickable where T : QObject.QObject<T>
 {
     public Transform Reference;
 
@@ -27,7 +27,7 @@ public class PositionSync(QObject.QObject qObject) : ITickable
             RelPos = Reference.ToRelPos(qObject.UnityComponent.transform.position);
             RelRot = Reference.ToRelRot(qObject.UnityComponent.transform.rotation);
 
-            qObject.Send(new PositionMessage
+            qObject.Send(new PositionMessage<T>
             {
                 Position = RelPos,
                 Rotation = RelRot,
@@ -48,12 +48,12 @@ public class PositionSync(QObject.QObject qObject) : ITickable
 }
 
 [MessagePackObject]
-public class PositionMessage : QObjectMessage
+public class PositionMessage<T> : QObjectMessage<T> where T : QObject.QObject<T>
 {
     [Key(2)] public required Vector3 Position;
     [Key(3)] public required Quaternion Rotation;
 
-    public override void OnReceive(QObject.QObject qObject, int from, int to)
+    public override void OnReceive(T qObject, int from, int to)
     {
         qObject.PositionSync.RelPos = Position;
         qObject.PositionSync.RelRot = Rotation;
