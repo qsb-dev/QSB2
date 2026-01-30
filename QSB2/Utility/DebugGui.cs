@@ -22,9 +22,9 @@ public class DebugGui : MonoBehaviour
 
     private void Update()
     {
-        if (Time.time > _lastSend + 1)
+        if (TimeLoop.GetSecondsElapsed() > _lastSend + 1)
         {
-            _lastSend = Time.time;
+            _lastSend = TimeLoop.GetSecondsElapsed();
 
             new TimeMessage
             {

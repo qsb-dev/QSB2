@@ -24,7 +24,7 @@ public static class DeterministicRigidbodyPatches
         __instance._transform = __instance.transform;
 
         // ADDED
-        // for rigidbody added later, may have already been captured
+        // for rigidbody added later, may have already been captured (e.g. quantum instrument adds body later)
         DeterministicManager.ParentCache.TryAdd(__instance._transform, (__instance._transform.GetSiblingIndex(), __instance._transform.parent));
 
         if (!__instance._scaleRoot)
