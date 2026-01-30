@@ -1,4 +1,4 @@
-﻿using QSB2.Authority;
+﻿using QSB2.Ownership;
 using QSB2.PositionSync;
 using QSB2.Utility;
 using UnityEngine;
@@ -18,7 +18,8 @@ public abstract class QObject
     // TODO: this is already dumb, combine into one thing with a buncha flags probably. there is a DAG of these guys depending on each other already
     public PositionSync.PositionSync PositionSync;
     public VelocitySync VelocitySync;
-    public HasOwner HasOwner;
+    public Owner Owner;
+    public OwnerQueue OwnerQueue;
     public RelativeToSector RelativeToSector;
 
     #endregion

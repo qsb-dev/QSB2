@@ -17,7 +17,7 @@ public struct VelocitySync(QObject.QObject qObject)
         var refBody = qObject.PositionSync.Reference.GetAttachedOWRigidbody();
         var body = qObject.Component.GetAttachedOWRigidbody();
 
-        if (qObject.HasOwner.DoWeOwn)
+        if (qObject.Owner.DoWeOwn)
         {
             // owner - sync from unity component
             RelVel = refBody.ToRelVel(body.GetVelocity(), body.GetPosition());

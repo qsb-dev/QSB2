@@ -16,7 +16,7 @@ public struct PositionSync(QObject.QObject qObject)
     {
         if (Reference == null) return; // will result in thing floating around for a bit. maybe make invisible while thats happening
         
-        if (qObject.HasOwner.DoWeOwn)
+        if (qObject.Owner.DoWeOwn)
         {
             // owner - sync from unity component
             RelPos = Reference.ToRelPos(qObject.Component.transform.position);

@@ -3,16 +3,19 @@ using System.Linq;
 using MessagePack;
 using QSB2.QObject;
 
-namespace QSB2.Authority;
+namespace QSB2.Ownership;
 
-public struct HasOwner(QObject.QObject qObject)
+public struct Owner(QObject.QObject qObject)
 {
-    public bool DoWeOwn => Owner == NetworkManager.LocalID;
+    public bool DoWeOwn => ID == NetworkManager.LocalID;
 
-    public int Owner = -1;
-    // optional. we can just set owner once and never touch it again
+    public int ID = -1;
+}
+
+public struct OwnerQueue(QObject.QObject qObject)
+{
     // BUG: if 2 clients send messages at the same time, what happens? do they arrive in the same order on both ends? else this would get desynced
-    public readonly List<int> OwnerQueue = new();
+    public readonly List<int> Queue = new();
 }
 
 [MessagePackObject]
@@ -23,7 +26,7 @@ public class OwnerQueueMessage : QObjectMessage
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        var ownerQueue = qObject.HasOwner.OwnerQueue;
+        var ownerQueue = qObject.OwnerQueue.Queue;
 
         switch (Action)
         {
@@ -42,7 +45,7 @@ public class OwnerQueueMessage : QObjectMessage
         }
 
         // empty queue = defer to host
-        qObject.HasOwner.Owner = ownerQueue.Count != 0 ? ownerQueue[0] : NetworkManager.Connections.Keys.Min();
+        qObject.Owner.ID = ownerQueue.Count != 0 ? ownerQueue[0] : NetworkManager.Connections.Keys.Min();
     }
 }
 

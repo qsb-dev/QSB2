@@ -12,7 +12,7 @@ public struct RelativeToSector(QObject.QObject qObject)
 
     public void Tick()
     {
-        if (qObject.HasOwner.DoWeOwn)
+        if (qObject.Owner.DoWeOwn)
         {
             var sector = SectorDetector.GetLastEnteredSector();
             if (sector == null) return;

@@ -17,14 +17,14 @@ public class Player : QObject<Transform>, ITickable
         PositionSync = new(this);
         RelativeToSector = new(this);
         RelativeToSector.SectorDetector = Locator.GetPlayerSectorDetector();
-        HasOwner = new(this);
-        HasOwner.Owner = Connection.ID;
+        Owner = new(this);
+        Owner.ID = Connection.ID;
 
         Connection.Player = this;
 
         TickableManager.Tickables.Add(this);
 
-        if (HasOwner.DoWeOwn)
+        if (Owner.DoWeOwn)
         {
             // we own. grab local guy
             Component = Locator.GetPlayerCameraController().transform;
@@ -51,7 +51,7 @@ public class Player : QObject<Transform>, ITickable
 
         TickableManager.Tickables.Remove(this);
 
-        if (!HasOwner.DoWeOwn)
+        if (!Owner.DoWeOwn)
         {
             // remove player object
             GameObject.Destroy(Component.gameObject);
