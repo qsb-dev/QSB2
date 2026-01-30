@@ -29,12 +29,11 @@ public static class WakeUpManager
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
             AllQObjectsCreated = false;
+            HostSaysGo = false; // BUG: if we say go while other person is still loading then this is false and it locks
 
             if (NetworkManager.IsHost)
             {
                 CanJoin = true;
-                HostSaysGo = false;
-
                 Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                 {
                     CanJoin = false;
@@ -78,7 +77,8 @@ public class HostSaysGoMessage : Message
     public override void OnReceive(int from, int to)
     {
         WakeUpManager.HostSaysGo = true;
-        
+        Logger.Log("host says go");
+
         Delay.RunWhen(() => WakeUpManager.AllQObjectsCreated, () =>
         {
             Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
