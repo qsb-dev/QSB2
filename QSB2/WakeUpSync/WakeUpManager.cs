@@ -27,6 +27,7 @@ public static class WakeUpManager
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
 
+            // TODO: wait until host says go
             Delay.RunWhen(() => AllQObjectsCreated, () =>
             {
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);

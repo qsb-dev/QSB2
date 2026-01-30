@@ -42,6 +42,7 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
+            // TODO: wait until host says go
             Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
             {
                 PlayerManager.Create();
