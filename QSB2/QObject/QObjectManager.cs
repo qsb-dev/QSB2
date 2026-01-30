@@ -45,15 +45,11 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
-            // wait for Start
-            Delay.FireOnNextUpdate(() =>
+            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
             {
-                Delay.RunWhen(() => WakeUpManager.HostSaysGo, () =>
-                {
-                    PlayerManager.Create();
-                    QShipManager.Create();
-                    QSectorManager.Create();
-                });
+                PlayerManager.Create();
+                QShipManager.Create();
+                QSectorManager.Create();
             });
         };
 

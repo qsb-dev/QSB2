@@ -1,10 +1,7 @@
 ﻿using HarmonyLib;
-using MessagePack;
 using OWML.Common;
-using QSB2.Messaging;
 using QSB2.Utility;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace QSB2.WakeUpSync;
 
@@ -15,7 +12,6 @@ public static class WakeUpManager
 
     public static bool AllQObjectsCreated; // TODO: move?
     public static bool CanJoin;
-    public static bool HostSaysGo;
 
     static WakeUpManager()
     {
@@ -28,18 +24,15 @@ public static class WakeUpManager
             // we start paused
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
+            CanJoin = true;
             AllQObjectsCreated = false;
-            HostSaysGo = false; // BUG: if we say go while other person is still loading then this is false and it locks
 
-            if (NetworkManager.IsHost)
+            Delay.RunWhen(() => AllQObjectsCreated, () =>
             {
-                CanJoin = true;
-                Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
-                {
-                    CanJoin = false;
-                    new HostSaysGoMessage().Send(-1);
-                });
-            }
+                Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
+                TimeScale = 1;
+                CanJoin = false;
+            });
         };
     }
 
@@ -68,21 +61,5 @@ public static class WakeUpManager
 
         __instance.WakeUp();
         return false;
-    }
-}
-
-[MessagePackObject]
-public class HostSaysGoMessage : Message
-{
-    public override void OnReceive(int from, int to)
-    {
-        WakeUpManager.HostSaysGo = true;
-        Logger.Log("host says go");
-
-        Delay.RunWhen(() => WakeUpManager.AllQObjectsCreated, () =>
-        {
-            Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
-            WakeUpManager.TimeScale = 1;
-        });
     }
 }
