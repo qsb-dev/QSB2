@@ -10,7 +10,7 @@ namespace QSB2.Player;
 /// </summary>
 public class Player : QObject<Transform>, ITickable
 {
-    public Connection Connection;
+    public required Connection Connection;
 
     public override void Create()
     {
@@ -19,6 +19,8 @@ public class Player : QObject<Transform>, ITickable
         RelativeToSector.SectorDetector = Locator.GetPlayerSectorDetector();
         HasOwner = new(this);
         HasOwner.Owner = Connection.ID;
+
+        Connection.Player = this;
 
         TickableManager.Tickables.Add(this);
 
@@ -45,6 +47,7 @@ public class Player : QObject<Transform>, ITickable
     public override void Destroy()
     {
         base.Destroy();
+        Connection.Player = null;
 
         TickableManager.Tickables.Remove(this);
 

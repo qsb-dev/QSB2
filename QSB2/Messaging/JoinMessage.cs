@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using MessagePack;
 using OWML.Utils;
+using QSB2.QObject;
+using QSB2.WakeUpSync;
 
 namespace QSB2.Messaging;
 
@@ -16,5 +19,8 @@ public class JoinMessage : Message
         NetworkManager.Connections.Add(ID, new(ID));
         Event?.SafeInvoke(ID);
         Logger.Log($"{ID} joined");
+        
+        // TODO: very stupid
+        WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
     }
 }

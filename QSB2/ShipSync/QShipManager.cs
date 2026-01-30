@@ -22,7 +22,9 @@ public class QShipManager
 
     public static void Destroy()
     {
-        QObjectManager.Entries[typeof(QShip).Hash()].QObjects.Values.Single().Destroy();
+        var entry = QObjectManager.Entries[typeof(QShip).Hash()];
+        entry.QObjects.Values.Single().Destroy();
+        entry.NextId = 0;
 
         new QObjectsCreatedMessage
         {

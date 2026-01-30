@@ -26,10 +26,13 @@ public class QSectorManager
 
     public static void Destroy()
     {
-        foreach (var qObject in QObjectManager.Entries[typeof(QSector).Hash()].QObjects.Values.ToList()) // we modify = copy
+        var entry = QObjectManager.Entries[typeof(QSector).Hash()];
+        foreach (var qObject in entry.QObjects.Values.ToList()) // we modify = copy
         {
             qObject.Destroy();
         }
+
+        entry.NextId = 0;
 
         new QObjectsCreatedMessage
         {

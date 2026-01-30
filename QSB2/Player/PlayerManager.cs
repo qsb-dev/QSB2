@@ -1,4 +1,5 @@
-﻿using QSB2.Messaging;
+﻿using System.Linq;
+using QSB2.Messaging;
 using QSB2.QObject;
 using QSB2.Utility;
 
@@ -10,19 +11,18 @@ public class PlayerManager
     {
         LeaveMessage.Event += id =>
         {
-            var connection = NetworkManager.Connections[id];
-            connection.Player.Destroy();
-            connection.Player = null;
+            NetworkManager.Connections[id].Player.Destroy();
         };
     }
-    
+
     public static void Create()
     {
         foreach (var connection in NetworkManager.Connections.Values)
         {
-            connection.Player = new();
-            connection.Player.Connection = connection;
-            connection.Player.Create();
+            new Player
+            {
+                Connection = connection
+            }.Create();
         }
 
         new QObjectsCreatedMessage
@@ -34,11 +34,13 @@ public class PlayerManager
 
     public static void Destroy()
     {
-        foreach (var connection in NetworkManager.Connections.Values)
+        var entry = QObjectManager.Entries[typeof(Player).Hash()];
+        foreach (var qObject in entry.QObjects.Values.ToList())
         {
-            connection.Player.Destroy();
-            connection.Player = null;
+            qObject.Destroy();
         }
+
+        entry.NextId = 0;
 
         new QObjectsCreatedMessage
         {

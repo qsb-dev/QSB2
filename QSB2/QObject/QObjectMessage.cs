@@ -20,6 +20,7 @@ public abstract class QObjectMessage : Message
             Logger.Log($"received message {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
             return;
         }
+
         OnReceive(qObject, from, to);
     }
 
@@ -39,6 +40,7 @@ public abstract class QObjectMessage<T> : Message where T : QObject, new() // no
             Logger.Log($"received message {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
             return;
         }
+
         OnReceive((T)qObject, from, to);
     }
 
@@ -56,12 +58,13 @@ public class QObjectsCreatedMessage : Message
 
     public override void OnReceive(int from, int to)
     {
-        var entry = QObjectManager.Entries[Type];
+        var connection = NetworkManager.Connections[from];
+        var type = QObjectManager.Entries[Type].Type;
+        Logger.Log($"qobjects type {type} created = {Created} for {from}", MessageType.Info);
 
-        Logger.Log($"qobjects type {entry.Type} created = {Created} for {from}", MessageType.Info);
-        if (Created) entry.CreatedFor.Add(from);
-        else entry.CreatedFor.Remove(from);
+        if (Created) connection.QObjectsCreated.Add(type);
+        else connection.QObjectsCreated.Remove(type);
 
-        WakeUpManager.AllQObjectsCreated = QObjectManager.Entries.Values.All(x => x.CreatedFor.Count == NetworkManager.Connections.Count);
+        WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
     }
 }
