@@ -36,21 +36,14 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
-            PlayerManager.Destroy();
-            QShipManager.Destroy();
-            QSectorManager.Destroy();
+            Destroy();
         };
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
-            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
-            {
-                PlayerManager.Create();
-                QShipManager.Create();
-                QSectorManager.Create();
-            });
+            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, Create);
         };
 
         // leave if not in game scene
@@ -58,6 +51,20 @@ public static class QObjectManager
         {
             if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
+    }
+
+    public static void Create()
+    {
+        PlayerManager.Create();
+        QShipManager.Create();
+        QSectorManager.Create();
+    }
+
+    public static void Destroy()
+    {
+        PlayerManager.Destroy();
+        QShipManager.Destroy();
+        QSectorManager.Destroy();
     }
 
     public static void Init()
