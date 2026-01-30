@@ -20,7 +20,11 @@ public class IdentifyMessage : Message
         if (GameVersion != QSB2.GameVersion) leave = true;
         if (DLCInstalled != QSB2.DLCInstalled) leave = true;
         if (!CanJoin) leave = true;
-        if (leave) NetworkManager.Disconnect();
+        if (leave)
+        {
+            Logger.Log("rejected. disconnecting");
+            NetworkManager.Disconnect();
+        }
 
         NetworkManager.LocalID = to;
         Logger.Log($"i am {to}");

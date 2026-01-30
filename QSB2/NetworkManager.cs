@@ -19,6 +19,7 @@ public static class NetworkManager
         _server.OnConnected = (id, _) =>
         {
             Logger.Log($"server connected {id}");
+            var hostJoining = _serverClients.Count == 0;
 
             _serverClients.Add(id);
             new IdentifyMessage
@@ -26,7 +27,7 @@ public static class NetworkManager
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
-                CanJoin = WakeUpManager.CanJoin,
+                CanJoin = WakeUpManager.CanJoin || hostJoining,
             }.Send(id);
 
             // new player knows nothing. fill them in
@@ -41,15 +42,25 @@ public static class NetworkManager
 
             _serverClients.Remove(id);
             // they cant say they left because they left. so we do it
-            // new LeaveMessage
-            // {
-            //     ID = id
-            // }.Send(-1);
+            new LeaveMessage
+            {
+                ID = id
+            }.Send(-1);
         };
         _server.OnData = MessageManager.OnServerData;
 
-        _client.OnConnected = () => Logger.Log("client connected");
-        _client.OnDisconnected = () => Logger.Log("client disconnected");
+        _client.OnConnected = () =>
+        {
+            Logger.Log("client connected");
+            Application.runInBackground = true;
+        };
+        _client.OnDisconnected = () =>
+        {
+            Logger.Log("client disconnected");
+            // we disconnect = wont receive leave messages that clears this, so we gotta do it here
+            Connections.Clear();
+            // LocalID = -1;
+        };
         _client.OnData = MessageManager.OnData;
     }
 
@@ -58,29 +69,19 @@ public static class NetworkManager
 
     public static void Host()
     {
-        WakeUpManager.CanJoin = true; // for now let us join on title screen
         _server.Start(Port);
         Connect();
     }
 
     public static void Connect()
     {
-        Application.runInBackground = true;
         _client.Connect(IP, Port);
     }
 
     public static void Disconnect()
     {
-        new LeaveMessage
-        {
-            ID = NetworkManager.LocalID
-        }.Send(-1);
-        
         _client.Disconnect();
         _server.Stop();
-        // we disconnect = wont receive leave messages that clears this, so we gotta do it here
-        Connections.Clear();
-        // LocalID = -1;
     }
 
     public static void Tick()

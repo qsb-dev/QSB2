@@ -4,6 +4,7 @@ using QSB2.Player;
 using QSB2.SectorSync;
 using QSB2.ShipSync;
 using QSB2.Utility;
+using QSB2.WakeUpSync;
 using UnityEngine;
 
 namespace QSB2.QObject;
@@ -43,12 +44,24 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
-            // TODO: wait until host says go
-            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
+            // wait for Start
+            Delay.FireOnNextUpdate(() =>
             {
-                PlayerManager.Create();
-                QShipManager.Create();
-                QSectorManager.Create();
+                if (NetworkManager.IsHost)
+                {
+                    Delay.RunWhen(() => WakeUpManager.HostSaysGo, () =>
+                    {
+                        PlayerManager.Create();
+                        QShipManager.Create();
+                        QSectorManager.Create();
+                    });
+                }
+                else
+                {
+                    PlayerManager.Create();
+                    QShipManager.Create();
+                    QSectorManager.Create();
+                }
             });
         };
 
