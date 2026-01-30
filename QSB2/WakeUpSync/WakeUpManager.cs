@@ -30,22 +30,22 @@ public static class WakeUpManager
             if (!loadScene.IsGameScene()) return;
 
             // we start paused
-            Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
             CanJoin = true;
             HostSaysGo = false;
             AllQObjectsCreated = false;
             AllScenesSame = false;
 
-            // wait for all of us to be in the solar system
+            Logger.Log("waiting for scene same", MessageType.Info);
             Delay.RunWhen(() => AllScenesSame, () =>
             {
+                Logger.Log("waiting for host to say go", MessageType.Info);
                 if (NetworkManager.IsHost)
                 {
                     Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                     {
                         new HostSaysGoMessage().Send(-1);
-                        
+
                         Delay.RunWhen(() => AllQObjectsCreated, () =>
                         {
                             Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
@@ -101,6 +101,7 @@ public class HostSaysGoMessage : Message
 {
     public override void OnReceive(int from, int to)
     {
+        Logger.Log("host says go. waiting for qobjects", MessageType.Info);
         WakeUpManager.HostSaysGo = true;
     }
 }
