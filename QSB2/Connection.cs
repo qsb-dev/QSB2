@@ -11,4 +11,5 @@ public class Connection(int id)
     public readonly Dictionary<Type, int> QObjectsCreated = new();
     public OWScene Scene;
     public int LoadCounter;
+    public float Time;
 }

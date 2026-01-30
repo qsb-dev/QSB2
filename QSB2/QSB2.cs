@@ -4,6 +4,7 @@ using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
 using QSB2.QObject;
+using QSB2.Utility;
 using QSB2.WakeUpSync;
 using UnityEngine;
 using Gizmos = Popcron.Gizmos;
@@ -46,6 +47,7 @@ public class QSB2 : ModBehaviour
     public void Start()
     {
         Logger.Log("qsb loaded", MessageType.Success);
+        gameObject.AddComponent<DebugGui>();
     }
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)
