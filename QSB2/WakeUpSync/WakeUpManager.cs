@@ -30,20 +30,21 @@ public static class WakeUpManager
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
             AllQObjectsCreated = false;
-            CanJoin = true;
-            HostSaysGo = false;
 
             if (NetworkManager.IsHost)
             {
+                CanJoin = true;
+                HostSaysGo = false;
+
                 Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                 {
+                    CanJoin = false;
                     HostSaysGo = true;
 
                     Delay.RunWhen(() => AllQObjectsCreated, () =>
                     {
                         Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                         TimeScale = 1;
-                        CanJoin = false;
                     });
                 });
             }
@@ -53,7 +54,6 @@ public static class WakeUpManager
                 {
                     Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                     TimeScale = 1;
-                    CanJoin = false;
                 });
             }
         };

@@ -32,6 +32,7 @@ public static class QObjectManager
 
         QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
         {
+            // BUG: can disconnect before this happens, so it never removes the qobjects
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
@@ -58,6 +59,7 @@ public static class QObjectManager
                 }
                 else
                 {
+                    // TODO: wait until host says go
                     PlayerManager.Create();
                     QShipManager.Create();
                     QSectorManager.Create();
