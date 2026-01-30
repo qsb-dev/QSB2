@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using QSB2.Messaging;
 using QSB2.QObject;
+using QSB2.QObject.Verify;
 using QSB2.Utility;
 
 namespace QSB2.Player;

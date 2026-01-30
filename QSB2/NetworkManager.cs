@@ -58,6 +58,7 @@ public static class NetworkManager
 
     public static void Host()
     {
+        WakeUpManager.CanJoin = true; // for now let us join on title screen
         _server.Start(Port);
         Connect();
     }

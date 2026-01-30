@@ -14,7 +14,7 @@ public static class WakeUpManager
     public static float TimeScale = 1;
 
     public static bool AllQObjectsCreated; // TODO: move?
-    public static bool CanJoin = true; // TODO: start false
+    public static bool CanJoin;
 
     static WakeUpManager()
     {
