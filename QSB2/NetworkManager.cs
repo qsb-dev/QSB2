@@ -61,16 +61,19 @@ public static class NetworkManager
         _client.OnData = MessageManager.OnData;
     }
 
+    public static string IP;
+    public static int Port;
+
     public static void Host()
     {
-        _server.Start(1337);
+        _server.Start(Port);
         Connect();
     }
 
     public static void Connect()
     {
         Application.runInBackground = true;
-        _client.Connect("localhost", 1337);
+        _client.Connect(IP, Port);
     }
 
     public static void Disconnect()

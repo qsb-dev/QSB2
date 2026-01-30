@@ -37,6 +37,12 @@ public class QSB2 : ModBehaviour
         WakeUpManager.Init();
     }
 
+    public override void Configure(IModConfig config)
+    {
+        NetworkManager.IP = config.GetSettingsValue<string>("IP");
+        NetworkManager.Port = config.GetSettingsValue<int>("Port");
+    }
+
     public void Start()
     {
         Logger.Log("qsb loaded", MessageType.Success);
