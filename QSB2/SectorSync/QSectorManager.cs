@@ -2,6 +2,7 @@
 using QSB2.QObject;
 using QSB2.QObject.Verify;
 using QSB2.Utility;
+using QSB2.Utility.Deterministic;
 using UnityEngine;
 
 namespace QSB2.SectorSync;
@@ -10,7 +11,7 @@ public class QSectorManager
 {
     public static void Create()
     {
-        foreach (var sector in Extensions.GetAllComponents<Sector>())
+        foreach (var sector in Extensions.GetAllComponents<Sector>().SortDeterministic())
         {
             new QSector
             {

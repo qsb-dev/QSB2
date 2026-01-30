@@ -10,6 +10,7 @@ namespace QSB2.QObject;
 
 public static class QObjectManager
 {
+    // TODO: entry per object manager instead of per qobject? if one manager does multiple subclasses like item
     public class Entry(Type type)
     {
         public readonly Type Type = type;
