@@ -29,6 +29,7 @@ public static class WakeUpManager
             // we start paused
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
+            AllQObjectsCreated = false;
             CanJoin = true;
             HostSaysGo = false;
 
@@ -56,10 +57,6 @@ public static class WakeUpManager
                 });
             }
         };
-
-        // player list change = need to update this
-        JoinMessage.Event += _ => { AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count); };
-        LeaveMessage.Event += _ => { AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count); };
     }
 
     public static void Init()

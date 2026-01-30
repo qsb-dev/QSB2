@@ -41,11 +41,12 @@ public static class NetworkManager
             Logger.Log($"server disconnected {id}");
 
             _serverClients.Remove(id);
-            // they cant say they left because they left. so we do it
-            new LeaveMessage
-            {
-                ID = id
-            }.Send(-1);
+            if (Connections.ContainsKey(id)) // mightve been kicked = no send join message
+                // they cant say they left because they left. so we do it
+                new LeaveMessage
+                {
+                    ID = id
+                }.Send(-1);
         };
         _server.OnData = MessageManager.OnServerData;
 
