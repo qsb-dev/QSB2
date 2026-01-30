@@ -13,7 +13,7 @@ public class QShip : QObject<Transform>, ITickable
     static QShip()
     {
         GlobalMessenger<OWRigidbody>.AddListener("EnterFlightConsole", _ => Instance?.WeAreFlying(true));
-        GlobalMessenger.AddListener("ExitFlightConsole", () => Instance?.WeAreFlying(false));
+        // GlobalMessenger.AddListener("ExitFlightConsole", () => Instance?.WeAreFlying(false));
 
         LeaveMessage.Event += id =>
         {
