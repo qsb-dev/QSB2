@@ -3,7 +3,6 @@ using QSB2.QObject;
 using QSB2.QObject.Verify;
 using QSB2.Utility;
 using QSB2.Utility.Deterministic;
-using UnityEngine;
 
 namespace QSB2.SectorSync;
 
@@ -22,7 +21,8 @@ public class QSectorManager
         new QObjectsCreatedMessage
         {
             Type = typeof(QSector).Hash(),
-            Created = true
+            Created = true,
+            Count = QObjectManager.Entries[typeof(QSector).Hash()].QObjects.Count
         }.Send(-1);
     }
 

@@ -29,7 +29,7 @@ public class Player : QObject<Transform>, ITickable
             // we own. grab local guy
             Component = Locator.GetPlayerCameraController().transform;
 
-            Logger.Log($"local player {Connection.ID} created");
+            Logger.Log($"local player for {Connection.ID} created");
         }
         else
         {
@@ -38,7 +38,7 @@ public class Player : QObject<Transform>, ITickable
             GameObject.Destroy(go.GetComponent<Collider>());
             Component = go.GetComponent<Transform>();
 
-            Logger.Log($"remote player {Connection.ID} created");
+            Logger.Log($"remote player for {Connection.ID} created");
         }
 
         base.Create();
@@ -56,7 +56,7 @@ public class Player : QObject<Transform>, ITickable
             // remove player object
             GameObject.Destroy(Component.gameObject);
 
-            Logger.Log($"remote player {ID} destroyed");
+            Logger.Log($"remote player for {Connection.ID} destroyed");
         }
     }
 

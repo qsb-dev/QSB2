@@ -58,6 +58,6 @@ public class SceneMessage : Message
         var connection = NetworkManager.Connections[from];
         connection.Scene = Scene;
         connection.LoadCounter = LoadCounter;
-        Logger.Log($"player from in scene {Scene} counter {LoadCounter}");
+        Logger.Log($"{from} in scene {Scene} counter {LoadCounter}");
     }
 }

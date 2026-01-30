@@ -10,10 +10,7 @@ public class PlayerManager
 {
     static PlayerManager()
     {
-        LeaveMessage.Event += id =>
-        {
-            NetworkManager.Connections[id].Player.Destroy();
-        };
+        LeaveMessage.Event += id => { NetworkManager.Connections[id].Player.Destroy(); };
     }
 
     public static void Create()
@@ -29,7 +26,8 @@ public class PlayerManager
         new QObjectsCreatedMessage
         {
             Type = typeof(Player).Hash(),
-            Created = true
+            Created = true,
+            Count = QObjectManager.Entries[typeof(Player).Hash()].QObjects.Count,
         }.Send(-1);
     }
 

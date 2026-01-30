@@ -14,15 +14,23 @@ public class QObjectsCreatedMessage : Message
 {
     [Key(0)] public required int Type;
     [Key(1)] public required bool Created;
+    [Key(2)] public int Count;
 
     public override void OnReceive(int from, int to)
     {
         var connection = NetworkManager.Connections[from];
         var type = QObjectManager.Entries[Type].Type;
-        Logger.Log($"qobjects type {type} created = {Created} for {from}", MessageType.Info);
 
-        if (Created) connection.QObjectsCreated.Add(type);
-        else connection.QObjectsCreated.Remove(type);
+        if (Created)
+        {
+            Logger.Log($"qobjects type {type} CREATED count {Count} for {from}", MessageType.Info);
+            connection.QObjectsCreated.Add(type, Count);
+        }
+        else
+        {
+            Logger.Log($"qobjects type {type} DESTROYED for {from}", MessageType.Info);
+            connection.QObjectsCreated.Remove(type);
+        }
 
         WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
     }

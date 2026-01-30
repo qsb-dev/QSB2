@@ -20,18 +20,20 @@ public class QShipManager
         new QObjectsCreatedMessage
         {
             Type = typeof(QShip).Hash(),
-            Created = true
+            Created = true,
+            Count = QObjectManager.Entries[typeof(QShip).Hash()].QObjects.Count,
         }.Send(-1);
     }
 
     public static void Destroy()
     {
-        if (LoadManager.GetCurrentScene() != OWScene.EyeOfTheUniverse)
+        var entry = QObjectManager.Entries[typeof(QShip).Hash()];
+        foreach (var qObject in entry.QObjects.Values.ToList()) // we modify = copy
         {
-            var entry = QObjectManager.Entries[typeof(QShip).Hash()];
-            entry.QObjects.Values.Single().Destroy();
-            entry.NextId = 0;
+            qObject.Destroy();
         }
+
+        entry.NextId = 0;
 
         new QObjectsCreatedMessage
         {

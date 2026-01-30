@@ -68,6 +68,7 @@ public static class NetworkManager
                 entry.QObjects.Clear();
                 entry.NextId = 0;
             }
+            TickableManager.Tickables.Clear();
         };
         _client.OnData = MessageManager.OnData;
     }
