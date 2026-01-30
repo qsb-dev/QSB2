@@ -2,6 +2,7 @@ using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
 using QSB2.Utility;
+using QSB2.WakeUpSync;
 
 namespace QSB2.QObject;
 
@@ -12,6 +13,12 @@ public abstract class QObjectMessage : Message
 
     public override void OnReceive(int from, int to)
     {
+        if (!WakeUpManager.AllQObjectsCreated)
+        {
+            Logger.Log("received object message when not all objects created. its fine, the other side probably hasnt received the flag yet", MessageType.Warning);
+            return;
+        }
+
         var entry = QObjectManager.Entries[Type];
         if (!entry.QObjects.TryGetValue(ID, out var qObject))
         {
@@ -32,6 +39,12 @@ public abstract class QObjectMessage<T> : Message where T : QObject, new() // no
 
     public override void OnReceive(int from, int to)
     {
+        if (!WakeUpManager.AllQObjectsCreated)
+        {
+            Logger.Log("received object message when not all objects created. its fine, the other side probably hasnt received the flag yet", MessageType.Warning);
+            return;
+        }
+        
         var entry = QObjectManager.Entries[typeof(T).Hash()];
         if (!entry.QObjects.TryGetValue(ID, out var qObject))
         {
