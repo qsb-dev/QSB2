@@ -34,6 +34,8 @@ public static class QSceneManager
 
         OnPostSceneLoad += (originalScene, loadScene) =>
         {
+            if (!NetworkManager.IsConnected) return;
+
             new SceneMessage
             {
                 Scene = loadScene,

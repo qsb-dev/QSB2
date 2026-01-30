@@ -9,10 +9,13 @@ public class QShipManager
 {
     public static void Create()
     {
-        new QShip
+        if (LoadManager.GetCurrentScene() != OWScene.EyeOfTheUniverse)
         {
-            Component = Locator.GetShipTransform()
-        }.Create();
+            new QShip
+            {
+                Component = Locator.GetShipTransform()
+            }.Create();
+        }
 
         new QObjectsCreatedMessage
         {
@@ -23,9 +26,12 @@ public class QShipManager
 
     public static void Destroy()
     {
-        var entry = QObjectManager.Entries[typeof(QShip).Hash()];
-        entry.QObjects.Values.Single().Destroy();
-        entry.NextId = 0;
+        if (LoadManager.GetCurrentScene() != OWScene.EyeOfTheUniverse)
+        {
+            var entry = QObjectManager.Entries[typeof(QShip).Hash()];
+            entry.QObjects.Values.Single().Destroy();
+            entry.NextId = 0;
+        }
 
         new QObjectsCreatedMessage
         {
