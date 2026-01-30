@@ -15,6 +15,9 @@ public class IdentifyMessage : Message
 
     public override void OnReceive(int from, int to)
     {
+        NetworkManager.LocalID = to;
+        Logger.Log($"i am {to}");
+        
         var leave = false;
         if (QSBVersion != QSB2.QSBVersion) leave = true;
         if (GameVersion != QSB2.GameVersion) leave = true;
@@ -25,9 +28,6 @@ public class IdentifyMessage : Message
             Logger.Log("rejected. disconnecting");
             NetworkManager.Disconnect();
         }
-
-        NetworkManager.LocalID = to;
-        Logger.Log($"i am {to}");
 
         // tell everyone else that we joined
         new JoinMessage
