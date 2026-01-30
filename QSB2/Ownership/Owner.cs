@@ -15,7 +15,7 @@ public struct Owner(QObject.QObject qObject)
 public struct OwnerQueue(QObject.QObject qObject)
 {
     // BUG: if 2 clients send messages at the same time, what happens? do they arrive in the same order on both ends? else this would get desynced
-    public readonly List<int> Queue = new();
+    public readonly List<int> IDs = new();
 }
 
 [MessagePackObject]
@@ -26,7 +26,7 @@ public class OwnerQueueMessage : QObjectMessage
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        var ownerQueue = qObject.OwnerQueue.Queue;
+        var ownerQueue = qObject.OwnerQueue.IDs;
 
         switch (Action)
         {
