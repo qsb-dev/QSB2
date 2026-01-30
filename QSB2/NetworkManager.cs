@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using QSB2.Messaging;
 using QSB2.WakeUpSync;
 using Telepathy;
@@ -19,28 +20,24 @@ public static class NetworkManager
         _server.OnConnected = (id, _) =>
         {
             Logger.Log($"server connected {id}");
-            var hostJoining = _serverClients.Count == 0;
-
             _serverClients.Add(id);
+
+            var hostJoining = Connections.Count == 0;
+            // new player knows nothing. fill them in
             new IdentifyMessage
             {
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
                 CanJoin = WakeUpManager.CanJoin || hostJoining,
-            }.Send(id);
-
-            // new player knows nothing. fill them in
-            new SyncMessage
-            {
-                IDs = _serverClients
+                IDs = Connections.Keys.ToList(),
             }.Send(id);
         };
         _server.OnDisconnected = id =>
         {
             Logger.Log($"server disconnected {id}");
-
             _serverClients.Remove(id);
+
             if (Connections.ContainsKey(id)) // mightve been kicked = no send join message
                 // they cant say they left because they left. so we do it
                 new LeaveMessage

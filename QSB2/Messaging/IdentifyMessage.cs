@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using System.Collections.Generic;
+using MessagePack;
 
 namespace QSB2.Messaging;
 
@@ -12,12 +13,19 @@ public class IdentifyMessage : Message
     [Key(1)] public required string GameVersion;
     [Key(2)] public required bool DLCInstalled;
     [Key(3)] public required bool CanJoin;
+    [Key(4)] public required List<int> IDs;
 
     public override void OnReceive(int from, int to)
     {
         NetworkManager.LocalID = to;
         Logger.Log($"i am {to}");
-        
+
+        foreach (var id in IDs)
+        {
+            NetworkManager.Connections.Add(id, new(id));
+            Logger.Log($"{id} exists");
+        }
+
         var leave = false;
         if (QSBVersion != QSB2.QSBVersion) leave = true;
         if (GameVersion != QSB2.GameVersion) leave = true;
@@ -29,10 +37,10 @@ public class IdentifyMessage : Message
             NetworkManager.Disconnect();
         }
 
-        // tell everyone else that we joined
+        // tell everyone we joined
         new JoinMessage
         {
             ID = to
-        }.Send(-2);
+        }.Send(-1);
     }
 }
