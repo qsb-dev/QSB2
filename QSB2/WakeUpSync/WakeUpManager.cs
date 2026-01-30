@@ -1,5 +1,8 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
 using OWML.Common;
+using QSB2.Messaging;
+using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
 
@@ -30,6 +33,16 @@ public static class WakeUpManager
                 TimeScale = 1;
             });
         };
+
+        // player list change = need to update this
+        JoinMessage.Event += _ =>
+        {
+            AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
+        };
+        LeaveMessage.Event += _ =>
+        {
+            AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
+        };
     }
 
     public static void Init()
@@ -38,6 +51,7 @@ public static class WakeUpManager
 
     public static void Tick()
     {
+        if (!NetworkManager.IsConnected) return;
         Time.timeScale = TimeScale;
     }
 
