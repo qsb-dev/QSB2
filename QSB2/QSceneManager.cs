@@ -1,7 +1,9 @@
-﻿using MessagePack;
+﻿using System.Linq;
+using MessagePack;
 using OWML.Common;
 using OWML.Utils;
 using QSB2.Messaging;
+using QSB2.WakeUpSync;
 
 namespace QSB2;
 
@@ -59,5 +61,8 @@ public class SceneMessage : Message
         connection.Scene = Scene;
         connection.LoadCounter = LoadCounter;
         Logger.Log($"{from} in scene {Scene} counter {LoadCounter}");
+
+        var lc = NetworkManager.LocalConnection;
+        WakeUpManager.AllScenesSame = NetworkManager.Connections.Values.All(c => c.Scene == lc.Scene && c.LoadCounter == lc.LoadCounter);
     }
 }

@@ -1,7 +1,11 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
+using MessagePack;
 using OWML.Common;
+using QSB2.Messaging;
 using QSB2.Utility;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace QSB2.WakeUpSync;
 
@@ -10,7 +14,11 @@ public static class WakeUpManager
 {
     public static float TimeScale = 1;
 
-    public static bool AllQObjectsCreated; // TODO: move?
+    // TODO: move?
+    public static bool AllQObjectsCreated;
+    public static bool AllScenesSame;
+
+    public static bool HostSaysGo;
     public static bool CanJoin;
 
     static WakeUpManager()
@@ -25,16 +33,40 @@ public static class WakeUpManager
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
             CanJoin = true;
+            HostSaysGo = false;
             AllQObjectsCreated = false;
+            AllScenesSame = false;
 
-            Delay.RunWhen(() => AllQObjectsCreated, () =>
+            // wait for all of us to be in the solar system
+            Delay.RunWhen(() => AllScenesSame, () =>
             {
-                Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
-                TimeScale = 1;
-                CanJoin = false;
+                if (NetworkManager.IsHost)
+                {
+                    Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
+                    {
+                        new HostSaysGoMessage().Send(-1);
+                        
+                        Delay.RunWhen(() => AllQObjectsCreated, () =>
+                        {
+                            Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
+                            TimeScale = 1;
+                            CanJoin = false;
+                        });
+                    });
+                }
+                else
+                {
+                    Delay.RunWhen(() => AllQObjectsCreated, () =>
+                    {
+                        Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
+                        TimeScale = 1;
+                        CanJoin = false;
+                    });
+                }
             });
         };
     }
+
 
     public static void Init()
     {
@@ -61,5 +93,14 @@ public static class WakeUpManager
 
         __instance.WakeUp();
         return false;
+    }
+}
+
+[MessagePackObject]
+public class HostSaysGoMessage : Message
+{
+    public override void OnReceive(int from, int to)
+    {
+        WakeUpManager.HostSaysGo = true;
     }
 }
