@@ -1,8 +1,7 @@
-﻿using System.Linq;
-using HarmonyLib;
+﻿using HarmonyLib;
+using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
-using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -39,21 +38,7 @@ public static class WakeUpManager
                 Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                 {
                     CanJoin = false;
-                    HostSaysGo = true;
-
-                    Delay.RunWhen(() => AllQObjectsCreated, () =>
-                    {
-                        Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
-                        TimeScale = 1;
-                    });
-                });
-            }
-            else
-            {
-                Delay.RunWhen(() => AllQObjectsCreated, () =>
-                {
-                    Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
-                    TimeScale = 1;
+                    new HostSaysGoMessage().Send(-1);
                 });
             }
         };
@@ -84,5 +69,20 @@ public static class WakeUpManager
 
         __instance.WakeUp();
         return false;
+    }
+}
+
+[MessagePackObject]
+public class HostSaysGoMessage : Message
+{
+    public override void OnReceive(int from, int to)
+    {
+        WakeUpManager.HostSaysGo = true;
+        
+        Delay.RunWhen(() => WakeUpManager.AllQObjectsCreated, () =>
+        {
+            Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
+            WakeUpManager.TimeScale = 1;
+        });
     }
 }

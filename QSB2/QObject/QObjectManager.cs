@@ -48,22 +48,12 @@ public static class QObjectManager
             // wait for Start
             Delay.FireOnNextUpdate(() =>
             {
-                if (NetworkManager.IsHost)
+                Delay.RunWhen(() => WakeUpManager.HostSaysGo, () =>
                 {
-                    Delay.RunWhen(() => WakeUpManager.HostSaysGo, () =>
-                    {
-                        PlayerManager.Create();
-                        QShipManager.Create();
-                        QSectorManager.Create();
-                    });
-                }
-                else
-                {
-                    // TODO: wait until host says go
                     PlayerManager.Create();
                     QShipManager.Create();
                     QSectorManager.Create();
-                }
+                });
             });
         };
 
