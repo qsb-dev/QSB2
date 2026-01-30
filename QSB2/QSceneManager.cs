@@ -37,7 +37,7 @@ public static class QSceneManager
             new SceneMessage
             {
                 Scene = loadScene,
-                LoadCounter = NetworkManager.Connections[NetworkManager.LocalID].LoadCounter + 1,
+                LoadCounter = NetworkManager.LocalConnection.LoadCounter + 1,
             }.Send(-1);
         };
     }

@@ -32,18 +32,24 @@ public static class QObjectManager
 
         QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
         {
-            // BUG: can disconnect before this happens, so it never removes the qobjects
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
-            Destroy();
+            PlayerManager.Destroy();
+            QShipManager.Destroy();
+            QSectorManager.Destroy();
         };
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
-            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, Create);
+            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing, () =>
+            {
+                PlayerManager.Create();
+                QShipManager.Create();
+                QSectorManager.Create();
+            });
         };
 
         // leave if not in game scene
@@ -51,20 +57,6 @@ public static class QObjectManager
         {
             if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
-    }
-
-    public static void Create()
-    {
-        PlayerManager.Create();
-        QShipManager.Create();
-        QSectorManager.Create();
-    }
-
-    public static void Destroy()
-    {
-        PlayerManager.Destroy();
-        QShipManager.Destroy();
-        QSectorManager.Destroy();
     }
 
     public static void Init()

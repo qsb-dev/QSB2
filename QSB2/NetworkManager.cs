@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using QSB2.Messaging;
+using QSB2.Player;
 using QSB2.QObject;
+using QSB2.SectorSync;
+using QSB2.ShipSync;
 using QSB2.WakeUpSync;
 using Telepathy;
 using UnityEngine;
@@ -58,9 +61,13 @@ public static class NetworkManager
         _client.OnDisconnected = () =>
         {
             Logger.Log("client disconnected");
-            QObjectManager.Destroy(); // it sends messages, dont care, just get rid of em
-            Connections.Clear(); // we disconnect = wont receive leave messages that clears this, so we gotta do it here
-            LocalID = -1;
+            // just clear out everything, i dont care
+            Connections.Clear();
+            foreach (var entry in QObjectManager.Entries.Values)
+            {
+                entry.QObjects.Clear();
+                entry.NextId = 0;
+            }
         };
         _client.OnData = MessageManager.OnData;
     }
@@ -94,4 +101,5 @@ public static class NetworkManager
     public static readonly List<int> _serverClients = new();
     public static int LocalID = -1;
     public static readonly Dictionary<int, Connection> Connections = new();
+    public static Connection LocalConnection => Connections[LocalID];
 }
