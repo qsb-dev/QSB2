@@ -14,6 +14,7 @@ public static class WakeUpManager
     public static float TimeScale = 1;
 
     public static bool AllQObjectsCreated; // TODO: move?
+    public static bool CanJoin = true; // TODO: start false
 
     static WakeUpManager()
     {
@@ -26,12 +27,14 @@ public static class WakeUpManager
             // we start paused
             Logger.Log("new loop. waiting for qobjects", MessageType.Info);
             TimeScale = 0;
+            CanJoin = true;
 
             // TODO: wait until host says go
             Delay.RunWhen(() => AllQObjectsCreated, () =>
             {
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                 TimeScale = 1;
+                CanJoin = false;
             });
         };
 

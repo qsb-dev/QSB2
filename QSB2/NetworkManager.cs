@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using QSB2.Messaging;
+using QSB2.WakeUpSync;
 using Telepathy;
 using UnityEngine;
 
@@ -26,6 +26,7 @@ public static class NetworkManager
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
+                CanJoin = WakeUpManager.CanJoin,
             }.Send(id);
 
             // new player knows nothing. fill them in
@@ -40,24 +41,15 @@ public static class NetworkManager
 
             _serverClients.Remove(id);
             // they cant say they left because they left. so we do it
-            new LeaveMessage
-            {
-                ID = id
-            }.Send(-1);
+            // new LeaveMessage
+            // {
+            //     ID = id
+            // }.Send(-1);
         };
         _server.OnData = MessageManager.OnServerData;
 
-
-        _client.OnConnected = () =>
-        {
-            Logger.Log("client connected");
-            QSB2.Harmony.PatchAll(Assembly.GetExecutingAssembly());
-        };
-        _client.OnDisconnected = () =>
-        {
-            Logger.Log("client disconnected");
-            QSB2.Harmony.UnpatchSelf();
-        };
+        _client.OnConnected = () => Logger.Log("client connected");
+        _client.OnDisconnected = () => Logger.Log("client disconnected");
         _client.OnData = MessageManager.OnData;
     }
 
@@ -78,10 +70,16 @@ public static class NetworkManager
 
     public static void Disconnect()
     {
+        new LeaveMessage
+        {
+            ID = NetworkManager.LocalID
+        }.Send(-1);
+        
         _client.Disconnect();
         _server.Stop();
         // we disconnect = wont receive leave messages that clears this, so we gotta do it here
         Connections.Clear();
+        // LocalID = -1;
     }
 
     public static void Tick()

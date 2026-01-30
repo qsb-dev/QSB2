@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
@@ -12,7 +13,6 @@ namespace QSB2;
 public class QSB2 : ModBehaviour
 {
     public static QSB2 Instance;
-    public static Harmony Harmony;
 
     #region versioning
 
@@ -29,7 +29,7 @@ public class QSB2 : ModBehaviour
     public void Awake()
     {
         Instance = this;
-        Harmony = new Harmony("JohnCorby.QSB2");
+        new Harmony("JohnCorby.QSB2").PatchAll(Assembly.GetExecutingAssembly());
 
         Gizmos.CameraFilter = _ => true;
 

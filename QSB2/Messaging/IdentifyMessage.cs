@@ -11,6 +11,7 @@ public class IdentifyMessage : Message
     [Key(0)] public required string QSBVersion;
     [Key(1)] public required string GameVersion;
     [Key(2)] public required bool DLCInstalled;
+    [Key(3)] public required bool CanJoin;
 
     public override void OnReceive(int from, int to)
     {
@@ -18,6 +19,7 @@ public class IdentifyMessage : Message
         if (QSBVersion != QSB2.QSBVersion) leave = true;
         if (GameVersion != QSB2.GameVersion) leave = true;
         if (DLCInstalled != QSB2.DLCInstalled) leave = true;
+        if (!CanJoin) leave = true;
         if (leave) NetworkManager.Disconnect();
 
         NetworkManager.LocalID = to;
