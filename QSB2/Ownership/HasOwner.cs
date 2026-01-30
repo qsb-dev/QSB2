@@ -5,7 +5,7 @@ using QSB2.QObject;
 
 namespace QSB2.Authority;
 
-public class HasOwner(QObject.QObject qObject)
+public struct HasOwner(QObject.QObject qObject)
 {
     public bool DoWeOwn => Owner == NetworkManager.LocalID;
 

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace QSB2.PositionSync;
 
-public class VelocitySync(QObject.QObject qObject)
+public struct VelocitySync(QObject.QObject qObject)
 {
     public Vector3 RelVel;
     public Vector3 RelAngVel;
