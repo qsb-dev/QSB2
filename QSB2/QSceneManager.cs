@@ -1,5 +1,7 @@
-﻿using OWML.Common;
+﻿using MessagePack;
+using OWML.Common;
 using OWML.Utils;
+using QSB2.Messaging;
 
 namespace QSB2;
 
@@ -29,7 +31,31 @@ public static class QSceneManager
             Logger.Log($"POST SCENE LOAD ({originalScene} -> {loadScene})", MessageType.Info);
             OnPostSceneLoad?.SafeInvoke(originalScene, loadScene);
         };
+
+        OnPostSceneLoad += (originalScene, loadScene) =>
+        {
+            new SceneMessage
+            {
+                Scene = loadScene,
+                LoadCounter = NetworkManager.Connections[NetworkManager.LocalID].LoadCounter + 1,
+            }.Send(-1);
+        };
     }
 
     public static bool IsGameScene(this OWScene scene) => scene is OWScene.SolarSystem or OWScene.EyeOfTheUniverse;
+}
+
+[MessagePackObject]
+public class SceneMessage : Message
+{
+    [Key(0)] public required OWScene Scene;
+    [Key(1)] public required int LoadCounter;
+
+    public override void OnReceive(int from, int to)
+    {
+        var connection = NetworkManager.Connections[from];
+        connection.Scene = Scene;
+        connection.LoadCounter = LoadCounter;
+        Logger.Log($"player from in scene {Scene} counter {LoadCounter}");
+    }
 }
