@@ -13,7 +13,7 @@ public static class QObjectManager
     public class Entry(Type type)
     {
         public readonly Type Type = type;
-        public int NextId;
+        public int NextId; // not reset between loops, so ids in one loop will be totally different from ids in another loop
         public readonly Dictionary<int, QObject> QObjects = new();
         public readonly HashSet<int> CreatedFor = new();
     }
