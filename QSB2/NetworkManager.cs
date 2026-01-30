@@ -55,8 +55,7 @@ public static class NetworkManager
         {
             Logger.Log("client connected");
             Application.runInBackground = true;
-            if (IsHost)
-                WakeUpManager.CanJoin = true; // for now let us join on title screen
+            WakeUpManager.CanJoin = true; // let us join on title screen
         };
         _client.OnDisconnected = () =>
         {
