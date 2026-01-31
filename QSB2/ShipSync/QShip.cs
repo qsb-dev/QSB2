@@ -20,11 +20,7 @@ public class QShip : QObject<Transform>, ITickable
             if (NetworkManager.IsHost)
             {
                 // leaving player = left the seat. host does this since the player left
-                Instance?.Send(new OwnerQueueMessage
-                {
-                    PlayerID = id,
-                    Action = OwnerQueueAction.Remove
-                }, -1);
+                Instance?.OwnerQueue.DoAction(OwnerQueueAction.Remove, id);
             }
         };
     }
@@ -66,10 +62,6 @@ public class QShip : QObject<Transform>, ITickable
 
     private void WeAreFlying(bool value)
     {
-        Send(new OwnerQueueMessage
-        {
-            PlayerID = NetworkManager.LocalID,
-            Action = value ? OwnerQueueAction.Force : OwnerQueueAction.Remove,
-        }, -1);
+        OwnerQueue.DoAction(value ? OwnerQueueAction.Force : OwnerQueueAction.Remove);
     }
 }

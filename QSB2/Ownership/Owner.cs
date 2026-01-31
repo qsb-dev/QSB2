@@ -16,6 +16,15 @@ public struct OwnerQueue(QObject.QObject qObject)
 {
     // BUG: if 2 clients send messages at the same time, what happens? do they arrive in the same order on both ends? else this would get desynced
     public readonly List<int> IDs = new();
+
+    public void DoAction(OwnerQueueAction action, int id = -1)
+    {
+        qObject.Send(new OwnerQueueMessage
+        {
+            PlayerID = id == -1 ? NetworkManager.LocalID : id,
+            Action = action
+        }, -1);
+    }
 }
 
 [MessagePackObject]
