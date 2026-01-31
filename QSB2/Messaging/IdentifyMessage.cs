@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using MessagePack;
+﻿using MessagePack;
 
 namespace QSB2.Messaging;
 
@@ -12,18 +11,22 @@ public class IdentifyMessage : Message
     [Key(0)] public required string QSBVersion;
     [Key(1)] public required string GameVersion;
     [Key(2)] public required bool DLCInstalled;
+
     [Key(3)] public required bool CanJoin;
-    [Key(4)] public required List<int> IDs;
+
+    // the minimal initial state
+    [Key(4)] public required (int ID, OWScene scene, int loadCounter)[] Connections;
+    // not qobjects cuz thats initialized after everyone joins
 
     public override void OnReceive(int from, int to)
     {
         NetworkManager.LocalID = to;
         Logger.Log($"i am {to}");
 
-        foreach (var id in IDs)
+        foreach (var x in Connections)
         {
-            NetworkManager.Connections.Add(id, new(id));
-            Logger.Log($"{id} exists");
+            NetworkManager.Connections.Add(x.ID, new(x.ID) { Scene = x.scene, LoadCounter = x.loadCounter });
+            Logger.Log($"{x.ID} exists");
         }
 
         var leave = false;

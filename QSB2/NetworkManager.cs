@@ -34,7 +34,7 @@ public static class NetworkManager
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
                 CanJoin = WakeUpManager.CanJoin || hostJoining,
-                IDs = Connections.Keys.ToList(),
+                Connections = Connections.Values.Select(x => (x.ID, x.Scene, x.LoadCounter)).ToArray(),
             }.Send(id);
         };
         _server.OnDisconnected = id =>
