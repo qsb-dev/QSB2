@@ -32,38 +32,28 @@ public static class WakeUpManager
             // we start paused
             TimeScale = 0;
             CanJoin = true;
-            HostSaysGo = false;
+            HostSaysGo = false; // BUG: if host says go and were still in previous scene, thisll be set to false on transition
             AllQObjectsCreated = false;
             AllScenesSame = false;
 
-            // Logger.Log("waiting for scene same", MessageType.Info);
-            // Delay.RunWhen(() => AllScenesSame, () =>
-            // {
-                Logger.Log("waiting for host to say go", MessageType.Info);
-                if (NetworkManager.IsHost)
+            Logger.Log("waiting for host to say go", MessageType.Info);
+            if (NetworkManager.IsHost)
+            {
+                Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                 {
-                    Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
-                    {
-                        new HostSaysGoMessage().Send(-1);
+                    Logger.Log("go key pressed, waiting for same scene", MessageType.Info);
+                    // in case someone is still on previous scene
+                    Delay.RunWhen(() => AllScenesSame, () => { new HostSaysGoMessage().Send(-1); });
+                });
+            }
 
-                        Delay.RunWhen(() => AllQObjectsCreated, () =>
-                        {
-                            Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
-                            TimeScale = 1;
-                            CanJoin = false;
-                        });
-                    });
-                }
-                else
-                {
-                    Delay.RunWhen(() => AllQObjectsCreated, () =>
-                    {
-                        Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
-                        TimeScale = 1;
-                        CanJoin = false;
-                    });
-                }
-            // });
+            // object manager will wait for host go and then this will get set later
+            Delay.RunWhen(() => AllQObjectsCreated, () =>
+            {
+                Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
+                TimeScale = 1;
+                CanJoin = false;
+            });
         };
     }
 
@@ -77,7 +67,7 @@ public static class WakeUpManager
     public static void Tick()
     {
         if (!NetworkManager.IsConnected) return;
-        
+
         foreach (var connection in NetworkManager.Connections.Values)
         {
             connection.Time += Time.deltaTime;
