@@ -44,7 +44,7 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
-            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing && WakeUpManager.HostSaysGo, () =>
+            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing && WakeUpManager.AllScenesSame && !WakeUpManager.HostWaitingForPlayers, () =>
             {
                 PlayerManager.Create();
                 QShipManager.Create();

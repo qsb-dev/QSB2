@@ -14,11 +14,9 @@ public static class WakeUpManager
 {
     public static float TimeScale = 1;
 
-    // TODO: move?
     public static bool AllQObjectsCreated;
     public static bool AllScenesSame;
-
-    public static bool HostSaysGo;
+    public static bool HostWaitingForPlayers;
     public static bool CanJoin;
 
     static WakeUpManager()
@@ -32,22 +30,23 @@ public static class WakeUpManager
             // we start paused
             TimeScale = 0;
             CanJoin = true;
-            HostSaysGo = false; // BUG: if host says go and were still in previous scene, thisll be set to false on transition
-            AllQObjectsCreated = false;
-            AllScenesSame = false;
 
-            Logger.Log("waiting for host to say go", MessageType.Info);
             if (NetworkManager.IsHost)
             {
+                new HostWaitingForPlayersMessage
+                {
+                    Value = true
+                }.Send(-1);
                 Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                 {
-                    Logger.Log("go key pressed, waiting for same scene", MessageType.Info);
-                    // in case someone is still on previous scene
-                    Delay.RunWhen(() => AllScenesSame, () => { new HostSaysGoMessage().Send(-1); });
+                    new HostWaitingForPlayersMessage
+                    {
+                        Value = false
+                    }.Send(-1);
                 });
             }
 
-            // object manager will wait for host go and then this will get set later
+            // will eventually get set from object manager
             Delay.RunWhen(() => AllQObjectsCreated, () =>
             {
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
@@ -56,7 +55,6 @@ public static class WakeUpManager
             });
         };
     }
-
 
     public static void Init()
     {
@@ -114,12 +112,14 @@ public static class WakeUpManager
 }
 
 [MessagePackObject]
-public class HostSaysGoMessage : Message
+public class HostWaitingForPlayersMessage : Message
 {
+    [Key(0)] public required bool Value;
+
     public override void OnReceive(int from, int to)
     {
-        Logger.Log("host says go. waiting for qobjects", MessageType.Info);
-        WakeUpManager.HostSaysGo = true;
+        Logger.Log($"host waiting for players = {Value}", MessageType.Info);
+        WakeUpManager.HostWaitingForPlayers = Value;
     }
 }
 
