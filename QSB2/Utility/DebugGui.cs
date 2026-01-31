@@ -7,8 +7,6 @@ namespace QSB2.Utility;
 
 public class DebugGui : MonoBehaviour
 {
-    private float _lastSend;
-
     private void OnGUI()
     {
         foreach (var connection in NetworkManager.Connections.Values)
@@ -18,30 +16,6 @@ public class DebugGui : MonoBehaviour
             GUILayout.Label($"\tscene {connection.Scene} counter {connection.LoadCounter}");
             GUILayout.Label($"\tcreated {connection.QObjectsCreated.Join()}");
         }
-    }
-
-    private void Update()
-    {
-        if (TimeLoop.GetSecondsElapsed() < _lastSend || TimeLoop.GetSecondsElapsed() > _lastSend + 1)
-        {
-            _lastSend = TimeLoop.GetSecondsElapsed();
-
-            new TimeMessage
-            {
-                Time = TimeLoop.GetSecondsElapsed()
-            }.Send(-1);
-        }
-    }
-}
-
-[MessagePackObject]
-public class TimeMessage : Message
-{
-    [Key(0)] public required float Time;
-
-    public override void OnReceive(int from, int to)
-    {
-        NetworkManager.Connections[from].Time = Time;
     }
 }
 

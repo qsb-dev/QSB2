@@ -72,9 +72,36 @@ public static class WakeUpManager
     {
     }
 
+    private static float _lastTimeSend;
+
     public static void Tick()
     {
         if (!NetworkManager.IsConnected) return;
+        
+        foreach (var connection in NetworkManager.Connections.Values)
+        {
+            connection.Time += Time.deltaTime;
+        }
+
+        if (AllQObjectsCreated)
+        {
+            // a minor amount of actual timesync because yes it is actually needed
+            var hostTime = NetworkManager.Connections[NetworkManager.Connections.Keys.Min()].Time;
+            var myTime = NetworkManager.LocalConnection.Time;
+            var diff = hostTime - myTime;
+            TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
+        }
+
+        if (Time.timeSinceLevelLoad < _lastTimeSend || Time.timeSinceLevelLoad > _lastTimeSend + 1)
+        {
+            _lastTimeSend = Time.timeSinceLevelLoad;
+
+            new TimeMessage
+            {
+                Time = Time.timeSinceLevelLoad
+            }.Send(-1);
+        }
+
         Time.timeScale = TimeScale;
     }
 
@@ -103,5 +130,16 @@ public class HostSaysGoMessage : Message
     {
         Logger.Log("host says go. waiting for qobjects", MessageType.Info);
         WakeUpManager.HostSaysGo = true;
+    }
+}
+
+[MessagePackObject]
+public class TimeMessage : Message
+{
+    [Key(0)] public required float Time;
+
+    public override void OnReceive(int from, int to)
+    {
+        NetworkManager.Connections[from].Time = Time;
     }
 }
