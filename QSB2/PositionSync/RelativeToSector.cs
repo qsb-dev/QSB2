@@ -5,7 +5,7 @@ using QSB2.Utility;
 
 namespace QSB2.PositionSync;
 
-public struct RelativeToSector(QObject.QObject qObject)
+public class RelativeToSector(QObject.QObject qObject)
 {
     public SectorDetector SectorDetector;
     public QSector QSector;

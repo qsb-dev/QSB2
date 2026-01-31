@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace QSB2.PositionSync;
 
-public struct PositionSync(QObject.QObject qObject)
+public class PositionSync(QObject.QObject qObject)
 {
     public Transform Reference;
 

@@ -5,14 +5,14 @@ using QSB2.QObject;
 
 namespace QSB2.Ownership;
 
-public struct Owner(QObject.QObject qObject)
+public class Owner(QObject.QObject qObject)
 {
     public bool DoWeOwn => ID == NetworkManager.LocalID;
 
     public int ID = -1;
 }
 
-public struct OwnerQueue(QObject.QObject qObject)
+public class OwnerQueue(QObject.QObject qObject)
 {
     // BUG: if 2 clients send messages at the same time, what happens? do they arrive in the same order on both ends? else this would get desynced
     public readonly List<int> IDs = new();
