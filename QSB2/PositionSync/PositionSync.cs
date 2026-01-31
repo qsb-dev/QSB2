@@ -31,8 +31,18 @@ public struct PositionSync(QObject.QObject qObject)
         else
         {
             // non owner - sync to unity component
-            qObject.Component.transform.position = Reference.FromRelPos(RelPos);
-            qObject.Component.transform.rotation = Reference.FromRelRot(RelRot);
+            var body = qObject.Component.GetAttachedOWRigidbody();
+            if (body)
+            {
+                Logger.Log("joe");
+                body.SetPosition(Reference.FromRelPos(RelPos));
+                body.SetRotation(Reference.FromRelRot(RelRot));
+            }
+            else
+            {
+                qObject.Component.transform.position = Reference.FromRelPos(RelPos);
+                qObject.Component.transform.rotation = Reference.FromRelRot(RelRot);
+            }
         }
     }
 

@@ -36,9 +36,9 @@ public static class WakeUpManager
             AllQObjectsCreated = false;
             AllScenesSame = false;
 
-            Logger.Log("waiting for scene same", MessageType.Info);
-            Delay.RunWhen(() => AllScenesSame, () =>
-            {
+            // Logger.Log("waiting for scene same", MessageType.Info);
+            // Delay.RunWhen(() => AllScenesSame, () =>
+            // {
                 Logger.Log("waiting for host to say go", MessageType.Info);
                 if (NetworkManager.IsHost)
                 {
@@ -63,7 +63,7 @@ public static class WakeUpManager
                         CanJoin = false;
                     });
                 }
-            });
+            // });
         };
     }
 

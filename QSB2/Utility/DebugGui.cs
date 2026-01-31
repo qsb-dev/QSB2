@@ -14,7 +14,7 @@ public class DebugGui : MonoBehaviour
         foreach (var connection in NetworkManager.Connections.Values)
         {
             GUILayout.Label($"PLAYER {connection.ID}");
-            GUILayout.Label($"\ttime diff {connection.Time - NetworkManager.LocalConnection.Time}");
+            GUILayout.Label($"\ttime {connection.Time} diff {connection.Time - NetworkManager.LocalConnection.Time}");
             GUILayout.Label($"\tscene {connection.Scene} counter {connection.LoadCounter}");
             GUILayout.Label($"\tcreated {connection.QObjectsCreated.Join()}");
         }
