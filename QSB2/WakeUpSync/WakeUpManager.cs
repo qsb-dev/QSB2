@@ -58,10 +58,6 @@ public static class WakeUpManager
         };
     }
 
-    public static void Init()
-    {
-    }
-
     private static float _lastTimeSend;
 
     public static void Tick()

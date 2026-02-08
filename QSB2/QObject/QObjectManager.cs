@@ -58,8 +58,4 @@ public static class QObjectManager
             if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
     }
-
-    public static void Init()
-    {
-    }
 }

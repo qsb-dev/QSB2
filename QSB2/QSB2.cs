@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
@@ -34,8 +35,9 @@ public class QSB2 : ModBehaviour
 
         Gizmos.CameraFilter = _ => true;
 
-        QObjectManager.Init();
-        WakeUpManager.Init();
+        // i want all static constructors running at the beginning instead of whenever we first reference
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+            RuntimeHelpers.RunClassConstructor(type.TypeHandle);
     }
 
     public override void Configure(IModConfig config)
