@@ -3,6 +3,7 @@ using HarmonyLib;
 using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
+using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -52,6 +53,7 @@ public static class WakeUpManager
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                 TimeScale = 1;
                 CanJoin = false;
+                StartableManager.Start();
             });
         };
     }
