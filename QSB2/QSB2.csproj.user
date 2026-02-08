@@ -1,5 +1,8 @@
 ﻿<Project>
-  <PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Windows_NT'">
     <OutputPath>$(AppData)/OuterWildsModManager/OWML/Mods/JohnCorby.QSB2</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(OS)' == 'Unix'">
+    <OutputPath>$(HOME)/.local/share/OuterWildsModManager/OWML/Mods/JohnCorby.QSB2</OutputPath>
   </PropertyGroup>
 </Project>
