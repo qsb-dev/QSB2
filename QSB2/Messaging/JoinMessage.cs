@@ -17,6 +17,7 @@ public class JoinMessage : Message
     public override void OnReceive(int from, int to)
     {
         NetworkManager.Connections.Add(ID, new(ID));
+        NetworkManager.ConnectionIDs.Add(ID);
         Event?.SafeInvoke(ID);
         Logger.Log($"{ID} joined");
     }

@@ -63,6 +63,7 @@ public static class NetworkManager
             Logger.Log("client disconnected");
             // just clear out everything, i dont care
             Connections.Clear();
+            ConnectionIDs.Clear();
             foreach (var entry in QObjectManager.Entries.Values)
             {
                 entry.QObjects.Clear();
@@ -102,6 +103,7 @@ public static class NetworkManager
 
     public static readonly List<int> _serverClients = new();
     public static int LocalID = -1;
+    public static readonly List<int> ConnectionIDs = new(); // for order
     public static readonly Dictionary<int, Connection> Connections = new();
     public static Connection LocalConnection => Connections[LocalID];
 }

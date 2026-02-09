@@ -15,8 +15,9 @@ public class DebugGui : MonoBehaviour
         if (!NetworkManager.IsConnected) return;
 
         GUILayout.Label($"host waiting for players = {WakeUpManager.HostWaitingForPlayers}");
-        foreach (var connection in NetworkManager.Connections.Values)
+        foreach (var id in NetworkManager.ConnectionIDs) // we want order in this list
         {
+            var connection = NetworkManager.Connections[id];
             GUILayout.Label($"PLAYER {connection.ID}");
             GUILayout.Label($"\trtt {connection.RTT * 1000:F1}ms");
             GUILayout.Label($"\ttime {connection.Time} diff {connection.Time - NetworkManager.LocalConnection.Time}");

@@ -34,7 +34,7 @@ public class QShip : QObject<Transform>, ITickable
         RelativeToSector = new(this);
         RelativeToSector.SectorDetector = Locator.GetShipTransform().GetComponentInChildren<SectorDetector>();
         Owner = new(this);
-        Owner.ID = NetworkManager.Connections.Keys.Min(); // set to host for now
+        Owner.ID = NetworkManager.ConnectionIDs[0]; // set to host for now
         OwnerQueue = new(this);
 
         TickableManager.Tickables.Add(this);

@@ -18,6 +18,7 @@ public class LeaveMessage : Message
     {
         Event?.SafeInvoke(ID);
         NetworkManager.Connections.Remove(ID);
+        NetworkManager.ConnectionIDs.Remove(ID);
         Logger.Log($"{ID} left");
     }
 }

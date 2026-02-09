@@ -72,7 +72,7 @@ public static class WakeUpManager
         if (AllQObjectsCreated)
         {
             // a minor amount of actual timesync because yes it is actually needed
-            var hostTime = NetworkManager.Connections[NetworkManager.Connections.Keys.Min()].Time;
+            var hostTime = NetworkManager.Connections[NetworkManager.ConnectionIDs[0]].Time;
             var myTime = NetworkManager.LocalConnection.Time;
             var diff = hostTime - myTime;
             TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
