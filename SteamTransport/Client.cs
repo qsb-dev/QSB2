@@ -1,11 +1,15 @@
-﻿using Mirror;
-using Steamworks;
+﻿using Steamworks;
 using System;
 
 namespace SteamTransport;
 
 public class Client
 {
+    public Action OnConnected;
+    public Action<ArraySegment<byte>> OnData;
+    public Action<string> OnDisconnected;
+
+
     private SteamTransport _transport;
     private Steamworks.Callback<SteamNetConnectionStatusChangedCallback_t> _onStatusChanged;
 
@@ -30,7 +34,7 @@ public class Client
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
                     IsConnecting = false;
                     IsConnected = true;
-                    _transport.OnClientConnected?.Invoke();
+                    OnConnected?.Invoke();
                     break;
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ProblemDetectedLocally:
@@ -42,9 +46,7 @@ public class Client
 
                     IsConnecting = false;
                     IsConnected = false;
-                    _transport.OnClientError?.Invoke(TransportError.ConnectionClosed, t.m_info.m_szEndDebug);
-                    _transport.OnClientDisconnected?.Invoke();
-                    // OnClientDisconnected will cause mirror to shutdown the transport
+                    OnDisconnected?.Invoke(t.m_info.m_szEndDebug);
                     break;
             }
         });
@@ -66,8 +68,7 @@ public class Client
             var parsed = steamAddr.ParseString(_transport.TestIpAddress);
             if (!parsed)
             {
-                _transport.OnClientError?.Invoke(TransportError.DnsResolve, $"couldnt parse address {_transport.TestIpAddress} when connecting");
-                _transport.OnClientDisconnected?.Invoke(); // will show error box
+                OnDisconnected?.Invoke($"couldnt parse address {_transport.TestIpAddress} when connecting"); // will show error box
                 return;
             }
 
@@ -80,8 +81,7 @@ public class Client
             var parsed = ulong.TryParse(address, out var steamId);
             if (!parsed)
             {
-                _transport.OnClientError?.Invoke(TransportError.DnsResolve, $"couldnt parse address {address} when connecting");
-                _transport.OnClientDisconnected?.Invoke(); // will show error box
+                OnDisconnected?.Invoke($"couldnt parse address {address} when connecting"); // will show error box
                 return;
             }
 
@@ -99,8 +99,6 @@ public class Client
         {
             _transport.Log($"[warn] send returned {result}");
         }
-
-        _transport.OnClientDataSent?.Invoke(segment, channelId);
     }
 
     public void Receive()
@@ -110,7 +108,7 @@ public class Client
         for (var i = 0; i < numMessages; i++)
         {
             var (segment, channelId) = Util.Receive(ppOutMessages[i]);
-            _transport.OnClientDataReceived?.Invoke(segment, channelId);
+            OnData?.Invoke(segment);
         }
     }
 
@@ -139,8 +137,7 @@ public class Client
         IsConnected = false;
         // its not an error for us to close ourselves intentionally
         // but we do it anyway cuz above comment
-        _transport.OnClientError?.Invoke(TransportError.ConnectionClosed, "client closed connection for unknown reason! turn on \"[DEBUG] Debug Mode\" and \"[DEBUG] Hook Debug Logs\", try again, and report all logs shown!");
-        _transport.OnClientDisconnected?.Invoke();
+        OnDisconnected?.Invoke("client closed connection for unknown reason! turn on \"[DEBUG] Debug Mode\" and \"[DEBUG] Hook Debug Logs\", try again, and report all logs shown!");
 
         _onStatusChanged.Dispose();
     }

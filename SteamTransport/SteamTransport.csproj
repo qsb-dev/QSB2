@@ -4,7 +4,6 @@
         <LangVersion>latest</LangVersion>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="OWML" Version="2.15.4" ExcludeAssets="runtime" />
         <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" ExcludeAssets="runtime" />
     </ItemGroup>
 </Project>

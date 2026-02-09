@@ -1,5 +1,4 @@
-﻿using Mirror;
-using Steamworks;
+﻿using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +7,11 @@ namespace SteamTransport;
 
 public class Server
 {
+    public Action<int> OnConnected;
+    public Action<int, ArraySegment<byte>> OnData;
+    public Action<int, string> OnDisconnected;
+
+
     private SteamTransport _transport;
     private Steamworks.Callback<SteamNetConnectionStatusChangedCallback_t> _onStatusChanged;
 
@@ -38,7 +42,7 @@ public class Server
                 }
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_Connected:
                     _conns.Add(t.m_hConn);
-                    _transport.OnServerConnected?.Invoke((int)t.m_hConn.m_HSteamNetConnection);
+                    OnConnected?.Invoke((int)t.m_hConn.m_HSteamNetConnection);
                     break;
                 case ESteamNetworkingConnectionState.k_ESteamNetworkingConnectionState_ClosedByPeer:
                 // this logs an error below even tho it isnt really an error. its fine
@@ -51,8 +55,7 @@ public class Server
                     }
 
                     _conns.Remove(t.m_hConn);
-                    _transport.OnServerError?.Invoke((int)t.m_hConn.m_HSteamNetConnection, TransportError.ConnectionClosed, t.m_info.m_szEndDebug);
-                    _transport.OnServerDisconnected?.Invoke((int)t.m_hConn.m_HSteamNetConnection);
+                    OnDisconnected?.Invoke((int)t.m_hConn.m_HSteamNetConnection, t.m_info.m_szEndDebug);
                     break;
                 }
             }
@@ -76,7 +79,7 @@ public class Server
             var parsed = steamAddr.ParseString(_transport.TestIpAddress);
             if (!parsed)
             {
-                _transport.OnServerError?.Invoke(-1, TransportError.DnsResolve, $"couldnt parse address {_transport.TestIpAddress} when listening");
+                OnDisconnected?.Invoke(-1, $"couldnt parse address {_transport.TestIpAddress} when listening");
                 // dont really need to stop server here. mirror isnt designed to let us fail to listen anyway so this is all kinda silly
                 return;
             }
@@ -102,8 +105,6 @@ public class Server
         {
             _transport.Log($"[warn] send {conn.ToDebugString()} returned {result}");
         }
-
-        _transport.OnServerDataSent?.Invoke(connectionId, segment, channelId);
     }
 
     public void Receive()
@@ -117,7 +118,7 @@ public class Server
             for (var i = 0; i < numMessages; i++)
             {
                 var (segment, channelId) = Util.Receive(ppOutMessages[i]);
-                _transport.OnServerDataReceived?.Invoke((int)conn.m_HSteamNetConnection, segment, channelId);
+                OnData?.Invoke((int)conn.m_HSteamNetConnection, segment);
             }
         }
     }
@@ -146,7 +147,7 @@ public class Server
 
         _conns.Remove(conn);
         // its not an error for us to disconnect a client intentionally
-        _transport.OnServerDisconnected?.Invoke(connectionId);
+        OnDisconnected?.Invoke(connectionId, "disconnected by server");
     }
 
     public void Close()
