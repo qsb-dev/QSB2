@@ -88,6 +88,7 @@ public static class WakeUpManager
             }.Send(-1);
         }
 
+        // BUG: not properly preventing pausing does a buncha goofy player movement bugs. im lazy rn
         Time.timeScale = TimeScale;
     }
 
