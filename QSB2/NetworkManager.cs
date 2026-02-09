@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using QSB2.Messaging;
 using QSB2.Player;
@@ -72,18 +73,19 @@ public static class NetworkManager
         _client.OnData = MessageManager.OnData;
     }
 
-    public static string IP;
-    public static int Port;
+    public static string Address;
 
     public static void Host()
     {
-        _server.Start(Port);
+        var split = Address.Split(':');
+        _server.Start(int.Parse(split[1]));
         Connect();
     }
 
     public static void Connect()
     {
-        _client.Connect(IP, Port);
+        var split = Address.Split(':');
+        _client.Connect(split[0], int.Parse(split[1]));
     }
 
     public static void Disconnect()

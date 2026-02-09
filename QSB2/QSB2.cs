@@ -42,8 +42,7 @@ public class QSB2 : ModBehaviour
 
     public override void Configure(IModConfig config)
     {
-        NetworkManager.IP = config.GetSettingsValue<string>("IP");
-        NetworkManager.Port = config.GetSettingsValue<int>("Port");
+        NetworkManager.Address = config.GetSettingsValue<string>("Address");
     }
 
     public void Start()
