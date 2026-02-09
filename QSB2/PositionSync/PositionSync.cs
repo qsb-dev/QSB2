@@ -34,7 +34,6 @@ public class PositionSync(QObject.QObject qObject)
             var body = qObject.Component.GetAttachedOWRigidbody();
             if (body)
             {
-                Logger.Log("joe");
                 body.SetPosition(Reference.FromRelPos(RelPos));
                 body.SetRotation(Reference.FromRelRot(RelRot));
             }
