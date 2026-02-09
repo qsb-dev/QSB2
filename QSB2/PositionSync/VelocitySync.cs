@@ -32,9 +32,21 @@ public class VelocitySync(QObject.QObject qObject)
         else
         {
             // non owner - sync to unity component
-            body.SetVelocity(refBody.FromRelVel(RelVel, body.GetPosition()));
+            if (body is ShipBody) ShipBody_SetVelocity(body, refBody.FromRelVel(RelVel, body.GetPosition()));
+            else body.SetVelocity(refBody.FromRelVel(RelVel, body.GetPosition()));
             body.SetAngularVelocity(refBody.FromRelAngVel(RelAngVel));
         }
+    }
+
+    // ship with player inside does some bs that we dont want. so this hack exists for that
+    private static void ShipBody_SetVelocity(OWRigidbody body, Vector3 newVelocity)
+    {
+        if (body.RunningKinematicSimulation())
+            body._kinematicRigidbody.velocity = newVelocity + Locator.GetCenterOfTheUniverse().GetStaticFrameVelocity_Internal();
+        else
+            body._rigidbody.velocity = newVelocity + Locator.GetCenterOfTheUniverse().GetStaticFrameVelocity_Internal();
+        body._lastVelocity = body._currentVelocity;
+        body._currentVelocity = newVelocity;
     }
 }
 

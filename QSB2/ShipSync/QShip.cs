@@ -57,7 +57,7 @@ public class QShip : QObject<Transform>, ITickable
     {
         RelativeToSector.Tick();
         PositionSync.Tick();
-        // VelocitySync.Tick();
+        VelocitySync.Tick();
     }
 
     private void WeAreFlying(bool value)
