@@ -2,6 +2,6 @@
   "$schema": "https://raw.githubusercontent.com/ow-mods/owml/master/schemas/config_schema.json",
   "enabled": true,
   "settings": {
-    "Address": "localhost:1337"
+    "Address": "127.0.0.1:1337"
   }
 }
