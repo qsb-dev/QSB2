@@ -42,6 +42,7 @@ public static class MessageManager
         var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
         if (rawMessage.To == -1)
         {
+            OnData(data); // send to self too
             foreach (var id in NetworkManager._serverClients)
             {
                 NetworkManager._server.Send(id, data, Util.Channels.Reliable);
@@ -49,6 +50,7 @@ public static class MessageManager
         }
         else if (rawMessage.To == -2)
         {
+            // if were host, we send to everyone else. if were not, if below makes sure sender doesnt get it back
             foreach (var id in NetworkManager._serverClients)
             {
                 if (fromID == id) continue;
@@ -57,7 +59,10 @@ public static class MessageManager
         }
         else
         {
-            NetworkManager._server.Send(rawMessage.To, data, Util.Channels.Reliable);
+            if (rawMessage.To == 0)
+                OnData(data); // just pass it to self
+            else 
+                NetworkManager._server.Send(rawMessage.To, data, Util.Channels.Reliable);
         }
     }
 }

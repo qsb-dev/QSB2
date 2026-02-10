@@ -18,7 +18,7 @@ public static class WakeUpManager
     public static bool AllQObjectsCreated;
     public static bool AllScenesSame;
     public static bool HostWaitingForPlayers;
-    public static bool CanJoin;
+    public static bool CanJoin; // set on host
 
     static WakeUpManager()
     {
@@ -30,10 +30,11 @@ public static class WakeUpManager
 
             // we start paused
             TimeScale = 0;
-            CanJoin = true;
 
             if (NetworkManager.IsHost)
             {
+                CanJoin = true;
+
                 new HostWaitingForPlayersMessage
                 {
                     Value = true

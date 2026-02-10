@@ -14,10 +14,10 @@ namespace QSB2;
 
 public static class NetworkManager
 {
-    public static readonly Client _client = new(new());
-    public static readonly Server _server = new(new());
+    public static readonly Client _client = new(new()); // nonhost has this
+    public static readonly Server _server = new(new()); // host has this
 
-    public static bool IsConnected => _client.IsConnected;
+    public static bool IsConnected => _client.IsConnected || _server.IsListening;
     public static bool IsHost => _server.IsListening;
 
     static NetworkManager()
@@ -27,14 +27,13 @@ public static class NetworkManager
             Logger.Log($"server connected {id}");
             _serverClients.Add(id);
 
-            var hostJoining = Connections.Count == 0;
             // new player knows nothing. fill them in
             new IdentifyMessage
             {
                 QSBVersion = QSB2.QSBVersion,
                 GameVersion = QSB2.GameVersion,
                 DLCInstalled = QSB2.DLCInstalled,
-                CanJoin = WakeUpManager.CanJoin || hostJoining,
+                CanJoin = WakeUpManager.CanJoin,
                 Connections = Connections.Values.Select(x => (x.ID, x.Scene, x.LoadCounter)).ToArray(),
             }.Send(id);
         };
@@ -56,7 +55,6 @@ public static class NetworkManager
         {
             Logger.Log("client connected");
             Application.runInBackground = true;
-            WakeUpManager.CanJoin = true; // let us join on title screen
         };
         _client.OnDisconnected = reason =>
         {
@@ -80,7 +78,16 @@ public static class NetworkManager
     public static void Host()
     {
         _server.StartListening(Address);
-        Connect();
+        
+        // host doesnt have client, so theyre a special connection here
+        Connections.Add(0, new(0));
+        ConnectionIDs.Add(0);
+        LocalID = 0;
+        // we will NOT send the join event here. might change that later
+        
+        WakeUpManager.CanJoin = true; // let us join on title screen
+        
+        Application.runInBackground = true;
     }
 
     public static void Connect()
@@ -90,6 +97,21 @@ public static class NetworkManager
 
     public static void Disconnect()
     {
+        if (IsHost)
+        {
+            _serverClients.Clear();
+            // just clear out everything, i dont care
+            Connections.Clear();
+            ConnectionIDs.Clear();
+            foreach (var entry in QObjectManager.Entries.Values)
+            {
+                entry.QObjects.Clear();
+                entry.NextId = 0;
+            }
+
+            TickableManager.Tickables.Clear();
+        }
+        
         _client.Close();
         _server.Close();
     }
@@ -102,7 +124,7 @@ public static class NetworkManager
         _server.Flush();
     }
 
-    public static readonly List<int> _serverClients = new();
+    public static readonly List<int> _serverClients = new(); // TODO: remove if we can just use Connections
     public static int LocalID = -1;
     public static readonly List<int> ConnectionIDs = new(); // for order
     public static readonly Dictionary<int, Connection> Connections = new();

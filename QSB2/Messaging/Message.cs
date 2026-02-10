@@ -1,4 +1,5 @@
-﻿using MessagePack;
+﻿using System;
+using MessagePack;
 using QSB2.Utility;
 using SteamTransport;
 
@@ -16,7 +17,11 @@ public abstract class Message
             Message = MessagePackSerializer.Serialize(GetType(), this),
         };
 
-        NetworkManager._client.Send(new(MessagePackSerializer.Serialize(rawMessage)), Util.Channels.Reliable);
+        var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
+        if (NetworkManager.IsHost)
+            MessageManager.OnServerData(0, data); // server will send it to whoever
+        else
+            NetworkManager._client.Send(data, Util.Channels.Reliable); // send it to server, which will forward 
     }
 
     public abstract void OnReceive(int from, int to);
