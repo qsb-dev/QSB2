@@ -63,7 +63,7 @@ public static class Util
         return (segment, channelId);
     }
 
-    public static SteamNetworkingConfigValue_t[] MakeOptions(SteamTransport transport)
+    public static SteamNetworkingConfigValue_t[] MakeOptions(Settings transport)
     {
         var result = new List<SteamNetworkingConfigValue_t>();
 

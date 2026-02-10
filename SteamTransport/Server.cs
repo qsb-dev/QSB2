@@ -12,16 +12,16 @@ public class Server
     public Action<int, string> OnDisconnected;
 
 
-    private SteamTransport _transport;
+    private Settings _settings;
     private Steamworks.Callback<SteamNetConnectionStatusChangedCallback_t> _onStatusChanged;
 
-    public Server(SteamTransport transport)
+    public Server(Settings settings)
     {
-        _transport = transport;
+        _settings = settings;
 
         _onStatusChanged = Steamworks.Callback<SteamNetConnectionStatusChangedCallback_t>.Create(t =>
         {
-            _transport.Log($"STATUS CHANGED for {t.m_info.m_szConnectionDescription}\n" +
+            _settings.Log($"STATUS CHANGED for {t.m_info.m_szConnectionDescription}\n" +
                            $"  state = {t.m_info.m_eState}\n" +
                            $"  end = {(ESteamNetConnectionEnd)t.m_info.m_eEndReason} {t.m_info.m_szEndDebug}");
             // SteamNetworkingSockets.GetDetailedConnectionStatus(t.m_hConn, out var status, 1000);
@@ -35,7 +35,7 @@ public class Server
                     var result = SteamNetworkingSockets.AcceptConnection(t.m_hConn);
                     if (result != EResult.k_EResultOK)
                     {
-                        _transport.Log($"[warn] accept {t.m_info.m_szConnectionDescription} returned {result}");
+                        _settings.Log($"[warn] accept {t.m_info.m_szConnectionDescription} returned {result}");
                     }
 
                     break;
@@ -51,7 +51,7 @@ public class Server
                     var result = SteamNetworkingSockets.CloseConnection(t.m_hConn, t.m_info.m_eEndReason, t.m_info.m_szEndDebug, false);
                     if (result != true)
                     {
-                        _transport.Log($"[warn] close {t.m_info.m_szConnectionDescription} returned {result}");
+                        _settings.Log($"[warn] close {t.m_info.m_szConnectionDescription} returned {result}");
                     }
 
                     _conns.Remove(t.m_hConn);
@@ -69,28 +69,28 @@ public class Server
     // mirror connection id is derived from uint to int cast here. seems to do unchecked cast and be fine
     private readonly List<HSteamNetConnection> _conns = new();
 
-    public void StartListening()
+    public void StartListening(string address)
     {
-        var options = Util.MakeOptions(_transport);
+        var options = Util.MakeOptions(_settings);
 
-        if (!string.IsNullOrEmpty(_transport.TestIpAddress))
+        if (_settings.UseIpAddress)
         {
             var steamAddr = new SteamNetworkingIPAddr();
-            var parsed = steamAddr.ParseString(_transport.TestIpAddress);
+            var parsed = steamAddr.ParseString(address);
             if (!parsed)
             {
-                OnDisconnected?.Invoke(-1, $"couldnt parse address {_transport.TestIpAddress} when listening");
+                OnDisconnected?.Invoke(-1, $"couldnt parse address {address} when listening");
                 // dont really need to stop server here. mirror isnt designed to let us fail to listen anyway so this is all kinda silly
                 return;
             }
 
             _listenSocket = SteamNetworkingSockets.CreateListenSocketIP(ref steamAddr, options.Length, options);
-            _transport.Log($"listening on {steamAddr.ToDebugString()}");
+            _settings.Log($"listening on {steamAddr.ToDebugString()}");
         }
         else
         {
             _listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, options.Length, options);
-            _transport.Log($"listening on p2p");
+            _settings.Log($"listening on p2p");
         }
 
         IsListening = true;
@@ -103,7 +103,7 @@ public class Server
         var result = conn.Send(segment, channelId);
         if (result != EResult.k_EResultOK)
         {
-            _transport.Log($"[warn] send {conn.ToDebugString()} returned {result}");
+            _settings.Log($"[warn] send {conn.ToDebugString()} returned {result}");
         }
     }
 
@@ -130,7 +130,7 @@ public class Server
             var result = SteamNetworkingSockets.FlushMessagesOnConnection(conn);
             if (result != EResult.k_EResultOK)
             {
-                _transport.Log($"[warn] flush {conn.ToDebugString()} returned {result}");
+                _settings.Log($"[warn] flush {conn.ToDebugString()} returned {result}");
             }
         }
     }
@@ -138,11 +138,11 @@ public class Server
     public void Disconnect(int connectionId)
     {
         var conn = new HSteamNetConnection((uint)connectionId);
-        _transport.Log($"disconnect {conn.ToDebugString()}");
+        _settings.Log($"disconnect {conn.ToDebugString()}");
         var result = SteamNetworkingSockets.CloseConnection(conn, 0, "disconnected by server", false);
         if (result != true)
         {
-            _transport.Log($"[warn] close {conn.ToDebugString()} returned {result}");
+            _settings.Log($"[warn] close {conn.ToDebugString()} returned {result}");
         }
 
         _conns.Remove(conn);
@@ -153,11 +153,11 @@ public class Server
     public void Close()
     {
         // mirror disconnects all clients for us before this
-        _transport.Log("stop server");
+        _settings.Log("stop server");
         var result = SteamNetworkingSockets.CloseListenSocket(_listenSocket);
         if (result != true)
         {
-            _transport.Log($"[warn] stop server returned {result}");
+            _settings.Log($"[warn] stop server returned {result}");
         }
 
         IsListening = false;

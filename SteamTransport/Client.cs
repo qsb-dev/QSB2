@@ -10,16 +10,16 @@ public class Client
     public Action<string> OnDisconnected;
 
 
-    private SteamTransport _transport;
+    private Settings _settings;
     private Steamworks.Callback<SteamNetConnectionStatusChangedCallback_t> _onStatusChanged;
 
-    public Client(SteamTransport transport)
+    public Client(Settings settings)
     {
-        _transport = transport;
+        _settings = settings;
 
         _onStatusChanged = Steamworks.Callback<SteamNetConnectionStatusChangedCallback_t>.Create(t =>
         {
-            _transport.Log($"STATUS CHANGED for {t.m_info.m_szConnectionDescription}\n" +
+            _settings.Log($"STATUS CHANGED for {t.m_info.m_szConnectionDescription}\n" +
                            $"  state = {t.m_info.m_eState}\n" +
                            $"  end = {(ESteamNetConnectionEnd)t.m_info.m_eEndReason} {t.m_info.m_szEndDebug}");
             // SteamNetworkingSockets.GetDetailedConnectionStatus(t.m_hConn, out var status, 1000);
@@ -41,7 +41,7 @@ public class Client
                     var result = SteamNetworkingSockets.CloseConnection(_conn, t.m_info.m_eEndReason, t.m_info.m_szEndDebug, false);
                     if (result != true)
                     {
-                        _transport.Log($"[warn] close returned {result}");
+                        _settings.Log($"[warn] close returned {result}");
                     }
 
                     IsConnecting = false;
@@ -60,20 +60,20 @@ public class Client
 
     public void Connect(string address)
     {
-        var options = Util.MakeOptions(_transport);
+        var options = Util.MakeOptions(_settings);
 
-        if (!string.IsNullOrEmpty(_transport.TestIpAddress))
+        if (_settings.UseIpAddress)
         {
             var steamAddr = new SteamNetworkingIPAddr();
-            var parsed = steamAddr.ParseString(_transport.TestIpAddress);
+            var parsed = steamAddr.ParseString(address);
             if (!parsed)
             {
-                OnDisconnected?.Invoke($"couldnt parse address {_transport.TestIpAddress} when connecting"); // will show error box
+                OnDisconnected?.Invoke($"couldnt parse address {address} when connecting"); // will show error box
                 return;
             }
 
             _conn = SteamNetworkingSockets.ConnectByIPAddress(ref steamAddr, options.Length, options);
-            _transport.Log($"connecting to {steamAddr.ToDebugString()}");
+            _settings.Log($"connecting to {steamAddr.ToDebugString()}");
         }
         else
         {
@@ -88,7 +88,7 @@ public class Client
             identity.SetSteamID64(steamId);
 
             _conn = SteamNetworkingSockets.ConnectP2P(ref identity, 0, options.Length, options);
-            _transport.Log($"connecting to {identity.ToDebugString()}");
+            _settings.Log($"connecting to {identity.ToDebugString()}");
         }
     }
 
@@ -97,7 +97,7 @@ public class Client
         var result = _conn.Send(segment, channelId);
         if (result != EResult.k_EResultOK)
         {
-            _transport.Log($"[warn] send returned {result}");
+            _settings.Log($"[warn] send returned {result}");
         }
     }
 
@@ -117,7 +117,7 @@ public class Client
         var result = SteamNetworkingSockets.FlushMessagesOnConnection(_conn);
         if (result != EResult.k_EResultOK && result != EResult.k_EResultIgnored) // flush does ignored when connecting. dont log cuz spam
         {
-            _transport.Log($"[warn] flush returned {result}");
+            _settings.Log($"[warn] flush returned {result}");
         }
     }
 
@@ -126,11 +126,11 @@ public class Client
         // theres a weird case where we arent doing an intentional disconnect but there isnt a status change disonnect either
         // not sure whats going on there, but ill slap a stack trace on it
 
-        _transport.Log($"client close\n{Environment.StackTrace}");
+        _settings.Log($"client close\n{Environment.StackTrace}");
         var result = SteamNetworkingSockets.CloseConnection(_conn, 0, "client closed connection", false);
         if (result != true)
         {
-            _transport.Log($"[warn] client close returned {result}");
+            _settings.Log($"[warn] client close returned {result}");
         }
 
         IsConnecting = false;
