@@ -14,7 +14,8 @@
         <PackageReference Include="OWML" Version="2.15.4" ExcludeAssets="runtime" />
         <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" ExcludeAssets="runtime" />
         <PackageReference Include="MessagePack" Version="3.1.4"/>
-        <ProjectReference Include="..\Telepathy\Telepathy.csproj" />
+<!--        <ProjectReference Include="..\Telepathy\Telepathy.csproj" />-->
+        <ProjectReference Include="..\SteamTransport\SteamTransport.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Include="default-config.json">

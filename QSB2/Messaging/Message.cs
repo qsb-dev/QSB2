@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using QSB2.Utility;
+using SteamTransport;
 
 namespace QSB2.Messaging;
 
@@ -15,7 +16,7 @@ public abstract class Message
             Message = MessagePackSerializer.Serialize(GetType(), this),
         };
 
-        NetworkManager._client.Send(new(MessagePackSerializer.Serialize(rawMessage)));
+        NetworkManager._client.Send(new(MessagePackSerializer.Serialize(rawMessage)), Util.Channels.Reliable);
     }
 
     public abstract void OnReceive(int from, int to);

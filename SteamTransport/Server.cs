@@ -162,6 +162,6 @@ public class Server
 
         IsListening = false;
 
-        _onStatusChanged.Dispose();
+        // _onStatusChanged.Dispose();
     }
 }

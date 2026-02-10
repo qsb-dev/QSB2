@@ -7,22 +7,22 @@ using QSB2.QObject;
 using QSB2.SectorSync;
 using QSB2.ShipSync;
 using QSB2.WakeUpSync;
-using Telepathy;
+using SteamTransport;
 using UnityEngine;
 
 namespace QSB2;
 
 public static class NetworkManager
 {
-    public static readonly Client _client = new(1024);
-    public static readonly Server _server = new(1024);
+    public static readonly Client _client = new(new());
+    public static readonly Server _server = new(new());
 
-    public static bool IsConnected => _client.Connected;
-    public static bool IsHost => _server.Active;
+    public static bool IsConnected => _client.IsConnected;
+    public static bool IsHost => _server.IsListening;
 
     static NetworkManager()
     {
-        _server.OnConnected = (id, _) =>
+        _server.OnConnected = (id) =>
         {
             Logger.Log($"server connected {id}");
             _serverClients.Add(id);
@@ -38,9 +38,9 @@ public static class NetworkManager
                 Connections = Connections.Values.Select(x => (x.ID, x.Scene, x.LoadCounter)).ToArray(),
             }.Send(id);
         };
-        _server.OnDisconnected = id =>
+        _server.OnDisconnected = (id, reason) =>
         {
-            Logger.Log($"server disconnected {id}");
+            Logger.Log($"server disconnected {id} because {reason}");
             _serverClients.Remove(id);
 
             if (Connections.ContainsKey(id)) // mightve been kicked = no send join message
@@ -58,9 +58,9 @@ public static class NetworkManager
             Application.runInBackground = true;
             WakeUpManager.CanJoin = true; // let us join on title screen
         };
-        _client.OnDisconnected = () =>
+        _client.OnDisconnected = reason =>
         {
-            Logger.Log("client disconnected");
+            Logger.Log($"client disconnected because {reason}");
             // just clear out everything, i dont care
             Connections.Clear();
             ConnectionIDs.Clear();
@@ -69,6 +69,7 @@ public static class NetworkManager
                 entry.QObjects.Clear();
                 entry.NextId = 0;
             }
+
             TickableManager.Tickables.Clear();
         };
         _client.OnData = MessageManager.OnData;
@@ -78,27 +79,27 @@ public static class NetworkManager
 
     public static void Host()
     {
-        var split = Address.Split(':');
-        _server.Start(int.Parse(split[1]));
+        _server.StartListening(Address);
         Connect();
     }
 
     public static void Connect()
     {
-        var split = Address.Split(':');
-        _client.Connect(split[0], int.Parse(split[1]));
+        _client.Connect(Address);
     }
 
     public static void Disconnect()
     {
-        _client.Disconnect();
-        _server.Stop();
+        _client.Close();
+        _server.Close();
     }
 
     public static void Tick()
     {
-        _client.Tick(100);
-        _server.Tick(100);
+        _client.Receive();
+        _client.Flush();
+        _server.Receive();
+        _server.Flush();
     }
 
     public static readonly List<int> _serverClients = new();

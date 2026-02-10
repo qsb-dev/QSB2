@@ -4,6 +4,7 @@ using MessagePack;
 using MessagePack.Unity;
 using OWML.Common;
 using QSB2.Utility;
+using SteamTransport;
 
 namespace QSB2.Messaging;
 
@@ -43,7 +44,7 @@ public static class MessageManager
         {
             foreach (var id in NetworkManager._serverClients)
             {
-                NetworkManager._server.Send(id, data);
+                NetworkManager._server.Send(id, data, Util.Channels.Reliable);
             }
         }
         else if (rawMessage.To == -2)
@@ -51,12 +52,12 @@ public static class MessageManager
             foreach (var id in NetworkManager._serverClients)
             {
                 if (fromID == id) continue;
-                NetworkManager._server.Send(id, data);
+                NetworkManager._server.Send(id, data, Util.Channels.Reliable);
             }
         }
         else
         {
-            NetworkManager._server.Send(rawMessage.To, data);
+            NetworkManager._server.Send(rawMessage.To, data, Util.Channels.Reliable);
         }
     }
 }
