@@ -50,7 +50,7 @@ public static class MessageManager
         }
         else if (rawMessage.To == -2)
         {
-            // if were host, we send to everyone else. if were not, if below makes sure sender doesnt get it back
+            if (fromID != 0) OnData(data); // send to self too
             foreach (var id in NetworkManager._serverClients)
             {
                 if (fromID == id) continue;
