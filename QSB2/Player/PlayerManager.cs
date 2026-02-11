@@ -10,7 +10,7 @@ public class PlayerManager
 {
     static PlayerManager()
     {
-        LeaveMessage.Event += id => { NetworkManager.Connections[id].Player.Destroy(); };
+        LeaveMessage.Event += id => { NetworkManager.Connections[id].Player?.Destroy(); };
     }
 
     public static void Create()
