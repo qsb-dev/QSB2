@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using QSB2.Messaging;
-using QSB2.Player;
 using QSB2.QObject;
-using QSB2.SectorSync;
-using QSB2.ShipSync;
 using QSB2.WakeUpSync;
 using SteamTransport;
 using UnityEngine;
@@ -14,14 +10,15 @@ namespace QSB2;
 
 public static class NetworkManager
 {
-    public static readonly Client _client = new(new()); // nonhost has this
-    public static readonly Server _server = new(new()); // host has this
+    public static readonly Client _client; // nonhost has this
+    public static readonly Server _server; // host has this
 
     public static bool IsConnected => _client.IsConnected || _server.IsListening;
     public static bool IsHost => _server.IsListening;
 
     static NetworkManager()
     {
+        _server = new(new() { Log = s => Logger.Log(($"[server] {s}")) });
         _server.OnConnected = (id) =>
         {
             Logger.Log($"server connected {id}");
@@ -51,6 +48,7 @@ public static class NetworkManager
         };
         _server.OnData = MessageManager.OnServerData;
 
+        _client = new(new() { Log = s => Logger.Log($"[client] {s}") });
         _client.OnConnected = () =>
         {
             Logger.Log("client connected");
@@ -78,15 +76,15 @@ public static class NetworkManager
     public static void Host()
     {
         _server.StartListening(Address);
-        
+
         // host doesnt have client, so theyre a special connection here
         Connections.Add(0, new(0));
         ConnectionIDs.Add(0);
         LocalID = 0;
         // we will NOT send the join event here. might change that later
-        
+
         WakeUpManager.CanJoin = true; // let us join on title screen
-        
+
         Application.runInBackground = true;
     }
 
@@ -111,7 +109,7 @@ public static class NetworkManager
 
             TickableManager.Tickables.Clear();
         }
-        
+
         _client.Close();
         _server.Close();
     }

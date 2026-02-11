@@ -92,6 +92,9 @@ public class Server
             _listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(0, options.Length, options);
             _settings.Log($"listening on p2p");
         }
+        
+        if (_listenSocket == HSteamListenSocket.Invalid)
+            _settings.Log($"[warn] listen returned invalid"); // TODO: this is a listen fail
 
         IsListening = true;
     }

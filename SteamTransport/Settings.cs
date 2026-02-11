@@ -17,7 +17,7 @@ public class Settings
     /// <summary>
     /// if set, will use an ip address and port for listening/connecting
     /// </summary>
-    public bool UseIpAddress = true;
+    public bool UseIpAddress = false;
 
     /// <summary>
     /// timeout in ms when connecting, and timeout before detecting a loss in connection.

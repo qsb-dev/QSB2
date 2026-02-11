@@ -90,6 +90,9 @@ public class Client
             _conn = SteamNetworkingSockets.ConnectP2P(ref identity, 0, options.Length, options);
             _settings.Log($"connecting to {identity.ToDebugString()}");
         }
+        
+        if (_conn == HSteamNetConnection.Invalid)
+            _settings.Log($"[warn] connect returned invalid"); // TODO: this is a connect fail
     }
 
     public void Send(ArraySegment<byte> segment, int channelId)
