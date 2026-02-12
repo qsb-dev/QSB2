@@ -26,6 +26,7 @@ public class IdentifyMessage : Message
         foreach (var x in Connections)
         {
             NetworkManager.Connections.Add(x.ID, new(x.ID) { Scene = x.scene, LoadCounter = x.loadCounter });
+            NetworkManager.ConnectionIDs.Add(x.ID);
             Logger.Log($"{x.ID} exists");
         }
 
