@@ -142,6 +142,6 @@ public class Client
         // but we do it anyway cuz above comment
         OnDisconnected?.Invoke("client closed connection for unknown reason! turn on \"[DEBUG] Debug Mode\" and \"[DEBUG] Hook Debug Logs\", try again, and report all logs shown!");
 
-        // _onStatusChanged.Dispose();
+        _onStatusChanged.Dispose();
     }
 }
