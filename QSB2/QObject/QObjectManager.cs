@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using QSB2.Player;
+using QSB2.PlayerSync;
+using QSB2.ProbeSync;
 using QSB2.SectorSync;
 using QSB2.ShipSync;
 using QSB2.Utility;
@@ -36,6 +37,7 @@ public static class QObjectManager
             if (!originalScene.IsGameScene()) return;
 
             PlayerManager.Destroy();
+            ProbeManager.Destroy();
             QShipManager.Destroy();
             QSectorManager.Destroy();
         };
@@ -47,6 +49,7 @@ public static class QObjectManager
             Delay.RunWhen(() => LateInitializerManager.isDoneInitializing && WakeUpManager.AllScenesSame && !WakeUpManager.HostWaitingForPlayers, () =>
             {
                 PlayerManager.Create();
+                ProbeManager.Create();
                 QShipManager.Create();
                 QSectorManager.Create();
             });
