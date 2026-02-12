@@ -54,6 +54,14 @@ public class Probe : QObject<Transform>, ITickable
 
     public void Tick()
     {
+        if (Owner.DoWeOwn && !Component.gameObject.activeSelf)
+        {
+            // put probe on player when its disabled
+            // TODO: stupid
+            Component.transform.position = Locator.GetPlayerTransform().transform.position;
+            Component.transform.rotation = Locator.GetPlayerTransform().transform.rotation;
+        }
+        
         RelativeToSector.Tick();
         PositionSync.Tick();
     }

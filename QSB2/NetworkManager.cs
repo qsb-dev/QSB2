@@ -20,6 +20,8 @@ public static class NetworkManager
 
     public static void Host()
     {
+        if (_server != null) return; // TODO: tell player already hosting
+        
         {
             _server = new(new() { Log = s => Logger.Log(($"[server] {s}")) });
             _server.OnConnected = (id) =>
@@ -67,6 +69,8 @@ public static class NetworkManager
 
     public static void Connect()
     {
+        if (_client != null) return; // TODO: tell player already connecting
+        
         {
             _client = new(new() { Log = s => Logger.Log($"[client] {s}") });
             _client.OnConnected = () =>
