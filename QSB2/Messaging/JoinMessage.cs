@@ -21,5 +21,10 @@ public class JoinMessage : Message
         NetworkManager.ConnectionIDs.Add(ID);
         Event?.SafeInvoke(ID);
         Logger.Log($"{ID} joined");
+
+        // stupid hack: we want our counter to match host counter so u can play
+        // TODO: stupid
+        if (ID == NetworkManager.LocalID)
+            NetworkManager.LocalConnection.LoadCounter = NetworkManager.Connections[NetworkManager.ConnectionIDs[0]].LoadCounter - 1;
     }
 }
