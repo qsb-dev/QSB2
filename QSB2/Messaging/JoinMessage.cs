@@ -8,6 +8,7 @@ namespace QSB2.Messaging;
 public class JoinMessage : Message
 {
     [Key(0)] public required int ID;
+    [Key(1)] public required string Name;
 
     /// <summary>
     /// right after connection is added
@@ -16,7 +17,7 @@ public class JoinMessage : Message
 
     public override void OnReceive(int from, int to)
     {
-        NetworkManager.Connections.Add(ID, new(ID));
+        NetworkManager.Connections.Add(ID, new(ID, Name));
         NetworkManager.ConnectionIDs.Add(ID);
         Event?.SafeInvoke(ID);
         Logger.Log($"{ID} joined");

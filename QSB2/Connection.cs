@@ -5,9 +5,10 @@ using QSB2.ProbeSync;
 
 namespace QSB2;
 
-public class Connection(int id)
+public class Connection(int id, string name)
 {
     public int ID = id;
+    public string Name = name;
     public float RTT;
     public Player Player; // null when player isnt set up and in da world
     public Probe Probe;

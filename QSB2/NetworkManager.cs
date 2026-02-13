@@ -36,7 +36,7 @@ public static class NetworkManager
                     GameVersion = QSB2.GameVersion,
                     DLCInstalled = QSB2.DLCInstalled,
                     CanJoin = WakeUpManager.CanJoin,
-                    Connections = Connections.Values.Select(x => (x.ID, x.Scene, x.LoadCounter)).ToArray(),
+                    Connections = Connections.Values.Select(x => (x.ID, x.Name, x.Scene, x.LoadCounter)).ToArray(),
                 }.Send(id);
             };
             _server.OnDisconnected = (id, reason) =>
@@ -57,7 +57,7 @@ public static class NetworkManager
         _server.StartListening(Address);
 
         // host doesnt have client, so theyre a special connection here
-        Connections.Add(0, new(0));
+        Connections.Add(0, new(0, StandaloneProfileManager.SharedInstance.currentProfile.profileName));
         ConnectionIDs.Add(0);
         LocalID = 0;
         // we will NOT send the join event here. might change that later

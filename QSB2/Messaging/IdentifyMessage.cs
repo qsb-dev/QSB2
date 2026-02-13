@@ -15,7 +15,7 @@ public class IdentifyMessage : Message
     [Key(3)] public required bool CanJoin;
 
     // the minimal initial state
-    [Key(4)] public required (int ID, OWScene scene, int loadCounter)[] Connections;
+    [Key(4)] public required (int ID, string name, OWScene scene, int loadCounter)[] Connections;
     // not qobjects cuz thats initialized after everyone joins
 
     public override void OnReceive(int from, int to)
@@ -25,7 +25,7 @@ public class IdentifyMessage : Message
 
         foreach (var x in Connections)
         {
-            NetworkManager.Connections.Add(x.ID, new(x.ID) { Scene = x.scene, LoadCounter = x.loadCounter });
+            NetworkManager.Connections.Add(x.ID, new(x.ID, x.name) { Scene = x.scene, LoadCounter = x.loadCounter });
             NetworkManager.ConnectionIDs.Add(x.ID);
             Logger.Log($"{x.ID} exists");
         }
@@ -44,7 +44,8 @@ public class IdentifyMessage : Message
         // tell everyone we joined
         new JoinMessage
         {
-            ID = to
+            ID = to,
+            Name = StandaloneProfileManager.SharedInstance.currentProfile.profileName
         }.Send(-1);
     }
 }
