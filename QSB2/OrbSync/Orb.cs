@@ -1,11 +1,12 @@
 ﻿using HarmonyLib;
+using MessagePack;
 using QSB2.Ownership;
 using QSB2.QObject;
 using QSB2.WakeUpSync;
 
 namespace QSB2.OrbSync;
 
-// BUG: doesnt go into slots. lerps back into original slot
+// BUG: move orb to slot probably not accounted for here. might also break for some slots maybe idk
 [HarmonyPatch]
 public class Orb : QObject<NomaiInterfaceOrb>, ITickable
 {
@@ -21,7 +22,7 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
 
         base.Create();
     }
-    
+
     public override void Destroy()
     {
         base.Destroy();
@@ -39,8 +40,15 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
     public static void NomaiInterfaceOrb_StartDragFromPosition(NomaiInterfaceOrb __instance)
     {
         if (!WakeUpManager.AllQObjectsCreated) return;
+        if (!__instance._isBeingDragged) return; // might not have set this to true
+
         var orb = QObjectManager._componentToObject[__instance];
         orb.OwnerQueue.DoAction(OwnerQueueAction.Force);
+
+        orb.Send(new OrbDragMessage
+        {
+            Value = true
+        }, -2);
     }
 
     [HarmonyPostfix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.CancelDrag))]
@@ -49,5 +57,21 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
         if (!WakeUpManager.AllQObjectsCreated) return;
         var orb = QObjectManager._componentToObject[__instance];
         orb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
+
+        orb.Send(new OrbDragMessage
+        {
+            Value = false
+        }, -2);
+    }
+}
+
+[MessagePackObject]
+public class OrbDragMessage : QObjectMessage<Orb>
+{
+    [Key(1)] public required bool Value;
+
+    public override void OnReceive(Orb qObject, int from, int to)
+    {
+        qObject.Component._isBeingDragged = Value;
     }
 }
