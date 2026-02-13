@@ -1,9 +1,11 @@
 ﻿using HarmonyLib;
 using QSB2.Ownership;
 using QSB2.QObject;
+using QSB2.WakeUpSync;
 
 namespace QSB2.OrbSync;
 
+// BUG: doesnt go into slots. lerps back into original slot
 [HarmonyPatch]
 public class Orb : QObject<NomaiInterfaceOrb>, ITickable
 {
@@ -33,16 +35,18 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
         VelocitySync.Tick();
     }
 
-    [HarmonyPrefix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.StartDragFromPosition))]
+    [HarmonyPostfix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.StartDragFromPosition))]
     public static void NomaiInterfaceOrb_StartDragFromPosition(NomaiInterfaceOrb __instance)
     {
+        if (!WakeUpManager.AllQObjectsCreated) return;
         var orb = QObjectManager._componentToObject[__instance];
         orb.OwnerQueue.DoAction(OwnerQueueAction.Force);
     }
 
-    [HarmonyPrefix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.CancelDrag))]
+    [HarmonyPostfix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.CancelDrag))]
     public static void NomaiInterfaceOrb_CancelDrag(NomaiInterfaceOrb __instance)
     {
+        if (!WakeUpManager.AllQObjectsCreated) return;
         var orb = QObjectManager._componentToObject[__instance];
         orb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
     }
