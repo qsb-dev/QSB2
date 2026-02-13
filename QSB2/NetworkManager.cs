@@ -93,7 +93,7 @@ public static class NetworkManager
 
                 TickableManager.Tickables.Clear();
                 
-                _client?.Close();
+                // client already closed
                 _client = null;
             };
             _client.OnData = MessageManager.OnData;

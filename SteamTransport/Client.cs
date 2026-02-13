@@ -47,6 +47,8 @@ public class Client
                     IsConnecting = false;
                     IsConnected = false;
                     OnDisconnected?.Invoke(t.m_info.m_szEndDebug);
+                    
+                    _onStatusChanged.Dispose();
                     break;
             }
         });
@@ -142,7 +144,7 @@ public class Client
         IsConnected = false;
         // its not an error for us to close ourselves intentionally
         // but we do it anyway cuz above comment
-        OnDisconnected?.Invoke("client closed connection for unknown reason! turn on \"[DEBUG] Debug Mode\" and \"[DEBUG] Hook Debug Logs\", try again, and report all logs shown!");
+        // OnDisconnected?.Invoke("client closed connection for unknown reason! turn on \"[DEBUG] Debug Mode\" and \"[DEBUG] Hook Debug Logs\", try again, and report all logs shown!");
 
         _onStatusChanged.Dispose();
     }
