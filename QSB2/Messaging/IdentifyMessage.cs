@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using QSB2.WakeUpSync;
 
 namespace QSB2.Messaging;
 
@@ -16,6 +17,7 @@ public class IdentifyMessage : Message
 
     // the minimal initial state
     [Key(4)] public required (int ID, string name, OWScene scene, int loadCounter)[] Connections;
+    [Key(5)] public required bool HostWaitingForPlayers;
     // not qobjects cuz thats initialized after everyone joins
 
     public override void OnReceive(int from, int to)
@@ -29,6 +31,8 @@ public class IdentifyMessage : Message
             NetworkManager.ConnectionIDs.Add(x.ID);
             Logger.Log($"{x.ID} exists");
         }
+
+        WakeUpManager.HostWaitingForPlayers = HostWaitingForPlayers;
 
         var leave = false;
         if (QSBVersion != QSB2.QSBVersion) leave = true;

@@ -37,6 +37,7 @@ public static class NetworkManager
                     DLCInstalled = QSB2.DLCInstalled,
                     CanJoin = WakeUpManager.CanJoin,
                     Connections = Connections.Values.Select(x => (x.ID, x.Name, x.Scene, x.LoadCounter)).ToArray(),
+                    HostWaitingForPlayers = WakeUpManager.HostWaitingForPlayers,
                 }.Send(id);
             };
             _server.OnDisconnected = (id, reason) =>
