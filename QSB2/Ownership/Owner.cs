@@ -53,8 +53,8 @@ public class OwnerQueueMessage : QObjectMessage
                 break;
         }
 
-        // empty queue = defer to host
-        qObject.Owner.ID = ownerQueue.Count != 0 ? ownerQueue[0] : NetworkManager.ConnectionIDs[0];
+        // empty queue = no one owns
+        qObject.Owner.ID = ownerQueue.Count != 0 ? ownerQueue[0] : -1;
     }
 }
 

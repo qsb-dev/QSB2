@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using QSB2.OrbSync;
 using QSB2.PlayerSync;
 using QSB2.ProbeSync;
 using QSB2.SectorSync;
@@ -40,6 +41,7 @@ public static class QObjectManager
             ProbeManager.Destroy();
             QShipManager.Destroy();
             QSectorManager.Destroy();
+            OrbManager.Destroy();
         };
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
@@ -52,6 +54,7 @@ public static class QObjectManager
                 ProbeManager.Create();
                 QShipManager.Create();
                 QSectorManager.Create();
+                OrbManager.Create();
             });
         };
 

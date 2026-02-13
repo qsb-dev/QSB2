@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using QSB2.Messaging;
+﻿using QSB2.Messaging;
 using QSB2.Ownership;
 using QSB2.QObject;
 using UnityEngine;
@@ -34,7 +33,6 @@ public class QShip : QObject<Transform>, ITickable
         RelativeToSector = new(this);
         RelativeToSector.SectorDetector = Locator.GetShipTransform().GetComponentInChildren<SectorDetector>();
         Owner = new(this);
-        Owner.ID = NetworkManager.ConnectionIDs[0]; // set to host for now
         OwnerQueue = new(this);
 
         TickableManager.Tickables.Add(this);
@@ -55,6 +53,9 @@ public class QShip : QObject<Transform>, ITickable
 
     public void Tick()
     {
+        // no one owns = host takes
+        if (Owner.ID == -1) Owner.ID = NetworkManager.ConnectionIDs[0];
+
         RelativeToSector.Tick();
         PositionSync.Tick();
         VelocitySync.Tick();

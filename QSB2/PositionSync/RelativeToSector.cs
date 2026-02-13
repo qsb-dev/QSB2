@@ -12,6 +12,8 @@ public class RelativeToSector(QObject.QObject qObject)
 
     public void Tick()
     {
+        if (qObject.Owner.ID == -1) return; // no owner = do nothing
+        
         if (qObject.Owner.DoWeOwn)
         {
             var sector = SectorDetector.GetLastEnteredSector();
