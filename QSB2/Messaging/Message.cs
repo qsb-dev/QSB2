@@ -7,7 +7,7 @@ namespace QSB2.Messaging;
 
 public abstract class Message
 {
-    public void Send(int to)
+    public void Send(int to, bool unreliable = false)
     {
         var rawMessage = new RawMessage
         {
@@ -21,7 +21,7 @@ public abstract class Message
         if (NetworkManager.IsHost)
             MessageManager.OnServerData(0, data); // server will send it to whoever
         else
-            NetworkManager._client.Send(data, Util.Channels.Reliable); // send it to server, which will forward 
+            NetworkManager._client.Send(data, unreliable ? Util.Channels.Unreliable : Util.Channels.Reliable); // send it to server, which will forward 
     }
 
     public abstract void OnReceive(int from, int to);

@@ -39,17 +39,17 @@ public abstract class QObject
     }
 
     // syntax sugar
-    public void Send(QObjectMessage message, int to)
+    public void Send(QObjectMessage message, int to, bool unreliable = false)
     {
         message.Type = GetType().Hash();
         message.ID = ID;
-        message.Send(to);
+        message.Send(to, unreliable);
     }
 
-    public void Send<T>(QObjectMessage<T> message, int to) where T : QObject, new()
+    public void Send<T>(QObjectMessage<T> message, int to, bool unreliable = false) where T : QObject, new()
     {
         message.ID = ID;
-        message.Send(to);
+        message.Send(to, unreliable);
     }
 }
 

@@ -29,7 +29,7 @@ public class VelocitySync(QObject.QObject qObject)
             {
                 RelVel = RelVel,
                 RelAngVel = RelAngVel
-            }, -2);
+            }, -2, true);
         }
         else
         {

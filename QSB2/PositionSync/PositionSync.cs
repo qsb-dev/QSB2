@@ -28,7 +28,7 @@ public class PositionSync(QObject.QObject qObject)
             {
                 RelPos = RelPos,
                 RelRot = RelRot,
-            }, -2);
+            }, -2, true);
         }
         else
         {
