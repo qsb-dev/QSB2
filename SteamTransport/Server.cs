@@ -81,6 +81,7 @@ public class Server
             {
                 OnDisconnected?.Invoke(-1, $"couldnt parse address {address} when listening");
                 // dont really need to stop server here. mirror isnt designed to let us fail to listen anyway so this is all kinda silly
+                // TODO: do an actual fail here
                 return;
             }
 

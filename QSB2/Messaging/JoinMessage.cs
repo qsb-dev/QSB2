@@ -25,6 +25,6 @@ public class JoinMessage : Message
         // stupid hack: we want our counter to match host counter so u can play
         // TODO: stupid
         if (ID == NetworkManager.LocalID)
-            NetworkManager.LocalConnection.LoadCounter = NetworkManager.Connections[NetworkManager.ConnectionIDs[0]].LoadCounter - 1;
+            NetworkManager.LocalConnection.LoadCounter = Math.Max(0, NetworkManager.Connections[NetworkManager.ConnectionIDs[0]].LoadCounter - 1);
     }
 }

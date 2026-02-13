@@ -69,6 +69,7 @@ public class Client
             if (!parsed)
             {
                 OnDisconnected?.Invoke($"couldnt parse address {address} when connecting"); // will show error box
+                // TODO: do a separate fail here?
                 return;
             }
 
@@ -82,6 +83,7 @@ public class Client
             if (!parsed)
             {
                 OnDisconnected?.Invoke($"couldnt parse address {address} when connecting"); // will show error box
+                // TODO: do a separate fail here?
                 return;
             }
 

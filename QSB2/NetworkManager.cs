@@ -20,7 +20,7 @@ public static class NetworkManager
 
     public static void Host()
     {
-        if (_server != null) return; // TODO: tell player already hosting
+        if (_server != null || _client != null) return; // TODO: tell player
         
         {
             _server = new(new() { Log = s => Logger.Log(($"[server] {s}")) });
@@ -70,7 +70,7 @@ public static class NetworkManager
 
     public static void Connect()
     {
-        if (_client != null) return; // TODO: tell player already connecting
+        if (_server != null || _client != null) return; // TODO: tell player
         
         {
             _client = new(new() { Log = s => Logger.Log($"[client] {s}") });
@@ -92,6 +92,9 @@ public static class NetworkManager
                 }
 
                 TickableManager.Tickables.Clear();
+                
+                _client?.Close();
+                _client = null;
             };
             _client.OnData = MessageManager.OnData;
         }
