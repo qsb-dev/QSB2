@@ -133,7 +133,7 @@ public static class NetworkManager
         _server?.Flush();
     }
 
-    public static readonly List<int> _serverClients = new();
+    public static readonly List<int> _serverClients = new(); // separate list so broadcasts work before JoinMessage
     public static int LocalID = -1;
     public static readonly List<int> ConnectionIDs = new(); // for order
     public static readonly Dictionary<int, Connection> Connections = new();

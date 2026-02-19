@@ -18,10 +18,24 @@ public abstract class Message
         };
 
         var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
+        if (to == -1)
+        {
+            MessageManager.OnData(data); // send it to self also. then server will handle sending it to rest
+        }
+        else if (to == -2)
+        {
+            // server routing below does broadcast to everyone else
+        }
+        else if (to == NetworkManager.LocalID)
+        {
+            MessageManager.OnData(data); // pass it to self without going thru server
+            return;
+        }
+
         if (NetworkManager.IsHost)
-            MessageManager.OnServerData(0, data); // server will send it to whoever
+            MessageManager.OnServerData(0, data); // we are the server. we route
         else
-            NetworkManager._client.Send(data, unreliable ? Util.Channels.Unreliable : Util.Channels.Reliable); // send it to server, which will forward 
+            NetworkManager._client.Send(data, unreliable ? Util.Channels.Unreliable : Util.Channels.Reliable); // send it to server, which will route 
     }
 
     public abstract void OnReceive(int from, int to);
