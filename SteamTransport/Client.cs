@@ -6,7 +6,7 @@ namespace SteamTransport;
 public class Client
 {
     public Action OnConnected;
-    public Action<ArraySegment<byte>> OnData;
+    public Action<ArraySegment<byte>, int> OnData;
     public Action<string> OnDisconnected;
 
 
@@ -115,7 +115,7 @@ public class Client
         for (var i = 0; i < numMessages; i++)
         {
             var (segment, channelId) = Util.Receive(ppOutMessages[i]);
-            OnData?.Invoke(segment);
+            OnData?.Invoke(segment, channelId);
         }
     }
 

@@ -22,7 +22,7 @@ public static class MessageManager
         MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithResolver(UnityResolver.InstanceWithStandardResolver);
     }
 
-    public static void OnData(ArraySegment<byte> data)
+    public static void OnData(ArraySegment<byte> data, int channelId)
     {
         try
         {
@@ -37,26 +37,26 @@ public static class MessageManager
         }
     }
 
-    public static void OnServerData(int fromID, ArraySegment<byte> data)
+    public static void OnServerData(int fromID, ArraySegment<byte> data, int channelId)
     {
         var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
         if (rawMessage.To is -1 or -2)
         {
             // client will handle OnData for itself if needed
             // this just sends to everyone else   
-            if (fromID != 0) OnData(data); // we are server. send it to us also
+            if (fromID != 0) OnData(data, channelId); // we are server. send it to us also
             foreach (var id in NetworkManager._serverClients)
             {
                 if (fromID == id) continue;
-                NetworkManager._server.Send(id, data, Util.Channels.Reliable);
+                NetworkManager._server.Send(id, data, channelId);
             }
         }
         else
         {
             if (rawMessage.To == 0)
-                OnData(data); // we are server. pass to self
+                OnData(data, channelId); // we are server. pass to self
             else 
-                NetworkManager._server.Send(rawMessage.To, data, Util.Channels.Reliable);
+                NetworkManager._server.Send(rawMessage.To, data, channelId);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace QSB2.Messaging;
 
 public abstract class Message
 {
-    public void Send(int to, bool unreliable = false)
+    public void Send(int to, int channelId = Channels.Reliable)
     {
         var rawMessage = new RawMessage
         {
@@ -20,7 +20,7 @@ public abstract class Message
         var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
         if (to == -1)
         {
-            MessageManager.OnData(data); // send it to self also. then server will handle sending it to rest
+            MessageManager.OnData(data, channelId); // send it to self also. then server will handle sending it to rest
         }
         else if (to == -2)
         {
@@ -28,14 +28,14 @@ public abstract class Message
         }
         else if (to == NetworkManager.LocalID)
         {
-            MessageManager.OnData(data); // pass it to self without going thru server
+            MessageManager.OnData(data, channelId); // pass it to self without going thru server
             return;
         }
 
         if (NetworkManager.IsHost)
-            MessageManager.OnServerData(0, data); // we are the server. we route
+            MessageManager.OnServerData(0, data, channelId); // we are the server. we route
         else
-            NetworkManager._client.Send(data, unreliable ? Util.Channels.Unreliable : Util.Channels.Reliable); // send it to server, which will route 
+            NetworkManager._client.Send(data, channelId); // send it to server, which will route 
     }
 
     public abstract void OnReceive(int from, int to);

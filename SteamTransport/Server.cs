@@ -8,7 +8,7 @@ namespace SteamTransport;
 public class Server
 {
     public Action<int> OnConnected;
-    public Action<int, ArraySegment<byte>> OnData;
+    public Action<int, ArraySegment<byte>, int> OnData;
     public Action<int, string> OnDisconnected;
 
 
@@ -122,7 +122,7 @@ public class Server
             for (var i = 0; i < numMessages; i++)
             {
                 var (segment, channelId) = Util.Receive(ppOutMessages[i]);
-                OnData?.Invoke((int)conn.m_HSteamNetConnection, segment);
+                OnData?.Invoke((int)conn.m_HSteamNetConnection, segment, channelId);
             }
         }
     }

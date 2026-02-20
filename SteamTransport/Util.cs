@@ -1,18 +1,12 @@
-﻿using Steamworks;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using Steamworks;
 
 namespace SteamTransport;
 
 public static class Util
 {
-    public static class Channels
-    {
-        public const int Reliable = 0;
-        public const int Unreliable = 1;
-    }
-
     public const int MaxMessages = 256; // same as fizzy steamworks
 
     private static int SendFlag2MirrorChannel(int sendFlag) => sendFlag switch
@@ -124,4 +118,10 @@ public static class Util
 
         return result.ToArray();
     }
+}
+
+public static class Channels
+{
+    public const int Reliable = 0;
+    public const int Unreliable = 1;
 }

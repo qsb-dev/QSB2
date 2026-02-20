@@ -2,6 +2,7 @@
 using QSB2.QObject;
 using QSB2.SectorSync;
 using QSB2.Utility;
+using SteamTransport;
 
 namespace QSB2.PositionSync;
 
@@ -23,7 +24,7 @@ public class RelativeToSector(QObject.QObject qObject)
             qObject.Send(new ChangeSectorMessage
             {
                 SectorID = QSector.ID,
-            }, -2, true);
+            }, -2, Channels.Unreliable);
             
             qObject.PositionSync.Reference = sector.transform;
         }

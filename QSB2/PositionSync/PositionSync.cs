@@ -1,6 +1,7 @@
 ﻿using MessagePack;
 using QSB.Utility;
 using QSB2.QObject;
+using SteamTransport;
 using UnityEngine;
 
 namespace QSB2.PositionSync;
@@ -28,7 +29,7 @@ public class PositionSync(QObject.QObject qObject)
             {
                 RelPos = RelPos,
                 RelRot = RelRot,
-            }, -2, true);
+            }, -2, Channels.Unreliable);
         }
         else
         {

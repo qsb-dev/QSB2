@@ -1,6 +1,7 @@
 ﻿using QSB2.Ownership;
 using QSB2.PositionSync;
 using QSB2.Utility;
+using SteamTransport;
 using UnityEngine;
 
 namespace QSB2.QObject;
@@ -39,17 +40,17 @@ public abstract class QObject
     }
 
     // syntax sugar
-    public void Send(QObjectMessage message, int to, bool unreliable = false)
+    public void Send(QObjectMessage message, int to, int channelId = Channels.Reliable)
     {
         message.Type = GetType().Hash();
         message.ID = ID;
-        message.Send(to, unreliable);
+        message.Send(to, channelId);
     }
 
-    public void Send<T>(QObjectMessage<T> message, int to, bool unreliable = false) where T : QObject, new()
+    public void Send<T>(QObjectMessage<T> message, int to, int channelId = Channels.Reliable) where T : QObject, new()
     {
         message.ID = ID;
-        message.Send(to, unreliable);
+        message.Send(to, channelId);
     }
 }
 
