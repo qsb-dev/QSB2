@@ -57,7 +57,7 @@ public static class Util
         return (segment, channelId);
     }
 
-    public static SteamNetworkingConfigValue_t[] MakeOptions(Settings transport)
+    public static SteamNetworkingConfigValue_t[] MakeOptions(Settings settings)
     {
         var result = new List<SteamNetworkingConfigValue_t>();
 
@@ -67,7 +67,7 @@ public static class Util
             m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32,
             m_val = new SteamNetworkingConfigValue_t.OptionValue
             {
-                m_int32 = transport.Timeout
+                m_int32 = settings.Timeout
             }
         });
         result.Add(new SteamNetworkingConfigValue_t
@@ -76,12 +76,12 @@ public static class Util
             m_eDataType = ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32,
             m_val = new SteamNetworkingConfigValue_t.OptionValue
             {
-                m_int32 = transport.Timeout
+                m_int32 = settings.Timeout
             }
         });
 
         // 20% change of doing all, all delays are 200 ms. leads to about 1 second of rtt ping if enabled on both ends.
-        if (transport.DoFakeNetworkErrors)
+        if (settings.DoFakeNetworkErrors)
         {
             // global scope = dont apply to connection
             static void SetConfigValue(ESteamNetworkingConfigValue key, object value)

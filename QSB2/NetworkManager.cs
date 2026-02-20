@@ -17,13 +17,19 @@ public static class NetworkManager
     public static bool IsHost => _server?.IsListening ?? false;
 
     public static string Address;
+    public static bool UseIpAddress, DoFakeNetworkErrors;
 
     public static void Host()
     {
         if (_server != null || _client != null) return; // TODO: tell player
-        
+
         {
-            _server = new(new() { Log = s => Logger.Log(($"[server] {s}")) });
+            _server = new(new()
+            {
+                Log = s => Logger.Log(($"[server] {s}")),
+                UseIpAddress = UseIpAddress,
+                DoFakeNetworkErrors = DoFakeNetworkErrors
+            });
             _server.OnConnected = (id) =>
             {
                 Logger.Log($"server connected {id}");
@@ -54,7 +60,7 @@ public static class NetworkManager
             };
             _server.OnData = MessageManager.OnServerData;
         }
-        
+
         _server.StartListening(Address);
 
         // host doesnt have client, so theyre a special connection here
@@ -71,9 +77,14 @@ public static class NetworkManager
     public static void Connect()
     {
         if (_server != null || _client != null) return; // TODO: tell player
-        
+
         {
-            _client = new(new() { Log = s => Logger.Log($"[client] {s}") });
+            _client = new(new()
+            {
+                Log = s => Logger.Log(($"[client] {s}")),
+                UseIpAddress = UseIpAddress,
+                DoFakeNetworkErrors = DoFakeNetworkErrors
+            });
             _client.OnConnected = () =>
             {
                 Logger.Log("client connected");
@@ -92,13 +103,13 @@ public static class NetworkManager
                 }
 
                 TickableManager.Tickables.Clear();
-                
+
                 // client already closed
                 _client = null;
             };
             _client.OnData = MessageManager.OnData;
         }
-        
+
         _client.Connect(Address);
     }
 
