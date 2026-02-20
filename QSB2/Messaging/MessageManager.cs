@@ -40,10 +40,16 @@ public static class MessageManager
     public static void OnServerData(int fromID, ArraySegment<byte> data, int channelId)
     {
         var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
-        if (rawMessage.To is -1 or -2)
+        if (rawMessage.To == -1)
         {
-            // client will handle OnData for itself if needed
-            // this just sends to everyone else   
+            OnData(data, channelId); // we are server. send it to us also
+            foreach (var id in NetworkManager._serverClients)
+            {
+                NetworkManager._server.Send(id, data, channelId);
+            }
+        }
+        else if (rawMessage.To == -2)
+        {
             if (fromID != 0) OnData(data, channelId); // we are server. send it to us also
             foreach (var id in NetworkManager._serverClients)
             {

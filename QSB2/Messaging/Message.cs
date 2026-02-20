@@ -18,20 +18,6 @@ public abstract class Message
         };
 
         var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
-        if (to == -1)
-        {
-            MessageManager.OnData(data, channelId); // send it to self also. then server will handle sending it to rest
-        }
-        else if (to == -2)
-        {
-            // server routing below does broadcast to everyone else
-        }
-        else if (to == NetworkManager.LocalID)
-        {
-            MessageManager.OnData(data, channelId); // pass it to self without going thru server
-            return;
-        }
-
         if (NetworkManager.IsHost)
             MessageManager.OnServerData(0, data, channelId); // we are the server. we route
         else
