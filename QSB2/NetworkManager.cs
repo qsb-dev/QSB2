@@ -148,5 +148,7 @@ public static class NetworkManager
     public static int LocalID = -1;
     public static readonly List<int> ConnectionIDs = new(); // for order
     public static readonly Dictionary<int, Connection> Connections = new();
+
     public static Connection LocalConnection => Connections[LocalID];
+    public static bool LocalConnectionExists => IsConnected && LocalID != -1 && Connections.ContainsKey(LocalID); // there's time between connecting and getting local id and getting connection
 }

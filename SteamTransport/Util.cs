@@ -101,19 +101,19 @@ public static class Util
                 handle.Free();
             }
 
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Send, (float)20);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Recv, (float)20);
+            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Send, (float)20);
+            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Recv, (float)20);
 
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Send, (int)200);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Recv, (int)200);
+            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Send, (int)500);
+            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Recv, (int)500);
 
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Send, (float)20);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Recv, (float)20);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Time, (int)200);
+            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Send, (float)50);
+            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Recv, (float)500);
+            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Time, (int)500);
 
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Send, (float)20);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Recv, (float)20);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_TimeMax, (int)200);
+            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Send, (float)20);
+            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Recv, (float)20);
+            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_TimeMax, (int)200);
         }
 
         return result.ToArray();

@@ -76,7 +76,7 @@ public static class WakeUpManager
             var hostTime = NetworkManager.Connections[NetworkManager.ConnectionIDs[0]].Time;
             var myTime = NetworkManager.LocalConnection.Time;
             var diff = hostTime - myTime;
-            TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
+            // TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
         }
 
         if (Time.timeSinceLevelLoad < _lastTimeSend || Time.timeSinceLevelLoad > _lastTimeSend + 1)
