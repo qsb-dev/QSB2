@@ -83,6 +83,7 @@ public static class WakeUpManager
         {
             _lastTimeSend = Time.timeSinceLevelLoad;
 
+            // BUG: broadcast uses server list, but client may not have that connection yet. causes error for a bit
             new TimeMessage
             {
                 Time = Time.timeSinceLevelLoad
