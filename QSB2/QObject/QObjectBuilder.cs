@@ -13,6 +13,7 @@ public abstract class QObjectBuilder
 
     protected static void SendCreated<T>(bool created)
     {
+        // BUG: without loopback. it will take a minute for us to realize we destroyed our objects, which is bad cuz it means we'll keep receiving messages like they exist!
         var msg = new QObjectsCreatedMessage
         {
             Type = typeof(T).Hash(),
