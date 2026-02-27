@@ -19,7 +19,7 @@ public abstract class QObjectBuilder
             Type = typeof(T).Hash(),
             Created = true,
         };
-        if (created) msg.Count = QObjectManager._entries[typeof(T).Hash()].QObjects.Count;
+        if (created) msg.Count = QObjectManager.Entries[typeof(T).Hash()].QObjects.Count;
         msg.Send(-1);
     }
 }
@@ -42,7 +42,7 @@ public abstract class QObjectBuilder<TQ, TC> : QObjectBuilder where TQ : QObject
 
     public override void Destroy()
     {
-        var entry = QObjectManager._entries[typeof(TQ).Hash()];
+        var entry = QObjectManager.Entries[typeof(TQ).Hash()];
         foreach (var qObject in entry.QObjects.Values.ToList()) // we modify = copy
         {
             qObject.Destroy();

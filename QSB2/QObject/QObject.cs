@@ -27,7 +27,7 @@ public abstract class QObject
 
     public virtual void Create()
     {
-        var entry = QObjectManager._entries[GetType().Hash()];
+        var entry = QObjectManager.Entries[GetType().Hash()];
         ID = entry.NextId++;
         entry.QObjects.Add(ID, this);
         QObjectManager._componentToObject.Add(Component, this);
@@ -35,7 +35,7 @@ public abstract class QObject
 
     public virtual void Destroy()
     {
-        QObjectManager._entries[GetType().Hash()].QObjects.Remove(ID);
+        QObjectManager.Entries[GetType().Hash()].QObjects.Remove(ID);
         QObjectManager._componentToObject.Remove(Component);
     }
 

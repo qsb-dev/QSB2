@@ -27,7 +27,7 @@ public class ProbeBuilder : QObjectBuilder
 
     public override void Destroy()
     {
-        var entry = QObjectManager._entries[typeof(Probe).Hash()];
+        var entry = QObjectManager.Entries[typeof(Probe).Hash()];
         foreach (var qObject in entry.QObjects.Values.ToList())
         {
             qObject.Destroy();

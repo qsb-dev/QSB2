@@ -22,7 +22,7 @@ public static class QObjectManager
         public readonly Dictionary<int, QObject> QObjects = new();
     }
 
-    internal static readonly Dictionary<int, Entry> _entries = new();
+    public static readonly Dictionary<int, Entry> Entries = new();
 
     internal static readonly Dictionary<Component, QObject> _componentToObject = new();
 
@@ -31,7 +31,7 @@ public static class QObjectManager
     static QObjectManager()
     {
         foreach (var type in typeof(QObject).GetDerivedTypes())
-            _entries.Add(type.Hash(), new(type));
+            Entries.Add(type.Hash(), new(type));
 
         foreach (var type in typeof(QObjectBuilder).GetDerivedTypes())
             _builders.Add((QObjectBuilder)Activator.CreateInstance(type));
@@ -95,7 +95,7 @@ public static class QObjectManager
     public static T GetQObject<T>(this int id) where T : QObject, new()
     {
         if (!WakeUpManager.AllQObjectsCreated) throw new Exception($"tried to get {typeof(T)} from id {id} when not all qobjects created");
-        var entry = _entries[typeof(T).Hash()];
+        var entry = Entries[typeof(T).Hash()];
         if (!entry.QObjects.TryGetValue(id, out var qObject)) throw new ArgumentException($"could not find {typeof(T)} for id {id}");
         return (T)qObject;
     }

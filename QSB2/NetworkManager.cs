@@ -96,7 +96,7 @@ public static class NetworkManager
                 // just clear out everything, i dont care
                 Connections.Clear();
                 ConnectionIDs.Clear();
-                foreach (var entry in QObjectManager._entries.Values)
+                foreach (var entry in QObjectManager.Entries.Values)
                 {
                     entry.QObjects.Clear();
                     entry.NextId = 0;
@@ -121,7 +121,7 @@ public static class NetworkManager
             // just clear out everything, i dont care
             Connections.Clear();
             ConnectionIDs.Clear();
-            foreach (var entry in QObjectManager._entries.Values)
+            foreach (var entry in QObjectManager.Entries.Values)
             {
                 entry.QObjects.Clear();
                 entry.NextId = 0;

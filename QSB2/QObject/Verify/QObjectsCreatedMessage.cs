@@ -19,7 +19,7 @@ public class QObjectsCreatedMessage : Message
     public override void OnReceive(int from, int to)
     {
         var connection = NetworkManager.Connections[from];
-        var type = QObjectManager._entries[Type].Type;
+        var type = QObjectManager.Entries[Type].Type;
 
         if (Created)
         {
@@ -32,6 +32,6 @@ public class QObjectsCreatedMessage : Message
             connection.QObjectsCreated.Remove(type);
         }
 
-        WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager._entries.Count);
+        WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
     }
 }
