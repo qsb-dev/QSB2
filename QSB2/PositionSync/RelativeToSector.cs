@@ -19,7 +19,7 @@ public class RelativeToSector(QObject.QObject qObject)
         {
             var sector = SectorDetector.GetLastEnteredSector();
             if (sector == null) return;
-            QSector = (QSector)QObjectManager._componentToObject[sector];
+            QSector = sector.GetQObject<QSector>();
 
             qObject.Send(new ChangeSectorMessage
             {
@@ -45,6 +45,6 @@ public class ChangeSectorMessage : QObjectMessage
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        qObject.RelativeToSector.QSector = (QSector)QObjectManager.Entries[typeof(QSector).Hash()].QObjects[SectorID];
+        qObject.RelativeToSector.QSector = SectorID.GetQObject<QSector>();
     }
 }

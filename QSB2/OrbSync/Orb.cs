@@ -43,7 +43,7 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
         if (!WakeUpManager.AllQObjectsCreated) return;
         if (!__instance._isBeingDragged) return; // might not have set this to true
 
-        var orb = QObjectManager._componentToObject[__instance];
+        var orb = __instance.GetQObject<Orb>();
         orb.OwnerQueue.DoAction(OwnerQueueAction.Force);
 
         orb.Send(new OrbDragMessage
@@ -56,7 +56,7 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
     public static void NomaiInterfaceOrb_CancelDrag(NomaiInterfaceOrb __instance)
     {
         if (!WakeUpManager.AllQObjectsCreated) return;
-        var orb = QObjectManager._componentToObject[__instance];
+        var orb = __instance.GetQObject<Orb>();
         orb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
 
         orb.Send(new OrbDragMessage

@@ -15,14 +15,15 @@ public abstract class QObjectMessage : Message
     {
         if (!WakeUpManager.AllQObjectsCreated)
         {
-            Logger.Log("received object message when not all objects created. its fine, the other side probably hasnt received the flag yet", MessageType.Warning);
+            Logger.Log($"received {GetType()} when not all objects created. its fine, the other side probably hasnt received the flag yet", MessageType.Warning);
             return;
         }
 
+        // maybe use extension method here later
         var entry = QObjectManager.Entries[Type];
         if (!entry.QObjects.TryGetValue(ID, out var qObject))
         {
-            Logger.Log($"received message {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
+            Logger.Log($"received {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
             return;
         }
 
@@ -41,14 +42,15 @@ public abstract class QObjectMessage<T> : Message where T : QObject, new() // no
     {
         if (!WakeUpManager.AllQObjectsCreated)
         {
-            Logger.Log("received object message when not all objects created. its fine, the other side probably hasnt received the flag yet", MessageType.Warning);
+            Logger.Log($"received {GetType()} when not all objects created. its fine, the other side probably hasnt received the flag yet", MessageType.Warning);
             return;
         }
         
+        // maybe use extension method here later
         var entry = QObjectManager.Entries[typeof(T).Hash()];
         if (!entry.QObjects.TryGetValue(ID, out var qObject))
         {
-            Logger.Log($"received message {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
+            Logger.Log($"received {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
             return;
         }
 

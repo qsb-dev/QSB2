@@ -52,6 +52,11 @@ public abstract class QObject
         message.ID = ID;
         message.Send(to, channelId);
     }
+
+    public override string ToString()
+    {
+        return $"{GetType()} id {ID} component {Component}";
+    }
 }
 
 // convenience thing

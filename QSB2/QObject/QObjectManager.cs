@@ -23,7 +23,7 @@ public static class QObjectManager
 
     public static readonly Dictionary<int, Entry> Entries = new();
 
-    public static readonly Dictionary<Component, QObject> _componentToObject = new();
+    internal static readonly Dictionary<Component, QObject> _componentToObject = new();
 
     static QObjectManager()
     {
@@ -37,6 +37,7 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
+            // TODO: refactor
             PlayerManager.Destroy();
             ProbeManager.Destroy();
             QShipManager.Destroy();
@@ -64,4 +65,24 @@ public static class QObjectManager
             if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
     }
+
+    #region utils
+
+    public static T GetQObject<T>(this Component component) where T : QObject, new()
+    {
+        if (!WakeUpManager.AllQObjectsCreated) throw new Exception($"tried to get {typeof(T)} from {component} when not all qobjects created");
+        if (!_componentToObject.TryGetValue(component, out var qObject)) throw new ArgumentException($"could not find {typeof(T)} for {component}");
+        if (qObject is not T t) throw new ArgumentException($"could not find {typeof(T)} for {component} (got {qObject.GetType()} instead)");
+        return t;
+    }
+
+    public static T GetQObject<T>(this int id) where T : QObject, new()
+    {
+        if (!WakeUpManager.AllQObjectsCreated) throw new Exception($"tried to get {typeof(T)} from id {id} when not all qobjects created");
+        var entry = Entries[typeof(T).Hash()];
+        if (!entry.QObjects.TryGetValue(id, out var qObject)) throw new ArgumentException($"could not find {typeof(T)} for id {id}");
+        return (T)qObject;
+    }
+
+    #endregion
 }
