@@ -23,12 +23,7 @@ public class PlayerBuilder : QObjectBuilder
             }.Create();
         }
 
-        new QObjectsCreatedMessage
-        {
-            Type = typeof(Player).Hash(),
-            Created = true,
-            Count = QObjectManager._entries[typeof(Player).Hash()].QObjects.Count,
-        }.Send(-1);
+        SendCreated<Player>(true);
     }
 
     public override void Destroy()
@@ -41,10 +36,6 @@ public class PlayerBuilder : QObjectBuilder
 
         entry.NextId = 0;
 
-        new QObjectsCreatedMessage
-        {
-            Type = typeof(Player).Hash(),
-            Created = false
-        }.Send(-1);
+        SendCreated<Player>(false);
     }
 }

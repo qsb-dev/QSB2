@@ -10,6 +10,17 @@ public abstract class QObjectBuilder
 {
     public abstract void Create();
     public abstract void Destroy();
+
+    protected static void SendCreated<T>(bool created)
+    {
+        var msg = new QObjectsCreatedMessage
+        {
+            Type = typeof(T).Hash(),
+            Created = true,
+        };
+        if (created) msg.Count = QObjectManager._entries[typeof(T).Hash()].QObjects.Count;
+        msg.Send(-1);
+    }
 }
 
 public abstract class QObjectBuilder<TQ, TC> : QObjectBuilder where TQ : QObject<TC>, new() where TC : Component
@@ -24,13 +35,9 @@ public abstract class QObjectBuilder<TQ, TC> : QObjectBuilder where TQ : QObject
             }.Create();
         }
 
-        new QObjectsCreatedMessage
-        {
-            Type = typeof(TQ).Hash(),
-            Created = true,
-            Count = QObjectManager._entries[typeof(TQ).Hash()].QObjects.Count
-        }.Send(-1);
+        SendCreated<TQ>(true);
     }
+
 
     public override void Destroy()
     {
@@ -42,10 +49,6 @@ public abstract class QObjectBuilder<TQ, TC> : QObjectBuilder where TQ : QObject
 
         entry.NextId = 0;
 
-        new QObjectsCreatedMessage
-        {
-            Type = typeof(TQ).Hash(),
-            Created = false
-        }.Send(-1);
+        SendCreated<TQ>(false);
     }
 }

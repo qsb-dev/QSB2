@@ -1,7 +1,6 @@
 ﻿using System.Linq;
 using QSB2.Messaging;
 using QSB2.QObject;
-using QSB2.QObject.Verify;
 using QSB2.Utility;
 
 namespace QSB2.ProbeSync;
@@ -23,12 +22,7 @@ public class ProbeBuilder : QObjectBuilder
             }.Create();
         }
 
-        new QObjectsCreatedMessage
-        {
-            Type = typeof(Probe).Hash(),
-            Created = true,
-            Count = QObjectManager._entries[typeof(Probe).Hash()].QObjects.Count,
-        }.Send(-1);
+        SendCreated<Probe>(true);
     }
 
     public override void Destroy()
@@ -41,10 +35,6 @@ public class ProbeBuilder : QObjectBuilder
 
         entry.NextId = 0;
 
-        new QObjectsCreatedMessage
-        {
-            Type = typeof(Probe).Hash(),
-            Created = false
-        }.Send(-1);
+        SendCreated<Probe>(false);
     }
 }
