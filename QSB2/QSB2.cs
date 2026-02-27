@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using HarmonyLib;
 using OWML.Common;
 using OWML.ModHelper;
+using QSB2.Patches;
 using QSB2.QObject;
 using QSB2.Utility;
 using QSB2.WakeUpSync;
@@ -31,13 +32,15 @@ public class QSB2 : ModBehaviour
     public void Awake()
     {
         Instance = this;
-        new Harmony("JohnCorby.QSB2").PatchAll(Assembly.GetExecutingAssembly());
+        // new Harmony("JohnCorby.QSB2").PatchAll(Assembly.GetExecutingAssembly());
 
         Gizmos.CameraFilter = _ => true;
 
         // i want all static constructors running at the beginning instead of whenever we first reference
         foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
             RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+        
+        QPatchManager.Patch(QPatchWhen.Immediately);
     }
 
     public override void Configure(IModConfig config)

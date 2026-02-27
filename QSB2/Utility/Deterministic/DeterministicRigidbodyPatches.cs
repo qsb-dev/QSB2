@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using HarmonyLib;
 using OWML.Utils;
+using QSB2.Patches;
 using UnityEngine;
 
 namespace QSB2.Utility.Deterministic;
@@ -9,7 +10,7 @@ namespace QSB2.Utility.Deterministic;
 /// used to capture the true path of a rigidbody before it changes parent
 /// </summary>
 [HarmonyPatch(typeof(OWRigidbody))]
-public static class DeterministicRigidbodyPatches
+public class DeterministicRigidbodyPatches() : QPatch(QPatchWhen.Immediately)
 {
     /// <summary>
     /// changing the parent has to be deferred until Start to preserve the sibling index.

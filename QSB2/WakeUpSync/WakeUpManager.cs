@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using HarmonyLib;
+﻿using HarmonyLib;
 using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
+using QSB2.Patches;
 using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
@@ -10,7 +10,6 @@ using UnityEngine.InputSystem;
 
 namespace QSB2.WakeUpSync;
 
-[HarmonyPatch]
 public static class WakeUpManager
 {
     public static float TimeScale = 1;
@@ -93,6 +92,17 @@ public static class WakeUpManager
         // BUG: not properly preventing pausing does a buncha goofy player movement bugs. im lazy rn
         Time.timeScale = TimeScale;
     }
+}
+
+[HarmonyPatch]
+public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
+{
+    [HarmonyPrefix, HarmonyPatch(typeof(PlayerCameraEffectController), nameof(PlayerCameraEffectController.OnStartOfTimeLoop))]
+    public static bool PlayerCameraEffectController_OnStartOfTimeLoop(PlayerCameraEffectController __instance)
+    {
+        __instance.WakeUp();
+        return false;
+    }
 
     /*
     [HarmonyPrefix, HarmonyPatch(typeof(Time), nameof(Time.timeScale), MethodType.Setter)]
@@ -101,15 +111,6 @@ public static class WakeUpManager
         value = TimeScale;
     }
     */
-
-    [HarmonyPrefix, HarmonyPatch(typeof(PlayerCameraEffectController), nameof(PlayerCameraEffectController.OnStartOfTimeLoop))]
-    public static bool PlayerCameraEffectController_OnStartOfTimeLoop(PlayerCameraEffectController __instance)
-    {
-        if (!NetworkManager.IsConnected) return true;
-
-        __instance.WakeUp();
-        return false;
-    }
 }
 
 [MessagePackObject]

@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using QSB2.Patches;
 using UnityEngine;
 
 namespace QSB2;
@@ -8,7 +9,7 @@ namespace QSB2;
 /// theres a chance this breaks something, but idk what.
 /// </summary>
 [HarmonyPatch(typeof(OWExtensions))]
-public static class GetAttachedOWRigidbodyPatch
+public class GetAttachedOWRigidbodyPatch() : QPatch(QPatchWhen.Immediately) // might turn into onconnected
 {
     [HarmonyPrefix]
     [HarmonyPatch(nameof(OWExtensions.GetAttachedOWRigidbody), typeof(GameObject), typeof(bool))]

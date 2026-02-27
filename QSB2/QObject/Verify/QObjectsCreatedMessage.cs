@@ -2,6 +2,7 @@ using System.Linq;
 using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
+using QSB2.Patches;
 using QSB2.WakeUpSync;
 
 namespace QSB2.QObject.Verify;
@@ -33,5 +34,7 @@ public class QObjectsCreatedMessage : Message
         }
 
         WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
+        if (WakeUpManager.AllQObjectsCreated) QPatchManager.Patch(QPatchWhen.OnQObjectsCreated);
+        else QPatchManager.Unpatch(QPatchWhen.OnQObjectsCreated);
     }
 }

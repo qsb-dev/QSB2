@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MessagePack;
 using QSB2.Ownership;
+using QSB2.Patches;
 using QSB2.QObject;
 using QSB2.WakeUpSync;
 
@@ -8,7 +9,6 @@ namespace QSB2.OrbSync;
 
 // BUG: move orb to slot probably not accounted for here. might also break for some slots maybe idk
 // BUG: suspended orb doesnt trigger slot message
-[HarmonyPatch]
 public class Orb : QObject<NomaiInterfaceOrb>, ITickable
 {
     public override void Create()
@@ -36,11 +36,25 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
         PositionSync.Tick();
         VelocitySync.Tick();
     }
+}
 
+[MessagePackObject]
+public class OrbDragMessage : QObjectMessage<Orb>
+{
+    [Key(1)] public required bool Value;
+
+    public override void OnReceive(Orb qObject, int from, int to)
+    {
+        qObject.Component._isBeingDragged = Value;
+    }
+}
+
+[HarmonyPatch]
+public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
+{
     [HarmonyPostfix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.StartDragFromPosition))]
     public static void NomaiInterfaceOrb_StartDragFromPosition(NomaiInterfaceOrb __instance)
     {
-        if (!WakeUpManager.AllQObjectsCreated) return;
         if (!__instance._isBeingDragged) return; // might not have set this to true
 
         var orb = __instance.GetQObject<Orb>();
@@ -55,7 +69,6 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
     [HarmonyPostfix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.CancelDrag))]
     public static void NomaiInterfaceOrb_CancelDrag(NomaiInterfaceOrb __instance)
     {
-        if (!WakeUpManager.AllQObjectsCreated) return;
         var orb = __instance.GetQObject<Orb>();
         orb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
 
@@ -63,16 +76,5 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
         {
             Value = false
         }, -2);
-    }
-}
-
-[MessagePackObject]
-public class OrbDragMessage : QObjectMessage<Orb>
-{
-    [Key(1)] public required bool Value;
-
-    public override void OnReceive(Orb qObject, int from, int to)
-    {
-        qObject.Component._isBeingDragged = Value;
     }
 }

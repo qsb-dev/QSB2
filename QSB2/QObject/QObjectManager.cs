@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using OWML.Common;
-using QSB2.OrbSync;
-using QSB2.PlayerSync;
-using QSB2.ProbeSync;
-using QSB2.SectorSync;
-using QSB2.ShipSync;
 using QSB2.Utility;
 using QSB2.WakeUpSync;
 using UnityEngine;
@@ -41,6 +36,7 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
+            // TODO: spread over frames
             foreach (var builder in _builders)
             {
                 try

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using QSB2.Messaging;
+using QSB2.Patches;
 using QSB2.QObject;
 using QSB2.WakeUpSync;
 using SteamTransport;
@@ -67,6 +68,7 @@ public static class NetworkManager
         Connections.Add(0, new(0, StandaloneProfileManager.SharedInstance.currentProfile.profileName));
         ConnectionIDs.Add(0);
         LocalID = 0;
+        QPatchManager.Patch(QPatchWhen.OnConnected);
         // we will NOT send the join event here. might change that later
 
         WakeUpManager.CanJoin = true; // let us join on title screen
@@ -103,6 +105,7 @@ public static class NetworkManager
                 }
 
                 TickableManager.Tickables.Clear();
+                QPatchManager.Unpatch(QPatchWhen.OnConnected);
 
                 // client already closed
                 _client = null;
@@ -128,6 +131,7 @@ public static class NetworkManager
             }
 
             TickableManager.Tickables.Clear();
+            QPatchManager.Unpatch(QPatchWhen.OnConnected);
         }
 
         _client?.Close();
