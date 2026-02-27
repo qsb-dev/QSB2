@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using OWML.Common;
 using QSB2.OrbSync;
 using QSB2.PlayerSync;
 using QSB2.ProbeSync;
@@ -21,29 +22,38 @@ public static class QObjectManager
         public readonly Dictionary<int, QObject> QObjects = new();
     }
 
-    public static readonly Dictionary<int, Entry> Entries = new();
+    internal static readonly Dictionary<int, Entry> _entries = new();
 
     internal static readonly Dictionary<Component, QObject> _componentToObject = new();
+
+    private static readonly List<QObjectBuilder> _builders = new();
 
     static QObjectManager()
     {
         foreach (var type in typeof(QObject).GetDerivedTypes())
-        {
-            Entries.Add(type.Hash(), new(type));
-        }
+            _entries.Add(type.Hash(), new(type));
+
+        foreach (var type in typeof(QObjectBuilder).GetDerivedTypes())
+            _builders.Add((QObjectBuilder)Activator.CreateInstance(type));
 
         QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
         {
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
-            // TODO: refactor
-            PlayerManager.Destroy();
-            ProbeManager.Destroy();
-            QShipManager.Destroy();
-            QSectorManager.Destroy();
-            OrbManager.Destroy();
+            foreach (var builder in _builders)
+            {
+                try
+                {
+                    builder.Destroy();
+                }
+                catch (Exception e)
+                {
+                    Logger.Log(e.ToString(), MessageType.Error);
+                }
+            }
         };
+
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
             if (!NetworkManager.IsConnected) return;
@@ -51,11 +61,17 @@ public static class QObjectManager
 
             Delay.RunWhen(() => LateInitializerManager.isDoneInitializing && WakeUpManager.AllScenesSame && !WakeUpManager.HostWaitingForPlayers, () =>
             {
-                PlayerManager.Create();
-                ProbeManager.Create();
-                QShipManager.Create();
-                QSectorManager.Create();
-                OrbManager.Create();
+                foreach (var builder in _builders)
+                {
+                    try
+                    {
+                        builder.Create();
+                    }
+                    catch (Exception e)
+                    {
+                        Logger.Log(e.ToString(), MessageType.Error);
+                    }
+                }
             });
         };
 
@@ -79,7 +95,7 @@ public static class QObjectManager
     public static T GetQObject<T>(this int id) where T : QObject, new()
     {
         if (!WakeUpManager.AllQObjectsCreated) throw new Exception($"tried to get {typeof(T)} from id {id} when not all qobjects created");
-        var entry = Entries[typeof(T).Hash()];
+        var entry = _entries[typeof(T).Hash()];
         if (!entry.QObjects.TryGetValue(id, out var qObject)) throw new ArgumentException($"could not find {typeof(T)} for id {id}");
         return (T)qObject;
     }

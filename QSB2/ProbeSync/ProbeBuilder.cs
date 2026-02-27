@@ -1,20 +1,19 @@
 ﻿using System.Linq;
 using QSB2.Messaging;
-using QSB2.PlayerSync;
 using QSB2.QObject;
 using QSB2.QObject.Verify;
 using QSB2.Utility;
 
 namespace QSB2.ProbeSync;
 
-public class ProbeManager
+public class ProbeBuilder : QObjectBuilder
 {
-    static ProbeManager()
+    static ProbeBuilder()
     {
         LeaveMessage.Event += id => { NetworkManager.Connections[id].Probe?.Destroy(); };
     }
 
-    public static void Create()
+    public override void Create()
     {
         foreach (var connection in NetworkManager.Connections.Values)
         {
@@ -28,13 +27,13 @@ public class ProbeManager
         {
             Type = typeof(Probe).Hash(),
             Created = true,
-            Count = QObjectManager.Entries[typeof(Probe).Hash()].QObjects.Count,
+            Count = QObjectManager._entries[typeof(Probe).Hash()].QObjects.Count,
         }.Send(-1);
     }
 
-    public static void Destroy()
+    public override void Destroy()
     {
-        var entry = QObjectManager.Entries[typeof(Probe).Hash()];
+        var entry = QObjectManager._entries[typeof(Probe).Hash()];
         foreach (var qObject in entry.QObjects.Values.ToList())
         {
             qObject.Destroy();

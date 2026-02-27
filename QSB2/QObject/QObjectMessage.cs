@@ -20,7 +20,7 @@ public abstract class QObjectMessage : Message
         }
 
         // maybe use extension method here later
-        var entry = QObjectManager.Entries[Type];
+        var entry = QObjectManager._entries[Type];
         if (!entry.QObjects.TryGetValue(ID, out var qObject))
         {
             Logger.Log($"received {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);
@@ -47,7 +47,7 @@ public abstract class QObjectMessage<T> : Message where T : QObject, new() // no
         }
         
         // maybe use extension method here later
-        var entry = QObjectManager.Entries[typeof(T).Hash()];
+        var entry = QObjectManager._entries[typeof(T).Hash()];
         if (!entry.QObjects.TryGetValue(ID, out var qObject))
         {
             Logger.Log($"received {GetType()} with unknown qobject type {entry.Type} id {ID}", MessageType.Error);

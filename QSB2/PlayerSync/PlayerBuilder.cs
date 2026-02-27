@@ -6,14 +6,14 @@ using QSB2.Utility;
 
 namespace QSB2.PlayerSync;
 
-public class PlayerManager
+public class PlayerBuilder : QObjectBuilder
 {
-    static PlayerManager()
+    static PlayerBuilder()
     {
         LeaveMessage.Event += id => { NetworkManager.Connections[id].Player?.Destroy(); };
     }
 
-    public static void Create()
+    public override void Create()
     {
         foreach (var connection in NetworkManager.Connections.Values)
         {
@@ -27,13 +27,13 @@ public class PlayerManager
         {
             Type = typeof(Player).Hash(),
             Created = true,
-            Count = QObjectManager.Entries[typeof(Player).Hash()].QObjects.Count,
+            Count = QObjectManager._entries[typeof(Player).Hash()].QObjects.Count,
         }.Send(-1);
     }
 
-    public static void Destroy()
+    public override void Destroy()
     {
-        var entry = QObjectManager.Entries[typeof(Player).Hash()];
+        var entry = QObjectManager._entries[typeof(Player).Hash()];
         foreach (var qObject in entry.QObjects.Values.ToList())
         {
             qObject.Destroy();
