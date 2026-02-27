@@ -11,6 +11,8 @@ public static class MessageManager
 {
     /// <summary>
     /// should messages to self skip routing thru the server?
+    ///
+    /// true makes local messages receive inline, but it breaks message ordering guarantee that steam does between all clients
     /// </summary>
     public const bool DoMessageLoopback = false;
 
