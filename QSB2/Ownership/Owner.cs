@@ -14,7 +14,7 @@ public class Owner(QObject.QObject qObject)
 
 public class OwnerQueue(QObject.QObject qObject)
 {
-    // BUG: if 2 clients send messages at the same time, what happens? do they arrive in the same order on both ends? else this would get desynced
+    // BUG: without loopback, steam preserves order between clients. with loopback, these become desynced!
     public readonly List<int> IDs = new();
 
     public void DoAction(OwnerQueueAction action, int id = -1)
