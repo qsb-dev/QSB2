@@ -9,6 +9,9 @@ namespace QSB2.Messaging;
 
 public static class MessageManager
 {
+    /// <summary>
+    /// should messages to self skip routing thru the server?
+    /// </summary>
     public const bool DoMessageLoopback = false;
 
     private static readonly Dictionary<int, Type> _hashToType = new();
