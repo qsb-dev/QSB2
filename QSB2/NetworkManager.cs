@@ -92,6 +92,7 @@ public static class NetworkManager
             {
                 Logger.Log("client connected");
                 Application.runInBackground = true;
+                QPatchManager.Patch(QPatchWhen.OnConnected);
             };
             _client.OnDisconnected = reason =>
             {
