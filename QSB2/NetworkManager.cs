@@ -18,7 +18,8 @@ public static class NetworkManager
     public static bool IsHost => _server?.IsListening ?? false;
 
     public static string Address;
-    public static bool UseIpAddress, DoFakeNetworkErrors;
+    public static bool UseIpAddress;
+    public static int DoFakeNetworkErrors;
 
     public static void Host()
     {

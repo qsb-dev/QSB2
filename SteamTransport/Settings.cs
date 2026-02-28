@@ -29,5 +29,5 @@ public class Settings
     /// <summary>
     /// whether or not to simulate fake packet loss, lag, reorder, and dup
     /// </summary>
-    public bool DoFakeNetworkErrors;
+    public int DoFakeNetworkErrors = 0;
 }

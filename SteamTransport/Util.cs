@@ -81,7 +81,7 @@ public static class Util
         });
 
         // 20% change of doing all, all delays are 200 ms. leads to about 1 second of rtt ping if enabled on both ends.
-        if (settings.DoFakeNetworkErrors)
+        if (settings.DoFakeNetworkErrors != 0)
         {
             // global scope = dont apply to connection
             static void SetConfigValue(ESteamNetworkingConfigValue key, object value)
@@ -101,19 +101,32 @@ public static class Util
                 handle.Free();
             }
 
-            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Send, (float)20);
-            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Recv, (float)20);
+            switch (settings.DoFakeNetworkErrors)
+            {
+                case 1:
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Send, (float)20);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLoss_Recv, (float)20);
 
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Send, (int)500);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Recv, (int)500);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Send, (int)200);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Recv, (int)200);
 
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Send, (float)50);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Recv, (float)500);
-            SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Time, (int)500);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Send, (float)20);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Recv, (float)200);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Time, (int)200);
 
-            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Send, (float)20);
-            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Recv, (float)20);
-            // SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_TimeMax, (int)200);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Send, (float)20);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_Recv, (float)20);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketDup_TimeMax, (int)200);
+                    break;
+                case 2: 
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Send, (int)500);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketLag_Recv, (int)500);
+
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Send, (float)50);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Recv, (float)500);
+                    SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_FakePacketReorder_Time, (int)500);
+                    break;
+            }
         }
 
         return result.ToArray();

@@ -47,7 +47,7 @@ public class QSB2 : ModBehaviour
     {
         NetworkManager.Address = config.GetSettingsValue<string>("Address");
         NetworkManager.UseIpAddress = config.GetSettingsValue<bool>("Use Ip Address");
-        NetworkManager.DoFakeNetworkErrors = config.GetSettingsValue<bool>("Do Fake Network Errors");
+        NetworkManager.DoFakeNetworkErrors = config.GetSettingsValue<int>("Do Fake Network Errors");
     }
 
     public void Start()

@@ -4,6 +4,6 @@
   "settings": {
     "Address": "127.0.0.1:1337",
     "Use Ip Address": false,
-    "Do Fake Network Errors": false
+    "Do Fake Network Errors": 0
   }
 }
