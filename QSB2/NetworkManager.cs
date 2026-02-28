@@ -105,6 +105,7 @@ public static class NetworkManager
                 }
 
                 TickableManager.Tickables.Clear();
+                StartableManager.Startables.Clear();
                 QPatchManager.Unpatch(QPatchWhen.OnConnected);
 
                 // client already closed
@@ -131,6 +132,7 @@ public static class NetworkManager
             }
 
             TickableManager.Tickables.Clear();
+            StartableManager.Startables.Clear();
             QPatchManager.Unpatch(QPatchWhen.OnConnected);
         }
 
