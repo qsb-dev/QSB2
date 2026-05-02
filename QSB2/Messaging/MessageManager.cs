@@ -12,9 +12,9 @@ public static class MessageManager
     /// <summary>
     /// should messages to self skip routing thru the server?
     ///
-    /// true makes local messages receive inline, but it breaks message ordering guarantee that steam does between all clients
+    /// true makes local messages receive immediately but it breaks message ordering guarantee that steam does between all clients
     /// </summary>
-    public const bool DoMessageLoopback = false;
+    public const bool DoMessageLoopback = true;
 
     private static readonly Dictionary<int, Type> _hashToType = new();
 

@@ -1,7 +1,6 @@
 ﻿using MessagePack;
 using QSB2.QObject;
 using QSB2.SectorSync;
-using QSB2.Utility;
 using SteamTransport;
 
 namespace QSB2.PositionSync;
@@ -10,6 +9,11 @@ public class RelativeToSector(QObject.QObject qObject)
 {
     public SectorDetector SectorDetector;
     public QSector QSector;
+    /// <summary>
+    /// non owners take a bit to receive the first sector message.
+    /// TODO: somehow account for this in the initialization process?
+    /// </summary>
+    public bool SectorSet => QSector != null;
 
     public void Tick()
     {
