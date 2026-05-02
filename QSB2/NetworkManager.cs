@@ -159,6 +159,8 @@ public static class NetworkManager
 
     public static Connection LocalConnection => Connections[LocalID];
 
-    // there's time between connecting and getting local id (identify message) and getting connection (join message)
+    /// <summary>
+    /// there's time between connecting and getting local id (identify message) and getting connection (join message)
+    /// </summary>
     public static bool LocalConnectionExists => IsConnected && LocalID != -1 && Connections.ContainsKey(LocalID);
 }

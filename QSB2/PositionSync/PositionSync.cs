@@ -17,8 +17,7 @@ public class PositionSync(QObject.QObject qObject)
     {
         if (qObject.Owner.ID == -1) return; // no owner = do nothing
         
-        // TODO: maybe have some sort of flag for this to signal that hey were not actually completely initialized yet (since we dont have a valid position yet!)
-        if (Reference == null) return; // will result in thing floating around for a bit. maybe make invisible while thats happening
+        if (Reference == null) return; // happens with RelativeToSector usually
         
         if (qObject.Owner.DoWeOwn)
         {
