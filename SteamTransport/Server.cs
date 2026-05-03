@@ -157,6 +157,7 @@ public class Server
     public void Close()
     {
         // mirror disconnects all clients for us before this
+        // TODO: do we have to do this ourselves now??
         _settings.Log("stop server");
         var result = SteamNetworkingSockets.CloseListenSocket(_listenSocket);
         if (result != true)

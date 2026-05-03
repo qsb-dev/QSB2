@@ -4,7 +4,7 @@ using QSB2.WakeUpSync;
 namespace QSB2.Messaging;
 
 /// <summary>
-/// server tells us who we are
+/// server tells us who we and existing people are
 /// </summary>
 [MessagePackObject]
 public class IdentifyMessage : Message

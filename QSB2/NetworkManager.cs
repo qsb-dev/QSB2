@@ -97,7 +97,7 @@ public static class NetworkManager
             _client.OnDisconnected = reason =>
             {
                 Logger.Log($"client disconnected because {reason}");
-                // just clear out everything, i dont care
+                // just clear out everything, i dont care about proper disposal after we leave
                 Connections.Clear();
                 ConnectionIDs.Clear();
                 foreach (var entry in QObjectManager.Entries.Values)
@@ -107,7 +107,6 @@ public static class NetworkManager
                 }
 
                 TickableManager.Tickables.Clear();
-                StartableManager.Startables.Clear();
                 QPatchManager.Unpatch(QPatchWhen.OnConnected);
 
                 // client already closed
@@ -124,7 +123,7 @@ public static class NetworkManager
         if (IsHost)
         {
             _serverClients.Clear();
-            // just clear out everything, i dont care
+            // just clear out everything, i dont care about proper disposal after we leave
             Connections.Clear();
             ConnectionIDs.Clear();
             foreach (var entry in QObjectManager.Entries.Values)
@@ -134,7 +133,6 @@ public static class NetworkManager
             }
 
             TickableManager.Tickables.Clear();
-            StartableManager.Startables.Clear();
             QPatchManager.Unpatch(QPatchWhen.OnConnected);
         }
 
@@ -154,7 +152,7 @@ public static class NetworkManager
 
     internal static readonly List<int> _serverClients = new(); // separate list so broadcasts work before JoinMessage
     public static int LocalID = -1;
-    public static readonly List<int> ConnectionIDs = new(); // for order
+    public static readonly List<int> ConnectionIDs = new(); // for well-defined order
     public static readonly Dictionary<int, Connection> Connections = new();
 
     public static Connection LocalConnection => Connections[LocalID];

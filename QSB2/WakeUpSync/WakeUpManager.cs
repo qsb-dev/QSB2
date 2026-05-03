@@ -3,7 +3,6 @@ using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
 using QSB2.Patches;
-using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -53,7 +52,6 @@ public static class WakeUpManager
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                 TimeScale = 1;
                 CanJoin = false;
-                StartableManager.Start();
             });
         };
     }
@@ -75,7 +73,8 @@ public static class WakeUpManager
             var hostTime = NetworkManager.Connections[NetworkManager.ConnectionIDs[0]].Time;
             var myTime = NetworkManager.LocalConnection.Time;
             var diff = hostTime - myTime;
-            // TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
+            // exponential because -1 diff should be half speed and 1 diff should be 2x speed
+            TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
         }
 
         if (Time.timeSinceLevelLoad < _lastTimeSend || Time.timeSinceLevelLoad > _lastTimeSend + 1)
@@ -89,8 +88,8 @@ public static class WakeUpManager
             }.Send(-1);
         }
 
-        // BUG: not properly preventing pausing does a buncha goofy player movement bugs. im lazy rn
-        Time.timeScale = TimeScale;
+        if (!OWTime.IsPaused())
+            Time.timeScale = TimeScale;
     }
 }
 
@@ -100,17 +99,29 @@ public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
     [HarmonyPrefix, HarmonyPatch(typeof(PlayerCameraEffectController), nameof(PlayerCameraEffectController.OnStartOfTimeLoop))]
     public static bool PlayerCameraEffectController_OnStartOfTimeLoop(PlayerCameraEffectController __instance)
     {
+        // wake up immediately
         __instance.WakeUp();
         return false;
     }
 
-    /*
-    [HarmonyPrefix, HarmonyPatch(typeof(Time), nameof(Time.timeScale), MethodType.Setter)]
-    public static void Time_timeScale_Setter(ref float value)
+    [HarmonyPrefix]
+    [HarmonyPatch(typeof(OWTime), nameof(OWTime.Pause))]
+    public static bool StopPausing(ref OWTime.PauseType pauseType)
     {
-        value = TimeScale;
+        // loading pausing should stay. everything else should not pause
+        if (pauseType is OWTime.PauseType.Initializing
+            or OWTime.PauseType.Streaming
+            or OWTime.PauseType.Loading)
+        {
+            return true;
+        }
+        else
+        {
+            // stop NomaiVR from pausing manually grrrrrrrrrrr
+            pauseType = OWTime.PauseType.Menu;
+            return false;
+        }
     }
-    */
 }
 
 [MessagePackObject]
