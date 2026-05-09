@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using OWML.Common;
 using QSB2.Utility;
 using QSB2.WakeUpSync;
@@ -79,6 +80,8 @@ public static class QObjectManager
     }
 
     #region utils
+
+    public static IEnumerable<T> GetQObjects<T>() where T : QObject, new() => Entries[typeof(T).Hash()].QObjects.Values.Cast<T>();
 
     public static T GetQObject<T>(this Component component) where T : QObject, new()
     {

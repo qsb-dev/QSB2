@@ -1,6 +1,11 @@
-﻿using MessagePack;
+﻿using System;
+using System.Linq;
+using MessagePack;
+using OWML.Common;
 using QSB2.QObject;
 using QSB2.SectorSync;
+using QSB2.Utility;
+using UnityEngine;
 
 namespace QSB2.PositionSync;
 
@@ -20,13 +25,26 @@ public class RelativeToSector(QObject.QObject qObject)
     /// </summary>
     public bool SectorSet => QSector != null;
 
+    // put closest sector calculation on a timer since its expensive ig. thatll just make it lag spike in intervals lollolol
+    private const float UpdateInterval = 0.4f;
+    private float _timer = UpdateInterval;
+
     public void Tick()
     {
         if (qObject.Owner.ID == -1) return; // no owner = do nothing
 
         if (qObject.Owner.DoWeOwn)
         {
-            var sector = SectorDetector.GetLastEnteredSector(); // TODO: replace with heuristic
+            // TODO: either remove this or have Teleport immediately trigger a recalc
+            _timer += Time.unscaledDeltaTime;
+            if (_timer < UpdateInterval)
+            {
+                return;
+            }
+
+            _timer = 0;
+
+            var sector = GetClosestSector();
             if (sector == null) return;
 
             var qSector = sector.GetQObject<QSector>();
@@ -52,6 +70,126 @@ public class RelativeToSector(QObject.QObject qObject)
             qObject.PositionSync.Reference = sector.transform;
         }
     }
+
+    #region closest sector heuristic
+
+    private Sector GetClosestSector()
+    {
+        var validSectors = SectorDetector._sectorList
+            .Where(ShouldSyncTo)
+            .ToList();
+
+        if (validSectors.Count == 0)
+        {
+            validSectors = Extensions.GetAllComponents<Sector>()
+                .Where(x =>
+                    // we only wanna sync to the major ones when far away
+                    x.GetName() != Sector.Name.Unnamed &&
+                    ShouldSyncTo(x))
+                .ToList();
+        }
+
+        if (validSectors.Count == 0)
+        {
+            return null;
+        }
+
+        return validSectors
+            .MinBy(GetPenaltyScore);
+    }
+
+    private static EyeShuttleController _cachedShuttleController;
+
+    private bool ShouldSyncTo(Sector sector)
+    {
+        var occupantType = SectorDetector._occupantType;
+
+        // if we're the ship, don't sync to own sector
+        if (occupantType == DynamicOccupant.Ship && sector.GetName() == Sector.Name.Ship)
+        {
+            return false;
+        }
+
+        if (!sector.gameObject.activeInHierarchy)
+        {
+            return false;
+        }
+
+        // ig we gotta check if we're in the shuttle
+        if (sector.name is "Sector_Shuttle" or "Sector_NomaiShuttleInterior")
+        {
+            if (LoadManager.GetCurrentScene() == OWScene.SolarSystem)
+            {
+                var shuttleController = sector.gameObject.GetComponentInParent<NomaiShuttleController>();
+                if (shuttleController == null)
+                {
+                    Logger.Log($"Warning - Expected to find a NomaiShuttleController for {sector.name}!", MessageType.Warning);
+                    return false;
+                }
+
+                if (!shuttleController.IsPlayerInside())
+                {
+                    return false;
+                }
+            }
+            else if (LoadManager.GetCurrentScene() == OWScene.EyeOfTheUniverse)
+            {
+                if (!_cachedShuttleController)
+                {
+                    _cachedShuttleController = Extensions.GetAllComponents<EyeShuttleController>().Single();
+                }
+
+                if (!_cachedShuttleController._isPlayerInside)
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private float GetPenaltyScore(Sector sector)
+    {
+        var rigidbody = SectorDetector._attachedRigidbody;
+
+        // farther away = worse
+        var sqrDistance = (sector._triggerRoot.transform.position - rigidbody.GetPosition()).sqrMagnitude;
+        // bigger radius is usually not subsector = worse
+        var radius = GetRadius(sector);
+        // we wanna be moving at similar speeds (this is mainly for timeloop ring)
+        var sqrVelocity = GetSqrVelocity(sector);
+
+        return sqrDistance + radius * radius + sqrVelocity;
+    }
+
+    private float GetRadius(Sector sector)
+    {
+        // TODO : make this work for other stuff, not just shaped triggervolumes
+        var trigger = sector.GetTriggerVolume();
+        if (trigger && trigger.GetShape())
+        {
+            return trigger.GetShape().CalcWorldBounds().radius;
+        }
+
+        return 0f;
+    }
+
+    private float GetSqrVelocity(Sector sector)
+    {
+        var rigidbody = SectorDetector._attachedRigidbody;
+
+        var sectorRigidbody = sector.GetOWRigidbody();
+        if (sectorRigidbody && rigidbody)
+        {
+            var relativeVelocity = rigidbody.GetVelocity() - sectorRigidbody.GetPointVelocity(rigidbody.GetPosition());
+            return relativeVelocity.sqrMagnitude;
+        }
+
+        return 0;
+    }
+
+    #endregion
 }
 
 [MessagePackObject]
