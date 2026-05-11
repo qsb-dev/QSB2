@@ -50,11 +50,11 @@ public class RelativeToSector(QObject.QObject qObject)
             var qSector = sector.GetQObject<QSector>();
 
             // this is infrequent, so only send on change
-            if (QSector != qSector)
+            if (qSector != QSector)
             {
                 qObject.Send(new ChangeSectorMessage
                 {
-                    SectorID = QSector.ID,
+                    SectorID = qSector.ID,
                 }, -2);
 
                 qObject.PositionSync.Reference = sector.transform;

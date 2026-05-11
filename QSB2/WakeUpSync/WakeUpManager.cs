@@ -118,6 +118,7 @@ public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
         else
         {
             // stop NomaiVR from pausing manually grrrrrrrrrrr
+            // https://github.com/Raicuparta/nomai-vr/blob/master/NomaiVR/UI/LookArrow.cs#L138
             pauseType = OWTime.PauseType.Menu;
             return false;
         }

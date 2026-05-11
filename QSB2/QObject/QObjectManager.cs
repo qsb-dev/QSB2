@@ -77,6 +77,7 @@ public static class QObjectManager
             if (sw.Elapsed.TotalSeconds > 1 / 15f)
             {
                 sw.Restart();
+                Logger.Log("NEXT FRAME");
                 yield return null;
             }
         }
@@ -99,6 +100,7 @@ public static class QObjectManager
             if (sw.Elapsed.TotalSeconds > 1 / 15f)
             {
                 sw.Restart();
+                Logger.Log("NEXT FRAME");
                 yield return null;
             }
         }
