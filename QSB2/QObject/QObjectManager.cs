@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using OWML.Common;
 using QSB2.Utility;
@@ -37,18 +39,7 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
-            // TODO: spread over frames
-            foreach (var builder in _builders)
-            {
-                try
-                {
-                    builder.Destroy();
-                }
-                catch (Exception e)
-                {
-                    Logger.Log(e.ToString(), MessageType.Error);
-                }
-            }
+            QSB2.Instance.StartCoroutine(BuildersDestroy());
         };
 
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
@@ -56,20 +47,7 @@ public static class QObjectManager
             if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
-            Delay.RunWhen(() => LateInitializerManager.isDoneInitializing && WakeUpManager.AllScenesSame && !WakeUpManager.HostWaitingForPlayers, () =>
-            {
-                foreach (var builder in _builders)
-                {
-                    try
-                    {
-                        builder.Create();
-                    }
-                    catch (Exception e)
-                    {
-                        Logger.Log(e.ToString(), MessageType.Error);
-                    }
-                }
-            });
+            QSB2.Instance.StartCoroutine(BuildersCreate());
         };
 
         // leave if not in game scene
@@ -77,6 +55,53 @@ public static class QObjectManager
         {
             if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
+    }
+
+    // idk if spreading these over multiple frames will ever be necessary
+    private static IEnumerator BuildersCreate()
+    {
+        yield return new WaitUntil(() => LateInitializerManager.isDoneInitializing && WakeUpManager.AllScenesSame && !WakeUpManager.HostWaitingForPlayers);
+
+        var sw = Stopwatch.StartNew();
+        foreach (var builder in _builders)
+        {
+            try
+            {
+                builder.Create();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.ToString(), MessageType.Error);
+            }
+
+            if (sw.Elapsed.TotalSeconds > 1 / 15f)
+            {
+                sw.Restart();
+                yield return null;
+            }
+        }
+    }
+
+    private static IEnumerator BuildersDestroy()
+    {
+        var sw = Stopwatch.StartNew();
+        foreach (var builder in _builders)
+        {
+            try
+            {
+                builder.Destroy();
+            }
+            catch (Exception e)
+            {
+                Logger.Log(e.ToString(), MessageType.Error);
+            }
+
+            if (sw.Elapsed.TotalSeconds > 1 / 15f)
+            {
+                sw.Restart();
+                yield return null;
+            }
+        }
     }
 
     #region utils
