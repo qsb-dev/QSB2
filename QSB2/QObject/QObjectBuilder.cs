@@ -17,7 +17,7 @@ public abstract class QObjectBuilder
         var msg = new QObjectsCreatedMessage
         {
             Type = typeof(T).Hash(),
-            Created = true,
+            Created = created
         };
         if (created) msg.Count = QObjectManager.Entries[typeof(T).Hash()].QObjects.Count;
         msg.Send(-1);
