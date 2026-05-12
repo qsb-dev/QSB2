@@ -82,7 +82,7 @@ public class RelativeToSector(QObject.QObject qObject)
 
         if (validSectors.Count == 0)
         {
-            if (_cachedSectors.FirstOrDefault() == null)
+            if (_cachedSectors?.FirstOrDefault() == null)
             {
                 _cachedSectors = Extensions.GetAllComponents<Sector>().ToArray();
             }
