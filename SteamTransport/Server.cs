@@ -139,11 +139,11 @@ public class Server
         }
     }
 
-    public void Disconnect(int connectionId)
+    public void Disconnect(int connectionId, string reason = "disconnected by server")
     {
         var conn = new HSteamNetConnection((uint)connectionId);
         _settings.Log($"disconnect {conn.ToDebugString()}");
-        var result = SteamNetworkingSockets.CloseConnection(conn, 0, "disconnected by server", false);
+        var result = SteamNetworkingSockets.CloseConnection(conn, 0, reason, false);
         if (result != true)
         {
             _settings.Log($"[warn] close {conn.ToDebugString()} returned {result}");

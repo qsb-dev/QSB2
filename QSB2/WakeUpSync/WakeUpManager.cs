@@ -3,6 +3,7 @@ using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
 using QSB2.Patches;
+using QSB2.QObject.Verify;
 using QSB2.Utility;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -49,6 +50,8 @@ public static class WakeUpManager
             // will eventually get set from object manager
             Delay.RunWhen(() => AllQObjectsCreated, () =>
             {
+                QObjectsVerifyMessage.DoVerify(); // TODO: stupid
+                
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                 TimeScale = 1;
                 CanJoin = false;
