@@ -8,7 +8,7 @@ namespace QSB2.PlayerSync;
 /// <summary>
 /// for actual player in the world
 /// </summary>
-public class Player : QObject<Transform>, ITickable
+public class QPlayer : QObject<Transform>, ITickable
 {
     public required Connection Connection;
 
@@ -20,7 +20,7 @@ public class Player : QObject<Transform>, ITickable
         Owner = new(this);
         Owner.ID = Connection.ID;
 
-        Connection.Player = this;
+        Connection.QPlayer = this;
 
         TickableManager.Tickables.Add(this);
 
@@ -47,7 +47,7 @@ public class Player : QObject<Transform>, ITickable
     public override void Destroy()
     {
         base.Destroy();
-        Connection.Player = null;
+        Connection.QPlayer = null;
 
         TickableManager.Tickables.Remove(this);
 

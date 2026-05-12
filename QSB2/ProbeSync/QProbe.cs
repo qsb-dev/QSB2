@@ -8,7 +8,7 @@ namespace QSB2.ProbeSync;
 /// <summary>
 /// for actual player in the world
 /// </summary>
-public class Probe : QObject<Transform>, ITickable
+public class QProbe : QObject<Transform>, ITickable
 {
     public required Connection Connection;
 
@@ -20,7 +20,7 @@ public class Probe : QObject<Transform>, ITickable
         Owner = new(this);
         Owner.ID = Connection.ID;
 
-        Connection.Probe = this;
+        Connection.QProbe = this;
 
         TickableManager.Tickables.Add(this);
 
@@ -42,7 +42,7 @@ public class Probe : QObject<Transform>, ITickable
     public override void Destroy()
     {
         base.Destroy();
-        Connection.Player = null;
+        Connection.QPlayer = null;
 
         TickableManager.Tickables.Remove(this);
 

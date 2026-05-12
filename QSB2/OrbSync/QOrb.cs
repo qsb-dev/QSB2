@@ -9,7 +9,7 @@ namespace QSB2.OrbSync;
 
 // BUG: move orb to slot probably not accounted for here. might also break for some slots maybe idk
 // BUG: suspended orb doesnt trigger slot message
-public class Orb : QObject<NomaiInterfaceOrb>, ITickable
+public class QOrb : QObject<NomaiInterfaceOrb>, ITickable
 {
     public override void Create()
     {
@@ -39,11 +39,11 @@ public class Orb : QObject<NomaiInterfaceOrb>, ITickable
 }
 
 [MessagePackObject]
-public class OrbDragMessage : QObjectMessage<Orb>
+public class OrbDragMessage : QObjectMessage<QOrb>
 {
     [Key(1)] public required bool Value;
 
-    public override void OnReceive(Orb qObject, int from, int to)
+    public override void OnReceive(QOrb qObject, int from, int to)
     {
         qObject.Component._isBeingDragged = Value;
     }
@@ -57,7 +57,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
     {
         if (!__instance._isBeingDragged) return; // might not have set this to true
 
-        var orb = __instance.GetQObject<Orb>();
+        var orb = __instance.GetQObject<QOrb>();
         orb.OwnerQueue.DoAction(OwnerQueueAction.Force);
 
         orb.Send(new OrbDragMessage
@@ -69,7 +69,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
     [HarmonyPostfix, HarmonyPatch(typeof(NomaiInterfaceOrb), nameof(NomaiInterfaceOrb.CancelDrag))]
     public static void NomaiInterfaceOrb_CancelDrag(NomaiInterfaceOrb __instance)
     {
-        var orb = __instance.GetQObject<Orb>();
+        var orb = __instance.GetQObject<QOrb>();
         orb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
 
         orb.Send(new OrbDragMessage

@@ -1,33 +1,34 @@
 ﻿using System.Linq;
 using QSB2.Messaging;
 using QSB2.QObject;
+using QSB2.QObject.Verify;
 using QSB2.Utility;
 
-namespace QSB2.ProbeSync;
+namespace QSB2.PlayerSync;
 
-public class ProbeBuilder : QObjectBuilder
+public class QPlayerBuilder : QObjectBuilder
 {
-    static ProbeBuilder()
+    static QPlayerBuilder()
     {
-        LeaveMessage.Event += id => { NetworkManager.Connections[id].Probe?.Destroy(); };
+        LeaveMessage.Event += id => { NetworkManager.Connections[id].QPlayer?.Destroy(); };
     }
 
     public override void Create()
     {
         foreach (var connection in NetworkManager.Connections.Values)
         {
-            new Probe
+            new QPlayer
             {
                 Connection = connection
             }.Create();
         }
 
-        SendCreated<Probe>(true);
+        SendCreated<QPlayer>(true);
     }
 
     public override void Destroy()
     {
-        var entry = QObjectManager.Entries[typeof(Probe).Hash()];
+        var entry = QObjectManager.Entries[typeof(QPlayer).Hash()];
         foreach (var qObject in entry.QObjects.Values.ToList())
         {
             qObject.Destroy();
@@ -35,6 +36,6 @@ public class ProbeBuilder : QObjectBuilder
 
         entry.NextId = 0;
 
-        SendCreated<Probe>(false);
+        SendCreated<QPlayer>(false);
     }
 }

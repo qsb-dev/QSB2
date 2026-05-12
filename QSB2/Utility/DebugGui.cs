@@ -29,7 +29,7 @@ public class DebugGui : MonoBehaviour
             GUILayout.Label($"\ttime {connection.Time} diff {connection.Time - NetworkManager.LocalConnection.Time}");
             GUILayout.Label($"\tscene {connection.Scene} counter {connection.LoadCounter}");
             GUILayout.Label($"\tcreated {connection.QObjectsCreated.Join()}");
-            GUILayout.Label($"\tsectors: player {connection.Player?.PositionSync?.Reference} | probe {connection.Probe?.PositionSync?.Reference} | ship {QShip.Instance?.PositionSync?.Reference}");
+            GUILayout.Label($"\tsectors: player {connection.QPlayer?.PositionSync?.Reference} | probe {connection.QProbe?.PositionSync?.Reference} | ship {QShip.Instance?.PositionSync?.Reference}");
         }
 
         if (Time.timeSinceLevelLoad < _lastPingSend || Time.timeSinceLevelLoad > _lastPingSend + 1)
