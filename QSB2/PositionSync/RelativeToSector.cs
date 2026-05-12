@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using MessagePack;
 using OWML.Common;
 using QSB2.QObject;
@@ -73,6 +72,8 @@ public class RelativeToSector(QObject.QObject qObject)
 
     #region closest sector heuristic
 
+    private static Sector[] _cachedSectors;
+
     private Sector GetClosestSector()
     {
         var validSectors = SectorDetector._sectorList
@@ -81,7 +82,12 @@ public class RelativeToSector(QObject.QObject qObject)
 
         if (validSectors.Count == 0)
         {
-            validSectors = Extensions.GetAllComponents<Sector>()
+            if (_cachedSectors.FirstOrDefault() == null)
+            {
+                _cachedSectors = Extensions.GetAllComponents<Sector>().ToArray();
+            }
+
+            validSectors = _cachedSectors
                 .Where(x =>
                     // we only wanna sync to the major ones when far away
                     x.GetName() != Sector.Name.Unnamed &&
