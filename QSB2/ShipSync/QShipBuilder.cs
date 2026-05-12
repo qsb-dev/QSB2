@@ -13,6 +13,11 @@ public class QShipBuilder : QObjectBuilder<QShip, Transform>
             {
                 Component = Locator.GetShipTransform()
             }.Create();
+
+            // dont care about removing, itll go away on scene transition
+            var shipCustomAttach = new GameObject(nameof(ShipCustomAttach));
+            shipCustomAttach.transform.SetParent(Locator.GetShipTransform(), false);
+            shipCustomAttach.AddComponent<ShipCustomAttach>();
         }
 
         SendCreated<QShip>(true);
