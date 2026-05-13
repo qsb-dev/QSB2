@@ -11,6 +11,9 @@ public class VelocitySync(QObject.QObject qObject)
     public Vector3 RelVel;
     public Vector3 RelAngVel;
 
+    public float UpdateInterval = 0f;
+    private float _timer;
+    
     public void Tick()
     {
         if (qObject.Owner.ID == -1) return; // no owner = do nothing
@@ -22,6 +25,10 @@ public class VelocitySync(QObject.QObject qObject)
 
         if (qObject.Owner.DoWeOwn)
         {
+            _timer += Time.unscaledDeltaTime;
+            if (_timer < UpdateInterval) return;
+            _timer = 0;
+            
             // owner - sync from unity component
             RelVel = refBody.ToRelVel(body.GetVelocity(), body.GetPosition());
             RelAngVel = refBody.ToRelAngVel(body.GetAngularVelocity());

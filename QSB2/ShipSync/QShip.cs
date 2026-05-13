@@ -29,6 +29,9 @@ public class QShip : QObject<Transform>, ITickable
         Instance = this;
 
         PositionSync = new(this);
+        // sync vel all the time. sync pos sometimes
+        PositionSync.UpdateInterval = 1f;
+        PositionSync.SetConstantly = false;
         VelocitySync = new(this);
         RelativeToSector = new(this);
         RelativeToSector.SectorDetector = Locator.GetShipTransform().GetComponentInChildren<SectorDetector>();

@@ -25,8 +25,8 @@ public class RelativeToSector(QObject.QObject qObject)
     public bool SectorSet => QSector != null;
 
     // put closest sector calculation on a timer since its expensive ig. thatll just make it lag spike in intervals lollolol
-    private const float UpdateInterval = 0.4f;
-    private float _timer = UpdateInterval;
+    public float UpdateInterval = 1f;
+    private float _timer;
 
     public void Tick()
     {
@@ -36,11 +36,7 @@ public class RelativeToSector(QObject.QObject qObject)
         {
             // TODO: either remove this or have Teleport immediately trigger a recalc
             _timer += Time.unscaledDeltaTime;
-            if (_timer < UpdateInterval)
-            {
-                return;
-            }
-
+            if (_timer < UpdateInterval) return;
             _timer = 0;
 
             var sector = GetClosestSector();

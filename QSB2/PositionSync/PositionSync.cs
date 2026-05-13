@@ -12,6 +12,11 @@ public class PositionSync(QObject.QObject qObject)
 
     public Vector3 RelPos;
     public Quaternion RelRot;
+    
+    public float UpdateInterval = 0f;
+    private float _timer;
+
+    public bool SetConstantly = true;
 
     public void Tick()
     {
@@ -21,6 +26,10 @@ public class PositionSync(QObject.QObject qObject)
         
         if (qObject.Owner.DoWeOwn)
         {
+            _timer += Time.unscaledDeltaTime;
+            if (_timer < UpdateInterval) return;
+            _timer = 0;
+            
             // owner - sync from unity component
             RelPos = Reference.ToRelPos(qObject.Component.transform.position);
             RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
@@ -33,6 +42,13 @@ public class PositionSync(QObject.QObject qObject)
         }
         else
         {
+            if (!SetConstantly)
+            {
+                _timer += Time.unscaledDeltaTime;
+                if (_timer < UpdateInterval) return;
+                _timer = 0;
+            }
+            
             // non owner - sync to unity component
             var body = qObject.Component.GetAttachedOWRigidbody();
             if (body)
