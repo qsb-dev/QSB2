@@ -40,7 +40,7 @@ public class PositionSync(QObject.QObject qObject)
                 RelPos = RelPos,
                 RelRot = RelRot,
                 Time = Time.unscaledTime,
-            }, -2, Channels.Unreliable);
+            }, -2, SetOnReceive ? Channels.Reliable : Channels.Unreliable);
         }
         else
         {
