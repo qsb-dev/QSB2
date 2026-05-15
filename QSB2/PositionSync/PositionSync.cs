@@ -103,6 +103,7 @@ public class PositionMessage : QObjectMessage
 
         if (sync.OccasionalMode)
         {
+            // BUG: doesnt set rel stuff or lerped rel stuff
             var body = qObject.Component.GetAttachedOWRigidbody();
             if (body)
             {
