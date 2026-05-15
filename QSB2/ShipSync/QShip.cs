@@ -37,7 +37,7 @@ public class QShip : QObject<Transform>, ITickable
         Owner = new(this);
         OwnerQueue = new(this);
 
-        TickableManager.Tickables.Add(this);
+        TickableManager.Tickables.Insert(0, this); // this should sync before player and probe :PPP
 
         Component = Locator.GetShipTransform();
 
