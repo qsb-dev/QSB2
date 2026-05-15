@@ -7,7 +7,7 @@ public abstract class QPatch(QPatchWhen when)
     /// <summary>
     /// are we in a remotely called context?
     /// </summary>
-    public bool Remote;
+    public static bool Remote;
 }
 
 public enum QPatchWhen

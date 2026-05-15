@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using MessagePack;
 using MessagePack.Unity;
 using OWML.Common;
+using QSB2.Patches;
 using QSB2.Utility;
 
 namespace QSB2.Messaging;
@@ -35,12 +36,15 @@ public static class MessageManager
             var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
             var type = _hashToType[rawMessage.Type];
             var message = (Message)MessagePackSerializer.Deserialize(type, rawMessage.Message)!;
+            QPatch.Remote = rawMessage.From != NetworkManager.LocalID;
             message.OnReceive(rawMessage.From, rawMessage.To);
         }
         catch (Exception e)
         {
             Logger.Log(e.ToString(), MessageType.Error);
         }
+
+        QPatch.Remote = false;
     }
 
     public static void OnServerData(int fromID, ArraySegment<byte> data, int channelId)
