@@ -10,7 +10,6 @@ public class VelocitySync(QObject.QObject qObject)
 {
     public Vector3 RelVel;
     public Vector3 RelAngVel;
-    public float PrevTime; // for dropping out of order messages
 
     public float UpdateInterval = 0f;
     private float _timer;
@@ -72,8 +71,9 @@ public class VelocityMessage : QObjectMessage
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
         if (Time < qObject.PositionSync.PrevTime) return;
+        qObject.PositionSync.PrevTime = Time;
+
         qObject.VelocitySync.RelVel = RelVel;
         qObject.VelocitySync.RelAngVel = RelAngVel;
-        qObject.PositionSync.PrevTime = Time;
     }
 }

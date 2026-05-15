@@ -17,7 +17,7 @@ public class PositionSync(QObject.QObject qObject)
     public float UpdateInterval = 0f;
     private float _timer;
 
-    public bool SetConstantly = true;
+    public bool SetOnReceive;
 
     public void Tick()
     {
@@ -44,12 +44,7 @@ public class PositionSync(QObject.QObject qObject)
         }
         else
         {
-            if (!SetConstantly)
-            {
-                _timer += Time.unscaledDeltaTime;
-                if (_timer < UpdateInterval) return;
-                _timer = 0;
-            }
+            if (SetOnReceive) return;
 
             // non owner - sync to unity component
             var body = qObject.Component.GetAttachedOWRigidbody();
@@ -81,9 +76,29 @@ public class PositionMessage : QObjectMessage
 
     public override void OnReceive(QObject.QObject qObject, int from, int to)
     {
-        if (Time < qObject.PositionSync.PrevTime) return;
-        qObject.PositionSync.RelPos = RelPos;
-        qObject.PositionSync.RelRot = RelRot;
-        qObject.PositionSync.PrevTime = Time;
+        var sync = qObject.PositionSync;
+
+        if (Time < sync.PrevTime) return;
+        sync.PrevTime = Time;
+
+        if (sync.SetOnReceive)
+        {
+            var body = qObject.Component.GetAttachedOWRigidbody();
+            if (body)
+            {
+                body.SetPosition(sync.Reference.FromRelPos(RelPos));
+                body.SetRotation(sync.Reference.FromRelRot(RelRot));
+            }
+            else
+            {
+                qObject.Component.transform.position = sync.Reference.FromRelPos(RelPos);
+                qObject.Component.transform.rotation = sync.Reference.FromRelRot(RelRot);
+            }
+        }
+        else
+        {
+            sync.RelPos = RelPos;
+            sync.RelRot = RelRot;
+        }
     }
 }
