@@ -1,6 +1,7 @@
 ﻿using MessagePack;
 using QSB.Utility;
 using QSB2.QObject;
+using QSB2.Utility;
 using SteamTransport;
 using UnityEngine;
 
@@ -14,10 +15,17 @@ public class PositionSync(QObject.QObject qObject)
     public Quaternion RelRot;
     public float PrevTime; // for dropping out of order messages
 
-    public float UpdateInterval = 0f;
+    public float UpdateInterval = .1f;
     private float _timer;
 
-    public bool SetOnReceive;
+    public bool OccasionalMode;
+    public bool Lerp = true;
+
+    private Vector3 _lerpedRelPos;
+    private Quaternion _lerpedRelRot;
+    private Vector3 _currentVel;
+    private Quaternion _currentAngVel;
+    private Transform _lastReference;
 
     public void Tick()
     {
@@ -32,38 +40,50 @@ public class PositionSync(QObject.QObject qObject)
             _timer = 0;
 
             // owner - sync from unity component
-            RelPos = Reference.ToRelPos(qObject.Component.transform.position);
-            RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
+            _lerpedRelPos = RelPos = Reference.ToRelPos(qObject.Component.transform.position);
+            _lerpedRelRot = RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
 
             qObject.Send(new PositionMessage
             {
                 RelPos = RelPos,
                 RelRot = RelRot,
                 Time = Time.unscaledTime,
-            }, -2, SetOnReceive ? Channels.Reliable : Channels.Unreliable);
+            }, -2, Channels.Unreliable);
         }
         else
         {
-            if (SetOnReceive) return;
+            if (OccasionalMode) return;
+
+            if (_lastReference != Reference)
+            {
+                // update relative location since we've changed references
+                // BUG: this doesnt change the damp vel/angvel so it looks weird
+                _lerpedRelPos = RelPos = Reference.ToRelPos(qObject.Component.transform.position);
+                _lerpedRelRot = RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
+            }
+            _lerpedRelPos = Lerp ? Vector3.SmoothDamp(_lerpedRelPos, RelPos, ref _currentVel, UpdateInterval) : RelPos;
+            _lerpedRelRot = Lerp ? Quaternion.SmoothDamp(_lerpedRelRot, RelRot, ref _currentAngVel, UpdateInterval) : RelRot;
+            _lastReference = Reference;
 
             // non owner - sync to unity component
             var body = qObject.Component.GetAttachedOWRigidbody();
             if (body)
             {
-                body.SetPosition(Reference.FromRelPos(RelPos));
-                body.SetRotation(Reference.FromRelRot(RelRot));
+                body.SetPosition(Reference.FromRelPos(Lerp ? _lerpedRelPos : RelPos));
+                body.SetRotation(Reference.FromRelRot(Lerp ? _lerpedRelRot : RelRot));
             }
             else
             {
-                qObject.Component.transform.position = Reference.FromRelPos(RelPos);
-                qObject.Component.transform.rotation = Reference.FromRelRot(RelRot);
+                qObject.Component.transform.position = Reference.FromRelPos(Lerp ? _lerpedRelPos : RelPos);
+                qObject.Component.transform.rotation = Reference.FromRelRot(Lerp ? _lerpedRelRot : RelRot);
             }
         }
     }
 
     public void Teleport()
     {
-        // TODO: eventually when we do smooth guy, this acts as a "please dont lerp" indicator
+        _lerpedRelPos = RelPos;
+        _lerpedRelRot = RelRot;
     }
 }
 
@@ -81,7 +101,7 @@ public class PositionMessage : QObjectMessage
         if (Time < sync.PrevTime) return;
         sync.PrevTime = Time;
 
-        if (sync.SetOnReceive)
+        if (sync.OccasionalMode)
         {
             var body = qObject.Component.GetAttachedOWRigidbody();
             if (body)

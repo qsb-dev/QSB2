@@ -29,15 +29,16 @@ public class QShip : QObject<Transform>, ITickable
         Instance = this;
 
         PositionSync = new(this);
-        // PositionSync.UpdateInterval = 1f;
-        // PositionSync.SetOnReceive = true;
+        PositionSync.UpdateInterval = 1f;
+        PositionSync.OccasionalMode = true;
+        PositionSync.Lerp = false;
         VelocitySync = new(this);
         RelativeToSector = new(this);
         RelativeToSector.SectorDetector = Locator.GetShipTransform().GetComponentInChildren<SectorDetector>();
         Owner = new(this);
         OwnerQueue = new(this);
 
-        TickableManager.Tickables.Insert(0, this); // this should sync before player and probe :PPP
+        TickableManager.Tickables.Add(this); // this should sync before player and probe :PPP
 
         Component = Locator.GetShipTransform();
 

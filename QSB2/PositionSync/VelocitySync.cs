@@ -12,7 +12,7 @@ public class VelocitySync(QObject.QObject qObject)
     public Vector3 RelAngVel;
     public float PrevTime; // for dropping out of order messages
 
-    public float UpdateInterval = 0f;
+    public float UpdateInterval = .1f;
     private float _timer;
 
     public void Tick()
