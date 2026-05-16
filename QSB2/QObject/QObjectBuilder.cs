@@ -54,6 +54,7 @@ public abstract class QObjectBuilder
     #endregion
 }
 
+// convenience thing
 public abstract class QObjectBuilder<TQ, TC> : QObjectBuilder where TQ : QObject<TC>, new() where TC : Component
 {
     public override void Create() => CreateWith<TQ, TC>();

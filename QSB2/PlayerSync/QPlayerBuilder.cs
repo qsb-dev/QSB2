@@ -1,12 +1,10 @@
-﻿using System.Linq;
-using QSB2.Messaging;
+﻿using QSB2.Messaging;
 using QSB2.QObject;
-using QSB2.QObject.Verify;
-using QSB2.Utility;
+using UnityEngine;
 
 namespace QSB2.PlayerSync;
 
-public class QPlayerBuilder : QObjectBuilder
+public class QPlayerBuilder : QObjectBuilder<QPlayer, Transform>
 {
     static QPlayerBuilder()
     {
@@ -24,18 +22,5 @@ public class QPlayerBuilder : QObjectBuilder
         }
 
         SendCreated<QPlayer>(true);
-    }
-
-    public override void Destroy()
-    {
-        var entry = QObjectManager.Entries[typeof(QPlayer).Hash()];
-        foreach (var qObject in entry.QObjects.Values.ToList())
-        {
-            qObject.Destroy();
-        }
-
-        entry.NextId = 0;
-
-        SendCreated<QPlayer>(false);
     }
 }

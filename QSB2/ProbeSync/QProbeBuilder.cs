@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using QSB2.Messaging;
+﻿using QSB2.Messaging;
 using QSB2.QObject;
-using QSB2.Utility;
+using UnityEngine;
 
 namespace QSB2.ProbeSync;
 
-public class QProbeBuilder : QObjectBuilder
+public class QProbeBuilder : QObjectBuilder<QProbe, Transform>
 {
     static QProbeBuilder()
     {
@@ -23,18 +22,5 @@ public class QProbeBuilder : QObjectBuilder
         }
 
         SendCreated<QProbe>(true);
-    }
-
-    public override void Destroy()
-    {
-        var entry = QObjectManager.Entries[typeof(QProbe).Hash()];
-        foreach (var qObject in entry.QObjects.Values.ToList())
-        {
-            qObject.Destroy();
-        }
-
-        entry.NextId = 0;
-
-        SendCreated<QProbe>(false);
     }
 }
