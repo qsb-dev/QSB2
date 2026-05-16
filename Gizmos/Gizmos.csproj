@@ -2,6 +2,12 @@
     <PropertyGroup>
         <TargetFramework>net48</TargetFramework>
         <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+        <!--        <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>-->
+        <NoWarn>MSB3270</NoWarn>
+        <DebugType>portable</DebugType>
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" ExcludeAssets="runtime" />
