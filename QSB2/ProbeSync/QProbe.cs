@@ -10,7 +10,7 @@ namespace QSB2.ProbeSync;
 /// </summary>
 public class QProbe : QObject<Transform>, ITickable
 {
-    public required Connection Connection;
+    public Connection Connection;
 
     public override void Create()
     {

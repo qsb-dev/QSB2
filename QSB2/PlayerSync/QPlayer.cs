@@ -10,7 +10,13 @@ namespace QSB2.PlayerSync;
 /// </summary>
 public class QPlayer : QObject<Transform>, ITickable
 {
-    public required Connection Connection;
+    public Connection Connection;
+
+    #region in game player state
+
+    public bool IsDead;
+
+    #endregion
 
     public override void Create()
     {

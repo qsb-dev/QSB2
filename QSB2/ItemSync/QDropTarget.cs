@@ -2,7 +2,7 @@
 
 namespace QSB2.ItemSync;
 
-public class QDropTarget : QObject.QObject
+public abstract class QDropTarget : QObject.QObject
 {
 }
 

@@ -9,8 +9,6 @@ using UnityEngine;
 
 namespace QSB2.OrbSync;
 
-// BUG: move orb to slot probably not accounted for here. might also break for some slots maybe idk
-// BUG: suspended orb doesnt trigger slot message
 public class QOrb : QObject<NomaiInterfaceOrb>, ITickable
 {
     public override void Create()
