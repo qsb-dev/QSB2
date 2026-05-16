@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using QSB2.Localization;
+using UnityEngine;
 
 namespace QSB2.ShipSync;
 
@@ -7,13 +8,13 @@ public class ShipCustomAttach : MonoBehaviour
     private readonly ScreenPrompt _attachPrompt = new(
         InputLibrary.interactSecondary,
         InputLibrary.interact,
-        "Attach to ship" + "   <CMD>",
+        QLocalization.Current.AttachToShip + "   <CMD>",
         ScreenPrompt.MultiCommandType.HOLD_ONE_AND_PRESS_2ND
     );
 
     private readonly ScreenPrompt _detachPrompt = new(
         InputLibrary.cancel,
-        "Detach from ship" + "   <CMD>"
+        QLocalization.Current.DetachFromShip + "   <CMD>"
     );
 
     private PlayerAttachPoint _playerAttachPoint;
