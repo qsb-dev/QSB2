@@ -1,7 +1,6 @@
-﻿using QSB2.Utility;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace QSB.Utility;
+namespace QSB2.Utility;
 
 public static class RelativeTransformUtil
 {

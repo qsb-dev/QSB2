@@ -1,5 +1,4 @@
 ﻿using MessagePack;
-using QSB.Utility;
 using QSB2.QObject;
 using QSB2.Utility;
 using SteamTransport;
