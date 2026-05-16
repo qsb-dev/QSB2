@@ -108,7 +108,7 @@ public static class QObjectManager
 
     #region utils
 
-    public static IEnumerable<T> GetQObjects<T>() where T : QObject, new() => Entries[typeof(T).Hash()].QObjects.Values.Cast<T>();
+    public static IEnumerable<T> GetQObjects<T>() where T : QObject => Entries[typeof(T).Hash()].QObjects.Values.Cast<T>();
 
     public static T GetQObject<T>(this Component component) where T : QObject, new()
     {

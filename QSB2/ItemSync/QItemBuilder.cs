@@ -6,11 +6,11 @@ public class QItemBuilder : QObjectBuilder
 {
     public override void Create()
     {
-        throw new System.NotImplementedException();
+        SendCreated<QGenericItem>(true);
     }
 
     public override void Destroy()
     {
-        throw new System.NotImplementedException();
+        SendCreated<QGenericItem>(false);
     }
 }
