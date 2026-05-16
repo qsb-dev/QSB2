@@ -106,6 +106,15 @@ public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
         __instance.WakeUp();
         return false;
     }
+    
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(PlayerCameraEffectController), nameof(PlayerCameraEffectController.WakeUp))]
+    public static void PlayerCameraEffectController_WakeUp(PlayerCameraEffectController __instance)
+    {
+        // prevent funny thing when you pause while waking up
+        Locator.GetPauseCommandListener().AddPauseCommandLock();
+        Delay.RunWhen(() => !__instance._isOpeningEyes, () => Locator.GetPauseCommandListener().RemovePauseCommandLock());
+    }
 
     [HarmonyPrefix]
     [HarmonyPatch(typeof(OWTime), nameof(OWTime.Pause))]
@@ -126,6 +135,12 @@ public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
             return false;
         }
     }
+
+    // TODO: is this applicable? why is this needed?
+    [HarmonyPostfix]
+    [HarmonyPatch(typeof(SubmitActionSkipToNextLoop), nameof(SubmitActionSkipToNextLoop.AdvanceToNewTimeLoop))]
+    public static void PreventMeditationSoftlock()
+        => OWInput.ChangeInputMode(InputMode.Character);
 }
 
 [MessagePackObject]

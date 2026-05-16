@@ -29,6 +29,7 @@ public class QShip : QObject<Transform>, ITickable
         Instance = this;
 
         PositionSync = new(this);
+        // BUG: with below on, relative to sector gets busted and the ship will be in the wrong place for a second when it switches sectors
         // PositionSync.UpdateInterval = 1f;
         // PositionSync.OccasionalMode = true;
         // PositionSync.Lerp = false;
