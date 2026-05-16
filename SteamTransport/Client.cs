@@ -70,9 +70,7 @@ public class Client
             var parsed = steamAddr.ParseString(address);
             if (!parsed)
             {
-                OnDisconnected?.Invoke($"couldnt parse address {address} when connecting"); // will show error box
-                // TODO: do a separate fail here?
-                return;
+                throw new Exception($"couldnt parse address {address} when connecting");
             }
 
             _conn = SteamNetworkingSockets.ConnectByIPAddress(ref steamAddr, options.Length, options);
@@ -84,9 +82,7 @@ public class Client
             var parsed = ulong.TryParse(address, out var steamId);
             if (!parsed)
             {
-                OnDisconnected?.Invoke($"couldnt parse address {address} when connecting"); // will show error box
-                // TODO: do a separate fail here?
-                return;
+                throw new Exception($"couldnt parse address {address} when connecting");
             }
 
             identity.SetSteamID64(steamId);
@@ -96,7 +92,7 @@ public class Client
         }
         
         if (_conn == HSteamNetConnection.Invalid)
-            _settings.Log($"[warn] connect returned invalid"); // TODO: this is a connect fail
+            throw new Exception("connect returned invalid");
     }
 
     public void Send(ArraySegment<byte> segment, int channelId)
@@ -130,10 +126,7 @@ public class Client
 
     public void Close()
     {
-        // theres a weird case where we arent doing an intentional disconnect but there isnt a status change disonnect either
-        // not sure whats going on there, but ill slap a stack trace on it
-
-        _settings.Log($"client close\n{Environment.StackTrace}");
+        _settings.Log($"client close");
         var result = SteamNetworkingSockets.CloseConnection(_conn, 0, "client closed connection", false);
         if (result != true)
         {
@@ -142,9 +135,7 @@ public class Client
 
         IsConnecting = false;
         IsConnected = false;
-        // its not an error for us to close ourselves intentionally
-        // but we do it anyway cuz above comment
-        // OnDisconnected?.Invoke("client closed connection for unknown reason! turn on \"[DEBUG] Debug Mode\" and \"[DEBUG] Hook Debug Logs\", try again, and report all logs shown!");
+        // dont need to call ondisconnect, we know we're closing
 
         _onStatusChanged.Dispose();
     }

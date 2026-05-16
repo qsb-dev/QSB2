@@ -41,6 +41,7 @@ public class IdentifyMessage : Message
         if (!CanJoin) leave = true;
         if (leave)
         {
+            // we never send join message here, so no one even knows we exist. we can safely leave without bothering anymore
             Logger.Log("rejected. disconnecting");
             NetworkManager.Disconnect();
         }

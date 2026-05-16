@@ -9,13 +9,13 @@ public static class Util
 {
     public const int MaxMessages = 256; // same as fizzy steamworks
 
-    private static int SendFlag2MirrorChannel(int sendFlag) => sendFlag switch
+    private static int SendFlag2Channel(int sendFlag) => sendFlag switch
     {
         Constants.k_nSteamNetworkingSend_Reliable => Channels.Reliable,
         Constants.k_nSteamNetworkingSend_Unreliable => Channels.Unreliable
     };
 
-    private static int MirrorChannel2SendFlag(int mirrorChannel) => mirrorChannel switch
+    private static int Channel2SendFlag(int mirrorChannel) => mirrorChannel switch
     {
         Channels.Reliable => Constants.k_nSteamNetworkingSend_Reliable,
         Channels.Unreliable => Constants.k_nSteamNetworkingSend_Unreliable
@@ -42,7 +42,7 @@ public static class Util
     public static EResult Send(this HSteamNetConnection conn, ArraySegment<byte> segment, int channelId)
     {
         var handle = GCHandle.Alloc(segment.Array, GCHandleType.Pinned); // prevent moving or gc when passing to native function
-        var result = SteamNetworkingSockets.SendMessageToConnection(conn, handle.AddrOfPinnedObject() + segment.Offset, (uint)segment.Count, MirrorChannel2SendFlag(channelId), out _);
+        var result = SteamNetworkingSockets.SendMessageToConnection(conn, handle.AddrOfPinnedObject() + segment.Offset, (uint)segment.Count, Channel2SendFlag(channelId), out _);
         handle.Free();
         return result;
     }
@@ -52,7 +52,7 @@ public static class Util
         var msg = SteamNetworkingMessage_t.FromIntPtr(ppOutMessage);
         var segment = new ArraySegment<byte>(new byte[msg.m_cbSize]);
         Marshal.Copy(msg.m_pData, segment.Array, 0, msg.m_cbSize);
-        var channelId = SendFlag2MirrorChannel(msg.m_nFlags);
+        var channelId = SendFlag2Channel(msg.m_nFlags);
         SteamNetworkingMessage_t.Release(ppOutMessage);
         return (segment, channelId);
     }
