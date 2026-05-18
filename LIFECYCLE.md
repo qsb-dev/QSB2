@@ -15,3 +15,7 @@ here's my current plans for the game lifecycle:
 
 alternatively, instead of a hard lifecycle we just have a bunch of separate flags (like these objects are built for this guy or whatever) and then just do waiting based on those.
 that sounds more maleable and easier to handle
+
+UPDATE: i have done this with flags and sync points. way easier than a state machine.
+
+also, updating object builders and objects is the same thing. we only needed to wait for other objects, and we can just use a delay.runwhen for that

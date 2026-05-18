@@ -1,0 +1,7 @@
+﻿These are things I have idly thought of stumbled across during this rewrite. I'm writing them down here in hopes that others may follow it when developing.
+
+* Many small flags instead of one large state: some parts of QSB (mostly lifecycle and time sync stuff) uses a big complicated state machine. I have replaced this with a bunch of bools that can be composed together to make a lifecycle and sync points. Parts can easily be swapped out as needed.
+* Build for failure, make small explosions: things WILL fail. Write it to fail locally instead of globally. QSB1 did not do this for world objects and it causes some really terrible bugs that are hard to replicate.
+  * also log thoroughly. im weak on this one because it might cause some lag, but i would rather have log spam that is helpful when things break randomly instead of not enough information and a random bug we cant reproduce again for better logs.
+* Communicate often: state between players is communicated more granularly, so that errors can be caught more quickly. For example, every type of object has its own tiny initialization message, so when one thing fails we know of the one thing.
+* single source of truth: this one is pretty small, but dont have a lot of duplicate state. e.g. qplayer contains player stuff, nothing else. this one is more breakable cuz things are subject to change.
