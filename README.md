@@ -9,6 +9,8 @@ This project aims to swap out the entire foundation of QSB with a more stable on
 * world objects no longer have one shared ID space. this means if one object is mismatching it doesn't effect others (see small explosions section in STANDARDS.md)
   * this also means we can freely create/delete any things without shifting IDs around. we could do this before technically, but never did. this just makes it easier cuz each object type is its own independent thing, which is less brittle
 * diagnostic state is communicate between clients more, for hopefully less guesswork. this also means NO MORE LOGS BEHIND DEBUG for now, since things WILL fail randomly and i want FULL LOGS for when they happen.
+* no more goofy save sync. this caused a lot of problems around overwriting accidentally. either we'll make a new profile or tell players to do it themselves.
+* no more joining mid game. this wipes out and entirety category of code (initial state sync) and the bugs associated with not writing that code/writing it wrong.
 
 ## Porting
 
