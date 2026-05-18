@@ -111,8 +111,8 @@ public class Server
     {
         var ppOutMessages = new IntPtr[Util.MaxMessages];
 
-        // receive can result in disconnect, which modifies the collection. we must copy
-        foreach (var conn in _conns.ToList())
+        // TODO: if receive can result in disconnect, we must copy
+        foreach (var conn in _conns)
         {
             var numMessages = SteamNetworkingSockets.ReceiveMessagesOnConnection(conn, ppOutMessages, ppOutMessages.Length);
             for (var i = 0; i < numMessages; i++)
