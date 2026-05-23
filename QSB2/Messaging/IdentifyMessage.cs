@@ -1,5 +1,6 @@
 ﻿using MessagePack;
 using QSB2.WakeUpSync;
+using Steamworks;
 
 namespace QSB2.Messaging;
 
@@ -50,7 +51,7 @@ public class IdentifyMessage : Message
         new JoinMessage
         {
             ID = to,
-            Name = StandaloneProfileManager.SharedInstance.currentProfile.profileName
+            Name = SteamFriends.GetPersonaName()
         }.Send(-1);
     }
 }

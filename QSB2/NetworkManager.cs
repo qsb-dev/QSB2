@@ -5,6 +5,7 @@ using QSB2.Patches;
 using QSB2.QObject;
 using QSB2.WakeUpSync;
 using SteamTransport;
+using Steamworks;
 using UnityEngine;
 
 namespace QSB2;
@@ -66,7 +67,7 @@ public static class NetworkManager
         _server.StartListening(Address);
 
         // host doesnt have client, so theyre a special connection here
-        Connections.Add(0, new(0, StandaloneProfileManager.SharedInstance.currentProfile.profileName));
+        Connections.Add(0, new(0, SteamFriends.GetPersonaName()));
         ConnectionIDs.Add(0);
         LocalID = 0;
         QPatchManager.Patch(QPatchWhen.OnConnected);
