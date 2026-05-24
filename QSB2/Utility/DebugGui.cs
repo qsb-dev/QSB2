@@ -14,31 +14,37 @@ public class DebugGui : MonoBehaviour
 {
     public static float _lastPingSend;
 
-    public static List<int> _testList = new();
+    private static List<int> _testList = new();
+
+    private Vector2 _scrollPos;
 
     private void OnGUI()
     {
         if (!NetworkManager.LocalConnectionExists) return;
 
+        _scrollPos = GUILayout.BeginScrollView(_scrollPos);
+
         GUILayout.Label($"host waiting for players = {WakeUpManager.HostWaitingForPlayers}");
         foreach (var id in NetworkManager.ConnectionIDs) // we want order in this list
         {
             var connection = NetworkManager.Connections[id];
-            GUILayout.Label($"PLAYER {connection.ID} {connection.Name}");
-            GUILayout.Label($"\trtt {connection.RTT * 1000:F1}ms");
-            GUILayout.Label($"\ttime {connection.Time} diff {connection.Time - NetworkManager.LocalConnection.Time}");
-            GUILayout.Label($"\tscene {connection.Scene} counter {connection.LoadCounter}");
-            GUILayout.Label($"\tcreated {connection.QObjectsCreated.Join()}");
-            GUILayout.Label($"\tsectors: player {connection.QPlayer?.PositionSync?.Reference} | probe {connection.QProbe?.PositionSync?.Reference} | ship {QShip.Instance?.PositionSync?.Reference}");
+            GUILayout.Label($"<color=cyan>PLAYER {connection.ID} <b>{connection.Name}</b></color>");
+            GUILayout.Label($"rtt {connection.RTT * 1000:F1}ms");
+            GUILayout.Label($"time {connection.Time} diff {connection.Time - NetworkManager.LocalConnection.Time}");
+            GUILayout.Label($"scene {connection.Scene} counter {connection.LoadCounter}");
+            GUILayout.Label($"created {connection.QObjectsCreated.Join()}");
+            GUILayout.Label($"sectors: player {connection.QPlayer?.PositionSync?.Reference} | probe {connection.QProbe?.PositionSync?.Reference} | ship {QShip.Instance?.PositionSync?.Reference}");
         }
+
+        GUILayout.Label(_testList.Join());
+
+        GUILayout.EndScrollView();
 
         if (Time.timeSinceLevelLoad < _lastPingSend || Time.timeSinceLevelLoad > _lastPingSend + 1)
         {
             _lastPingSend = Time.timeSinceLevelLoad;
             new PingMessage().Send(-1);
         }
-        
-        GUILayout.Label(_testList.Join());
     }
 
     private void Update()

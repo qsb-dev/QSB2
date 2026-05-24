@@ -23,7 +23,7 @@ public class IdentifyMessage : Message
 
     public override void OnReceive(int from, int to)
     {
-        NetworkManager.LocalID = to;
+        NetworkManager.LocalID = to; // TODO?: client knows ID as soon as we connect, so dont technically need this. doesnt really matter
         Logger.Log($"i am {to}");
 
         foreach (var x in Connections)
