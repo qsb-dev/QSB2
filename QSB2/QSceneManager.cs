@@ -62,7 +62,6 @@ public class SceneMessage : Message
         connection.LoadCounter = LoadCounter;
         Logger.Log($"{from} in scene {Scene} counter {LoadCounter}");
 
-        var lc = NetworkManager.LocalConnection;
-        WakeUpManager.AllScenesSame = NetworkManager.Connections.Values.All(c => c.Scene == lc.Scene && c.LoadCounter == lc.LoadCounter);
+        WakeUpManager.RecalcAllSameFlags();
     }
 }

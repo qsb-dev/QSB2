@@ -71,7 +71,7 @@ public static class NetworkManager
         ConnectionIDs.Add(0);
         LocalID = 0;
         QPatchManager.Patch(QPatchWhen.OnConnected);
-        // we will NOT send the join event here. might change that later
+        // TODO?: we will NOT send the join event here. might change that later
 
         WakeUpManager.CanJoin = true; // let us join on title screen
 

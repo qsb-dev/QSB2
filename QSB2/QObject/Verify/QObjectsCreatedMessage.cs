@@ -33,8 +33,6 @@ public class QObjectsCreatedMessage : Message
             connection.QObjectsCreated.Remove(type);
         }
 
-        WakeUpManager.AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
-        if (WakeUpManager.AllQObjectsCreated) QPatchManager.Patch(QPatchWhen.OnQObjectsCreated);
-        else QPatchManager.Unpatch(QPatchWhen.OnQObjectsCreated);
+        WakeUpManager.RecalcAllSameFlags();
     }
 }

@@ -1,8 +1,10 @@
-﻿using HarmonyLib;
+﻿using System.Linq;
+using HarmonyLib;
 using MessagePack;
 using OWML.Common;
 using QSB2.Messaging;
 using QSB2.Patches;
+using QSB2.QObject;
 using QSB2.QObject.Verify;
 using QSB2.Utility;
 using UnityEngine;
@@ -14,10 +16,22 @@ public static class WakeUpManager
 {
     public static float TimeScale = 1;
 
-    public static bool AllQObjectsCreated;
-    public static bool AllScenesSame;
     public static bool HostWaitingForPlayers;
     public static bool CanJoin; // set on host
+    
+    // cached stuff
+    public static bool AllQObjectsCreated;
+    public static bool AllScenesSame;
+
+    public static void RecalcAllSameFlags()
+    {
+        AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
+        if (AllQObjectsCreated) QPatchManager.Patch(QPatchWhen.OnQObjectsCreated);
+        else QPatchManager.Unpatch(QPatchWhen.OnQObjectsCreated);
+
+        var lc = NetworkManager.LocalConnection;
+        AllScenesSame = NetworkManager.Connections.Values.All(c => c.Scene == lc.Scene && c.LoadCounter == lc.LoadCounter);
+    }
 
     static WakeUpManager()
     {
@@ -51,12 +65,15 @@ public static class WakeUpManager
             Delay.RunWhen(() => AllQObjectsCreated, () =>
             {
                 QObjectsVerifyMessage.DoVerify(); // TODO: stupid
-                
+
                 Logger.Log("all qobjects created on both sides. starting loop", MessageType.Success);
                 TimeScale = 1;
                 CanJoin = false;
             });
         };
+
+        JoinMessage.Event += _ => RecalcAllSameFlags();
+        LeaveMessage.Event += _ => RecalcAllSameFlags();
     }
 
     private static float _lastTimeSend;
@@ -106,7 +123,7 @@ public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
         __instance.WakeUp();
         return false;
     }
-    
+
     [HarmonyPostfix]
     [HarmonyPatch(typeof(PlayerCameraEffectController), nameof(PlayerCameraEffectController.WakeUp))]
     public static void PlayerCameraEffectController_WakeUp(PlayerCameraEffectController __instance)
