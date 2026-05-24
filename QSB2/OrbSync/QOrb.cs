@@ -113,6 +113,7 @@ public class OrbSlotMessage : QObjectMessage<QOrb>
     }
 }
 
+// BUG: if 2 people grab an orb at the same time it becomes locks and is on for both and cannot be turned back off
 [HarmonyPatch(typeof(NomaiInterfaceOrb))]
 public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
 {
