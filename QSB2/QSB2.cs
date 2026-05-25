@@ -29,20 +29,6 @@ public class QSB2 : ModBehaviour
 
     #endregion
 
-    public void Awake()
-    {
-        Instance = this;
-        // new Harmony("JohnCorby.QSB2").PatchAll(Assembly.GetExecutingAssembly());
-
-        Gizmos.CameraFilter = _ => true;
-
-        // i want all static constructors running at the beginning instead of whenever we first reference
-        foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
-            RuntimeHelpers.RunClassConstructor(type.TypeHandle);
-        
-        QPatchManager.Patch(QPatchWhen.Immediately);
-    }
-
     public override void Configure(IModConfig config)
     {
         NetworkManager.Address = config.GetSettingsValue<string>("Address");
@@ -52,8 +38,19 @@ public class QSB2 : ModBehaviour
 
     public void Start()
     {
-        Logger.Log("qsb loaded", MessageType.Success);
+        Instance = this;
+        // new Harmony("JohnCorby.QSB2").PatchAll(Assembly.GetExecutingAssembly());
+
+        // i want all static constructors running at the beginning instead of whenever we first reference
+        foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
+            RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+
+        QPatchManager.Patch(QPatchWhen.Immediately);
+
+        Gizmos.CameraFilter = _ => true;
         gameObject.AddComponent<DebugGui>();
+
+        Logger.Log("qsb loaded", MessageType.Success);
     }
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)

@@ -14,7 +14,7 @@ public static class QLocalization
 
 	public static Action LanguageChanged;
 
-	public static void Init()
+	static QLocalization()
 	{
 		// get all translation files
 		var directory = new DirectoryInfo(Path.Combine(QSB2.Instance.ModHelper.Manifest.ModFolderPath, "Translations\\"));
