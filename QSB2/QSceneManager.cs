@@ -62,6 +62,6 @@ public class SceneMessage : Message
         connection.LoadCounter = LoadCounter;
         Logger.Log($"{from} in scene {Scene} counter {LoadCounter}");
 
-        WakeUpManager.RecalcAllSameFlags();
+        WakeUpManager.RecalcCachedFlags();
     }
 }

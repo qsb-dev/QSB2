@@ -33,6 +33,6 @@ public class QObjectsCreatedMessage : Message
             connection.QObjectsCreated.Remove(type);
         }
 
-        WakeUpManager.RecalcAllSameFlags();
+        WakeUpManager.RecalcCachedFlags();
     }
 }

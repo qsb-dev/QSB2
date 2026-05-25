@@ -18,13 +18,13 @@ public static class WakeUpManager
 
     public static bool HostWaitingForPlayers;
     public static bool CanJoin; // set on host
-    
-    // cached stuff
+
     public static bool AllQObjectsCreated;
     public static bool AllScenesSame;
 
-    public static void RecalcAllSameFlags()
+    public static void RecalcCachedFlags()
     {
+        // this means we need a created message for all qobject types, even if none are created...
         AllQObjectsCreated = NetworkManager.Connections.Values.All(x => x.QObjectsCreated.Count == QObjectManager.Entries.Count);
         if (AllQObjectsCreated) QPatchManager.Patch(QPatchWhen.OnQObjectsCreated);
         else QPatchManager.Unpatch(QPatchWhen.OnQObjectsCreated);
@@ -72,8 +72,8 @@ public static class WakeUpManager
             });
         };
 
-        JoinMessage.Event += _ => RecalcAllSameFlags();
-        LeaveMessage.Event += _ => RecalcAllSameFlags();
+        JoinMessage.Event += _ => RecalcCachedFlags();
+        LeaveMessage.Event += _ => Delay.FireOnNextUpdate(RecalcCachedFlags);
     }
 
     private static float _lastTimeSend;
