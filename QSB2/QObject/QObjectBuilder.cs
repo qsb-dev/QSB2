@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using QSB2.QObject.Verify;
 using QSB2.Utility;
@@ -9,6 +10,9 @@ namespace QSB2.QObject;
 public abstract class QObjectBuilder
 {
     public abstract void Create();
+
+    // TODO?: refactor this into just a "destroy everything" thing and have separate message?
+    //        i think we only really want granularity when creating, destroy is just get rid of everything
     public abstract void Destroy();
 
     #region utils
