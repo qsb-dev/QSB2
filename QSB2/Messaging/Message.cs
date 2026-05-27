@@ -7,6 +7,11 @@ namespace QSB2.Messaging;
 
 public abstract class Message
 {
+    /// <summary>
+    /// are we in a remotely called context?
+    /// </summary>
+    protected static bool Remote => MessageManager.Remote;
+
     public void Send(int to, int channelId = Channels.Reliable)
     {
         var rawMessage = new RawMessage

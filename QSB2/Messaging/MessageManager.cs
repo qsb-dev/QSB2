@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using MessagePack;
 using MessagePack.Unity;
 using OWML.Common;
-using QSB2.Patches;
 using QSB2.Utility;
 
 namespace QSB2.Messaging;
@@ -29,14 +28,20 @@ public static class MessageManager
         MessagePackSerializer.DefaultOptions = MessagePackSerializerOptions.Standard.WithResolver(UnityResolver.InstanceWithStandardResolver);
     }
 
+    /// <summary>
+    /// are we in a remotely called context?
+    /// </summary>
+    public static bool Remote;
+
     public static void OnData(ArraySegment<byte> data, int channelId)
     {
+        var remote = Remote;
         try
         {
             var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
             var type = _hashToType[rawMessage.Type];
             var message = (Message)MessagePackSerializer.Deserialize(type, rawMessage.Message)!;
-            QPatch.Remote = rawMessage.From != NetworkManager.LocalID;
+            Remote = rawMessage.From != NetworkManager.LocalID;
             message.OnReceive(rawMessage.From, rawMessage.To);
         }
         catch (Exception e)
@@ -44,7 +49,7 @@ public static class MessageManager
             Logger.Log(e.ToString(), MessageType.Error);
         }
 
-        QPatch.Remote = false;
+        Remote = remote;
     }
 
     public static void OnServerData(int fromID, ArraySegment<byte> data, int channelId)
