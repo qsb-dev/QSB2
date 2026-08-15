@@ -45,6 +45,7 @@ public class IdentifyMessage : Message
             // we never send join message here, so no one even knows we exist. we can safely leave without bothering anymore
             Logger.Log("rejected. disconnecting");
             NetworkManager.Disconnect();
+            return;
         }
 
         // tell everyone we joined

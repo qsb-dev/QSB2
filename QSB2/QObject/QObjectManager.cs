@@ -36,6 +36,12 @@ public static class QObjectManager
 
         QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
         {
+            if (!loadScene.IsGameScene())
+            {
+                NetworkManager.Disconnect();
+                return;
+            }
+
             if (!originalScene.IsGameScene()) return;
 
             QSB2.Instance.StartCoroutine(BuildersDestroy());
@@ -46,12 +52,6 @@ public static class QObjectManager
             if (!loadScene.IsGameScene()) return;
 
             QSB2.Instance.StartCoroutine(BuildersCreate());
-        };
-
-        // leave if not in game scene
-        QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
-        {
-            if (!loadScene.IsGameScene()) NetworkManager.Disconnect();
         };
     }
 

@@ -136,6 +136,8 @@ public class Client
         IsConnecting = false;
         IsConnected = false;
         // dont need to call ondisconnect, we know we're closing
+        // just kidding, we use that to clean up stuff. maybe filter out this reason later in ui idk
+        OnDisconnected?.Invoke("client closed");
 
         _onStatusChanged.Dispose();
     }
