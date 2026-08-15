@@ -14,7 +14,7 @@ public class Owner(QObject.QObject qObject)
 
 public class OwnerQueue(QObject.QObject qObject)
 {
-    // BUG: without loopback, steam preserves order between clients. with loopback, these become desynced!
+    // BUG: race condition if 2 things try to add. will be different order. especially true for forcing, which can fail
     public readonly List<int> IDs = new();
 
     public void DoAction(OwnerQueueAction action, int id = -1)

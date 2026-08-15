@@ -13,6 +13,8 @@ public static class MessageManager
     /// should messages to self skip routing thru the server?
     ///
     /// true makes local messages receive immediately but it breaks message ordering guarantee that steam does between all clients
+    ///
+    /// decision: use loopback for host/non host consistency and because i rely on local things happening immediately
     /// </summary>
     public const bool DoMessageLoopback = true;
 
