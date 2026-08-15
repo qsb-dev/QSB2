@@ -29,19 +29,19 @@ public static class MessageManager
     }
 
     /// <summary>
-    /// are we in a remotely called context?
+    /// are we currently receiving a message?
     /// </summary>
-    public static bool Remote;
+    public static bool Receiving;
 
     public static void OnData(ArraySegment<byte> data, int channelId)
     {
-        var remote = Remote;
+        var receiving = Receiving;
         try
         {
             var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
             var type = _hashToType[rawMessage.Type];
             var message = (Message)MessagePackSerializer.Deserialize(type, rawMessage.Message)!;
-            Remote = rawMessage.From != NetworkManager.LocalID;
+            Receiving = true;
             message.OnReceive(rawMessage.From, rawMessage.To);
         }
         catch (Exception e)
@@ -49,7 +49,7 @@ public static class MessageManager
             Logger.Log(e.ToString(), MessageType.Error);
         }
 
-        Remote = remote;
+        Receiving = receiving;
     }
 
     public static void OnServerData(int fromID, ArraySegment<byte> data, int channelId)

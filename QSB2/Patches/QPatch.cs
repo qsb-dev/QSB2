@@ -7,9 +7,9 @@ public abstract class QPatch(QPatchWhen when)
     public readonly QPatchWhen When = when;
 
     /// <summary>
-    /// are we in a remotely called context?
+    /// are we currently receiving a message?
     /// </summary>
-    protected static bool Remote => MessageManager.Remote;
+    protected static bool Receiving => MessageManager.Receiving;
 }
 
 public enum QPatchWhen

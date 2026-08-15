@@ -8,9 +8,9 @@ namespace QSB2.Messaging;
 public abstract class Message
 {
     /// <summary>
-    /// are we in a remotely called context?
+    /// are we currently receiving a message?
     /// </summary>
-    protected static bool Remote => MessageManager.Remote;
+    protected static bool Receiving => MessageManager.Receiving;
 
     public void Send(int to, int channelId = Channels.Reliable)
     {

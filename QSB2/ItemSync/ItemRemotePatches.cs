@@ -19,7 +19,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	private static bool PickUpItem(DreamLanternItem __instance,
 		Transform holdTranform)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -46,7 +46,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	private static bool PickUpItem(VisionTorchItem __instance,
 		Transform holdTranform)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -78,7 +78,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	private static bool PickUpItem(SimpleLanternItem __instance,
 		Transform holdTranform)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -115,7 +115,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 		Sector sector,
 		IItemDropTarget customDropTarget)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -142,7 +142,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 		Sector sector,
 		IItemDropTarget customDropTarget)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -188,7 +188,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	private static bool SocketItem(DreamLanternItem __instance,
 		Transform socketTransform, Sector sector)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -212,7 +212,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	private static bool SocketItem(VisionTorchItem __instance,
 		Transform socketTransform, Sector sector)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -258,7 +258,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	private static bool PlaceIntoSocket(DreamLanternSocket __instance, ref bool __result,
 		OWItem item)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -282,7 +282,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	[HarmonyPatch(typeof(DreamLanternSocket), nameof(DreamLanternSocket.RemoveFromSocket))]
 	private static bool RemoveFromSocket(DreamLanternSocket __instance, ref OWItem __result)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
@@ -301,7 +301,7 @@ public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
 	[HarmonyPatch(typeof(SlideReelSocket), nameof(SlideReelSocket.RemoveFromSocket))]
 	private static bool RemoveFromSocket(SlideReelSocket __instance, ref OWItem __result)
 	{
-		if (!Remote)
+		if (!Receiving)
 		{
 			return true;
 		}
