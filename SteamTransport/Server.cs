@@ -153,7 +153,7 @@ public class Server
     {
         _settings.Log("stop server");
         // this calls ondisconnected, but it doesnt really need to. meh, it doesnt matter
-        foreach (var conn in _conns) Disconnect((int)conn.m_HSteamNetConnection, "server closed");
+        foreach (var conn in _conns.ToList()) Disconnect((int)conn.m_HSteamNetConnection, "server closed");
         var result = SteamNetworkingSockets.CloseListenSocket(_listenSocket);
         if (result != true)
         {
