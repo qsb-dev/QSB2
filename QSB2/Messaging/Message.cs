@@ -7,11 +7,6 @@ namespace QSB2.Messaging;
 
 public abstract class Message
 {
-    /// <summary>
-    /// are we currently receiving a message?
-    /// </summary>
-    protected static bool Receiving => MessageManager.Receiving;
-
     public void Send(int to, int channelId = Channels.Reliable)
     {
         var rawMessage = new RawMessage
