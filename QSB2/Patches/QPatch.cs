@@ -15,6 +15,5 @@ public abstract class QPatch(QPatchWhen when)
 public enum QPatchWhen
 {
     Immediately,
-    OnConnected,
     OnQObjectsCreated
 }

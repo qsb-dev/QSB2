@@ -38,7 +38,6 @@ public static class WakeUpManager
         // handle sync at beginning of loop
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
-            if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
             // we start paused
@@ -114,7 +113,7 @@ public static class WakeUpManager
 }
 
 [HarmonyPatch]
-public class WakeUpPatches() : QPatch(QPatchWhen.OnConnected)
+public class WakeUpPatches() : QPatch(QPatchWhen.Immediately)
 {
     [HarmonyPrefix, HarmonyPatch(typeof(PlayerCameraEffectController), nameof(PlayerCameraEffectController.OnStartOfTimeLoop))]
     public static bool PlayerCameraEffectController_OnStartOfTimeLoop(PlayerCameraEffectController __instance)

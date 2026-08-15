@@ -11,6 +11,7 @@ This project aims to swap out the entire foundation of QSB with a more stable on
 * diagnostic state is communicated between clients more, for hopefully less guesswork. this also means NO MORE LOGS BEHIND DEBUG for now, since things WILL fail randomly and i want FULL LOGS for when they happen.
 * no more goofy save sync. this caused some rare but bad problems around overwriting accidentally, and also messed with other mods (nh). either we'll make a new profile or tell players to do it themselves.
 * no more joining mid game. this wipes out and entirety category of code (initial state sync) and the bugs associated with not writing that code/writing it wrong.
+* no more singleplayer. this was never tested in qsb1 and it turns out there's some problems with it. if you want singleplayer, disable qsb.
 
 ## Porting
 

@@ -36,7 +36,6 @@ public static class QObjectManager
 
         QSceneManager.OnPreSceneLoad += (originalScene, loadScene) =>
         {
-            if (!NetworkManager.IsConnected) return;
             if (!originalScene.IsGameScene()) return;
 
             QSB2.Instance.StartCoroutine(BuildersDestroy());
@@ -44,7 +43,6 @@ public static class QObjectManager
 
         QSceneManager.OnPostSceneLoad += (originalScene, loadScene) =>
         {
-            if (!NetworkManager.IsConnected) return;
             if (!loadScene.IsGameScene()) return;
 
             QSB2.Instance.StartCoroutine(BuildersCreate());

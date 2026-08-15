@@ -15,7 +15,7 @@ public static class Logger
 }
 
 [HarmonyPatch]
-public class LoggerPatch() : QPatch(QPatchWhen.OnConnected)
+public class LoggerPatch() : QPatch(QPatchWhen.Immediately)
 {
     [HarmonyPrefix, HarmonyPatch(typeof(ModSocketOutput), nameof(ModSocketOutput.WriteLine), typeof(string), typeof(MessageType), typeof(string))]
     public static void ModSocketOutput_WriteLine(ref string line, MessageType type, string senderType)

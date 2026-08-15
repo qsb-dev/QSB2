@@ -6,7 +6,7 @@ using UnityEngine;
 namespace QSB2.ItemSync;
 
 [HarmonyPatch]
-public class ItemRemotePatches() : QPatch(QPatchWhen.OnConnected)
+public class ItemRemotePatches() : QPatch(QPatchWhen.Immediately)
 {
 	#region OWItem
 
