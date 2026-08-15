@@ -55,8 +55,8 @@ public class QSB2 : ModBehaviour
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)
     {
-        titleManager.CreateTitleButton("Host").OnSubmitAction += NetworkManager.Host;
-        titleManager.CreateTitleButton("Connect").OnSubmitAction += NetworkManager.Connect;
+        titleManager.CreateTitleButton("Host", 0, true).OnSubmitAction += NetworkManager.Host;
+        titleManager.CreateTitleButton("Connect", 1, true).OnSubmitAction += NetworkManager.Connect;
     }
 
     private void Update()
@@ -64,5 +64,13 @@ public class QSB2 : ModBehaviour
         TickableManager.Tick();
         NetworkManager.Tick();
         WakeUpManager.Tick();
+        
+        // hack. move this to menu manager or something later. also rewrite when ui is good
+        if (LoadManager.GetCurrentScene() == OWScene.TitleScreen)
+        {
+            var titleScreenManager = FindObjectOfType<TitleScreenManager>();
+            titleScreenManager._newGameObject.SetActive(NetworkManager.IsConnected);
+            titleScreenManager._resumeGameObject.SetActive(NetworkManager.IsConnected);
+        }
     }
 }
