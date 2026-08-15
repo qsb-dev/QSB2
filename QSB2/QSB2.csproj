@@ -11,9 +11,9 @@
         <DebugType>portable</DebugType>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="OWML" Version="2.15.4" ExcludeAssets="runtime" />
-        <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" ExcludeAssets="runtime" />
-        <PackageReference Include="MessagePack" Version="3.1.4"/>
+        <PackageReference Include="OWML" Version="2.16.2" IncludeAssets="compile" />
+        <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" IncludeAssets="compile" />
+        <PackageReference Include="MessagePack" Version="3.1.8" />
         <ProjectReference Include="..\SteamTransport\SteamTransport.csproj" />
         <ProjectReference Include="..\Gizmos\Gizmos.csproj" />
     </ItemGroup>
