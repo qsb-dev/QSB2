@@ -15,10 +15,7 @@ public class QFragment : QObject<FragmentIntegrity>
 
     public override void Create()
     {
-        var rnd = (float)QFragmentBuilder.LeashRandom.NextDouble();
-        var min = QFragmentBuilder.WhiteHoleVolume._debrisDistMin;
-        var max = QFragmentBuilder.WhiteHoleVolume._debrisDistMax;
-        LeashLength = min + (max - min) * rnd;
+        LeashLength = QFragmentBuilder.LeashRandom.Range(QFragmentBuilder.WhiteHoleVolume._debrisDistMin, QFragmentBuilder.WhiteHoleVolume._debrisDistMax);
 
         base.Create();
     }
@@ -69,7 +66,7 @@ public class FragmentPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         var qFragment = __instance._detachableFragment._fragmentIntegrity.GetQObject<QFragment>();
         __instance._leashLength = qFragment.LeashLength;
     }
-    
+
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FragmentIntegrity), nameof(FragmentIntegrity.AddDamage))]
     public static bool FragmentIntegrity_AddDamage(FragmentIntegrity __instance)

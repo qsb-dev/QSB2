@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using QSB2.QObject;
 using UnityEngine;
 
 namespace QSB2.Utility;
@@ -132,6 +131,11 @@ public static class Extensions
 
             return new Quaternion(result.x, result.y, result.z, result.w);
         }
+    }
 
+    extension(System.Random random)
+    {
+        public int Range(int minInclusive, int maxExclusive) => random.Next(minInclusive, maxExclusive);
+        public float Range(float minInclusive, float maxInclusive) => minInclusive + (maxInclusive - minInclusive) * (float)random.NextDouble();
     }
 }
