@@ -70,7 +70,7 @@ public class FragmentPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         __instance._leashLength = qFragment.LeashLength;
     }
     
-    [HarmonyPostfix]
+    [HarmonyPrefix]
     [HarmonyPatch(typeof(FragmentIntegrity), nameof(FragmentIntegrity.AddDamage))]
     public static bool FragmentIntegrity_AddDamage(FragmentIntegrity __instance)
     {
