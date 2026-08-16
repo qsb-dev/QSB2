@@ -11,11 +11,7 @@ namespace QSB2.EchoesOfTheEye.LightSensorSync;
 
 public class QLightSensor : QObject<SingleLightSensor>
 {
-    // global is union/or of local
-    public readonly Dictionary<QPlayer, bool> GlobalIlluminated = new();
-    public bool GlobalIlluminatedValue => GlobalIlluminated.Any(x => x.Value);
-    public readonly Dictionary<QPlayer, List<DreamLanternController>> GlobalLanternList = new();
-    public List<DreamLanternController> GlobalLanternListValue => GlobalLanternList.SelectMany(x => x.Value).Distinct().ToList();
+    public readonly HashSet<QPlayer> Illuminators = new();
     public bool LocalIlluminated;
     public List<DreamLanternController> LocalLanternList;
     public bool IsPlayerLightSensor;
@@ -26,9 +22,12 @@ public class QLightSensor : QObject<SingleLightSensor>
 
         // dont think i need to fire any events here, Start already handles that
         // BUG: at the towers, taking away the lanterns on one side and not the other triggers darkness, even tho it shouldnt
-        foreach (var qPlayer in QObjectManager.GetQObjects<QPlayer>())
-            GlobalIlluminated.Add(qPlayer, Component._startIlluminated);
-        LocalIlluminated = Component._startIlluminated;
+        if (Component._startIlluminated)
+        {
+            foreach (var qPlayer in QObjectManager.GetQObjects<QPlayer>())
+                Illuminators.Add(qPlayer);
+            LocalIlluminated = true;
+        }
 
         if (Component._detectDreamLanterns)
         {
@@ -48,27 +47,15 @@ public class SensorIlluminatedMessage : QObjectMessage<QLightSensor>
 
     public override void OnReceive(QLightSensor qObject, int from, int to)
     {
-        qObject.GlobalIlluminated[NetworkManager.Connections[from].QPlayer] = Value;
+        if (Value) qObject.Illuminators.Add(NetworkManager.Connections[from].QPlayer);
+        else qObject.Illuminators.Remove(NetworkManager.Connections[from].QPlayer);
 
         var illuminated = qObject.Component._illuminated;
-        qObject.Component._illuminated = qObject.GlobalIlluminatedValue;
+        qObject.Component._illuminated = qObject.Illuminators.Count > 0;
         if (qObject.Component._illuminated && !illuminated)
             qObject.Component.OnDetectLight.Invoke();
         else if (!qObject.Component._illuminated && illuminated)
             qObject.Component.OnDetectDarkness.Invoke();
-    }
-}
-
-[MessagePackObject]
-public class SectorLanternListMessage : QObjectMessage<QLightSensor>
-{
-    [Key(1)] public required List<DreamLanternController> Value;
-
-    public override void OnReceive(QLightSensor qObject, int from, int to)
-    {
-        qObject.GlobalLanternList[NetworkManager.Connections[from].QPlayer] = Value;
-
-        qObject.Component._illuminatingDreamLanternList = qObject.GlobalLanternListValue;
     }
 }
 
@@ -124,23 +111,24 @@ public class LightSensorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         // we store global illumination in __instance._illuminated
         // but smuggle local illumination out of UpdateIllumination
         var prevIlluminated = __instance._illuminated;
-        var prevLanternList = __instance._illuminatingDreamLanternList;
+        // var prevLanternList = __instance._illuminatingDreamLanternList;
         __instance.UpdateIllumination();
         var prevLocalIlluminated = qLightSensor.LocalIlluminated;
         var prevLocalLanternList = qLightSensor.LocalLanternList;
         qLightSensor.LocalIlluminated = __instance._illuminated;
         qLightSensor.LocalLanternList = __instance._illuminatingDreamLanternList;
         __instance._illuminated = prevIlluminated;
-        __instance._illuminatingDreamLanternList = prevLanternList;
+        // __instance._illuminatingDreamLanternList = prevLanternList;
 
         if (qLightSensor.LocalIlluminated != prevLocalIlluminated)
             qLightSensor.Send(new SensorIlluminatedMessage { Value = qLightSensor.LocalIlluminated }, SendTo.All);
 
         if (__instance._detectDreamLanterns)
         {
-            if (!qLightSensor.LocalLanternList.SequenceEqual(prevLocalLanternList))
+            if (!qLightSensor.LocalLanternList?.SequenceEqual(prevLocalLanternList) ?? false)
             {
-                qLightSensor.Send(new SectorLanternListMessage { Value = qLightSensor.LocalLanternList }, SendTo.All);
+                // TODO: similar thing as above. union all local lists together to get the global list
+                // or dont? if only the player with the local list cares and no one else does, it might be fine to just have everyone track it individually 
             }
         }
 
