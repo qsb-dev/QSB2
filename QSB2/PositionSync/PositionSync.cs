@@ -10,8 +10,8 @@ public class PositionSync(QObject.QObject qObject)
 {
     public Transform Reference;
 
-    public Vector3 RelPos;
-    public Quaternion RelRot;
+    public Vector3 RelPos = Vector3.zero;
+    public Quaternion RelRot = Quaternion.identity;
     public float PrevTime; // for dropping out of order messages
 
     public float UpdateInterval = .1f;
@@ -20,11 +20,10 @@ public class PositionSync(QObject.QObject qObject)
     public bool OccasionalMode;
     public bool Lerp = true;
 
-    private Vector3 _lerpedRelPos;
-    private Quaternion _lerpedRelRot;
-    private Vector3 _currentVel;
-    private Quaternion _currentAngVel;
-    private Transform _lastReference;
+    private Vector3 _lerpedRelPos = Vector3.zero;
+    private Quaternion _lerpedRelRot = Quaternion.identity;
+    private Vector3 _currentVel = Vector3.zero;
+    private Quaternion _currentAngVel = Quaternion.identity;
 
     public void Tick()
     {
@@ -41,6 +40,8 @@ public class PositionSync(QObject.QObject qObject)
             // owner - sync from unity component
             _lerpedRelPos = RelPos = Reference.ToRelPos(qObject.Component.transform.position);
             _lerpedRelRot = RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
+            _currentVel = Vector3.zero;
+            _currentAngVel = Quaternion.identity;
 
             qObject.Send(new PositionMessage
             {
@@ -53,28 +54,30 @@ public class PositionSync(QObject.QObject qObject)
         {
             if (OccasionalMode) return;
 
-            if (_lastReference != Reference)
+            if (Lerp)
             {
-                // update relative location since we've changed references
-                // BUG: this doesnt change the damp vel/angvel so it looks weird
-                _lerpedRelPos = RelPos = Reference.ToRelPos(qObject.Component.transform.position);
-                _lerpedRelRot = RelRot = Reference.ToRelRot(qObject.Component.transform.rotation);
+                _lerpedRelPos = Vector3.SmoothDamp(_lerpedRelPos, RelPos, ref _currentVel, UpdateInterval);
+                _lerpedRelRot = Quaternion.SmoothDamp(_lerpedRelRot, RelRot, ref _currentAngVel, UpdateInterval);
             }
-            _lerpedRelPos = Lerp ? Vector3.SmoothDamp(_lerpedRelPos, RelPos, ref _currentVel, UpdateInterval) : RelPos;
-            _lerpedRelRot = Lerp ? Quaternion.SmoothDamp(_lerpedRelRot, RelRot, ref _currentAngVel, UpdateInterval) : RelRot;
-            _lastReference = Reference;
+            else
+            {
+                _lerpedRelPos = RelPos;
+                _lerpedRelRot = RelRot;
+                _currentVel = Vector3.zero;
+                _currentAngVel = Quaternion.identity;
+            }
 
             // non owner - sync to unity component
             var body = qObject.Component.GetAttachedOWRigidbody();
             if (body)
             {
-                body.SetPosition(Reference.FromRelPos(Lerp ? _lerpedRelPos : RelPos));
-                body.SetRotation(Reference.FromRelRot(Lerp ? _lerpedRelRot : RelRot));
+                body.SetPosition(Reference.FromRelPos(_lerpedRelPos));
+                body.SetRotation(Reference.FromRelRot(_lerpedRelRot));
             }
             else
             {
-                qObject.Component.transform.position = Reference.FromRelPos(Lerp ? _lerpedRelPos : RelPos);
-                qObject.Component.transform.rotation = Reference.FromRelRot(Lerp ? _lerpedRelRot : RelRot);
+                qObject.Component.transform.position = Reference.FromRelPos(_lerpedRelPos);
+                qObject.Component.transform.rotation = Reference.FromRelRot(_lerpedRelRot);
             }
         }
     }
@@ -83,6 +86,42 @@ public class PositionSync(QObject.QObject qObject)
     {
         _lerpedRelPos = RelPos;
         _lerpedRelRot = RelRot;
+        _currentVel = Vector3.zero;
+        _currentAngVel = Quaternion.identity;
+    }
+
+    /// <summary>
+    /// change all our location variables to be relative to the new reference
+    /// </summary>
+    public void ReferenceChanged(Transform oldRef, Transform newRef)
+    {
+        return;
+        if (oldRef == null) return;
+
+        if (Lerp)
+        {
+            // var oldRefBody = oldRef.GetAttachedOWRigidbody();
+            // var newRefBody = newRef.GetAttachedOWRigidbody();
+
+
+            var oldPos = oldRef.FromRelPos(RelPos);
+            var oldRot = oldRef.FromRelRot(RelRot);
+            var oldLerpedPos = qObject.Component.transform.position;
+            var oldLerpedRot = qObject.Component.transform.rotation;
+            RelPos = newRef.ToRelPos(oldPos);
+            RelRot = newRef.ToRelRot(oldRot);
+            _lerpedRelPos = newRef.ToRelPos(oldLerpedPos);
+            _lerpedRelRot = newRef.ToRelRot(oldLerpedRot);
+            _currentVel = Vector3.zero;
+            _currentAngVel = Quaternion.identity; // dont really know how to handle this. its less noticeable
+        }
+        else
+        {
+            var oldPos = qObject.Component.transform.position;
+            var oldRot = qObject.Component.transform.rotation;
+            RelPos = newRef.ToRelPos(oldPos);
+            RelRot = newRef.ToRelRot(oldRot);
+        }
     }
 }
 

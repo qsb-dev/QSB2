@@ -8,8 +8,8 @@ namespace QSB2.PositionSync;
 
 public class VelocitySync(QObject.QObject qObject)
 {
-    public Vector3 RelVel;
-    public Vector3 RelAngVel;
+    public Vector3 RelVel = Vector3.zero;
+    public Vector3 RelAngVel = Vector3.zero;
     public float PrevTime; // for dropping out of order messages
 
     public float UpdateInterval = .1f;
@@ -59,6 +59,23 @@ public class VelocitySync(QObject.QObject qObject)
             body._rigidbody.velocity = newVelocity + Locator.GetCenterOfTheUniverse().GetStaticFrameVelocity_Internal();
         body._lastVelocity = body._currentVelocity;
         body._currentVelocity = newVelocity;
+    }
+
+    /// <summary>
+    /// change all our location variables to be relative to the new reference
+    /// </summary>
+    public void ReferenceChanged(Transform oldRef, Transform newRef)
+    {
+        return;
+        if (oldRef == null) return;
+        
+        var body = qObject.Component.GetAttachedOWRigidbody();
+        var newRefBody = newRef.GetAttachedOWRigidbody();
+        
+        var oldVel = body.GetVelocity();
+        var oldAngVel = body.GetAngularVelocity();
+        RelVel = newRefBody.ToRelVel(oldVel, body.GetPosition());
+        RelAngVel = newRefBody.ToRelAngVel(oldAngVel);
     }
 }
 

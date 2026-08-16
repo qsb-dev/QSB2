@@ -93,7 +93,7 @@ public static class WakeUpManager
             var myTime = NetworkManager.LocalConnection.Time;
             var diff = hostTime - myTime;
             // exponential because -1 diff should be half speed and 1 diff should be 2x speed
-            TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
+            // TimeScale = Mathf.Pow(2, Mathf.Clamp(diff, -2, 2));
         }
 
         if (Time.timeSinceLevelLoad < _lastTimeSend || Time.timeSinceLevelLoad > _lastTimeSend + 1)

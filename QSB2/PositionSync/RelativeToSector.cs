@@ -62,7 +62,10 @@ public class RelativeToSector(QObject.QObject qObject)
             if (QSector == null) return;
 
             var sector = QSector.Component;
+            var oldRef = qObject.PositionSync.Reference; 
             qObject.PositionSync.Reference = sector.transform;
+            // qObject.PositionSync.ReferenceChanged(oldRef, sector.transform);
+            qObject.VelocitySync?.ReferenceChanged(oldRef, sector.transform);
         }
     }
 
