@@ -2,6 +2,7 @@
 using System.Linq;
 using HarmonyLib;
 using MessagePack;
+using QSB2.Messaging;
 using QSB2.Patches;
 using QSB2.PlayerSync;
 using QSB2.QObject;
@@ -82,7 +83,7 @@ public class LightSensorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
             __instance._lightDetector.GetShape().enabled = false;
             if (!__instance._preserveStateWhileDisabled)
             {
-                qLightSensor.Send(new SensorIlluminatedMessage { Value = false }, -1);
+                qLightSensor.Send(new SensorIlluminatedMessage { Value = false }, SendTo.All);
             }
         }
 
@@ -120,7 +121,7 @@ public class LightSensorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         // __instance._illuminatingDreamLanternList = prevLanternList;
 
         if (qLightSensor.LocalIlluminated != prevLocalIlluminated)
-            qLightSensor.Send(new SensorIlluminatedMessage { Value = qLightSensor.LocalIlluminated }, -1);
+            qLightSensor.Send(new SensorIlluminatedMessage { Value = qLightSensor.LocalIlluminated }, SendTo.All);
 
         if (__instance._detectDreamLanterns)
         {

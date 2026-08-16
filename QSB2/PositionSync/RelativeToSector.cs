@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using MessagePack;
 using OWML.Common;
+using QSB2.Messaging;
 using QSB2.QObject;
 using QSB2.SectorSync;
 using QSB2.Utility;
@@ -50,7 +51,7 @@ public class RelativeToSector(QObject.QObject qObject)
                 qObject.Send(new ChangeSectorMessage
                 {
                     SectorID = qSector.ID,
-                }, -2);
+                }, SendTo.Others);
 
                 qObject.PositionSync.Reference = sector.transform;
             }

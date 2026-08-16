@@ -50,13 +50,13 @@ public static class WakeUpManager
                 new HostWaitingForPlayersMessage
                 {
                     Value = true
-                }.Send(-1);
+                }.Send(SendTo.All);
                 Delay.RunWhen(() => Keyboard.current.enterKey.isPressed, () =>
                 {
                     new HostWaitingForPlayersMessage
                     {
                         Value = false
-                    }.Send(-1);
+                    }.Send(SendTo.All);
                 });
             }
 
@@ -104,7 +104,7 @@ public static class WakeUpManager
             new TimeMessage
             {
                 Time = Time.timeSinceLevelLoad
-            }.Send(-1);
+            }.Send(SendTo.All);
         }
 
         if (!OWTime.IsPaused())

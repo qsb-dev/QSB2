@@ -42,7 +42,7 @@ public static class QSceneManager
             {
                 Scene = loadScene,
                 LoadCounter = NetworkManager.LocalConnection.LoadCounter + 1,
-            }.Send(-1);
+            }.Send(SendTo.All);
         };
     }
 

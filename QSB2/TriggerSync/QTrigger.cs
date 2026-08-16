@@ -55,7 +55,7 @@ public class QTrigger : QObject<OWTriggerVolume>
         Send(new TriggerMessage
         {
             Enter = true
-        }, -1);
+        }, SendTo.All);
     }
 
     private void OnExit(GameObject hitObj)
@@ -63,7 +63,7 @@ public class QTrigger : QObject<OWTriggerVolume>
         Send(new TriggerMessage
         {
             Enter = false
-        }, -1);
+        }, SendTo.All);
     }
 }
 

@@ -59,7 +59,7 @@ public static class MessageManager
         var rawMessage = MessagePackSerializer.Deserialize<RawMessage>(data);
         if (DoMessageLoopback)
         {
-            if (rawMessage.To is -1 or -2)
+            if (rawMessage.To is SendTo.All or SendTo.Others)
             {
                 // client will handle OnData for itself if needed
                 // this just sends to everyone else   
@@ -80,7 +80,7 @@ public static class MessageManager
         }
         else
         {
-            if (rawMessage.To == -1)
+            if (rawMessage.To == SendTo.All)
             {
                 OnData(data, channelId); // we are server. send it to us also
                 foreach (var id in NetworkManager._serverClients)
@@ -88,7 +88,7 @@ public static class MessageManager
                     NetworkManager._server.Send(id, data, channelId);
                 }
             }
-            else if (rawMessage.To == -2)
+            else if (rawMessage.To == SendTo.Others)
             {
                 if (fromID != 0) OnData(data, channelId); // we are server. send it to us also
                 foreach (var id in NetworkManager._serverClients)

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using MessagePack;
+using QSB2.Messaging;
 using QSB2.QObject;
 
 namespace QSB2.Ownership;
@@ -23,7 +24,7 @@ public class OwnerQueue(QObject.QObject qObject)
         {
             PlayerID = id == -1 ? NetworkManager.LocalID : id,
             Action = action
-        }, -1);
+        }, SendTo.All);
     }
 }
 

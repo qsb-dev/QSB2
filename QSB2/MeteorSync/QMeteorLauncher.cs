@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MessagePack;
 using OWML.Common;
+using QSB2.Messaging;
 using QSB2.Patches;
 using QSB2.QObject;
 using UnityEngine;
@@ -106,7 +107,7 @@ public class MeteorLauncherPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 }
 
                 __instance.GetQObject<QMeteorLauncher>()
-                    .Send(new MeteorPreLaunchMessage(), -2);
+                    .Send(new MeteorPreLaunchMessage(), SendTo.Others);
             }
 
             if (Time.time > __instance._lastLaunchTime + __instance._launchDelay + 2.3f)
@@ -177,7 +178,7 @@ public class MeteorLauncherPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 {
                     MeteorId = meteorController.GetQObject<QMeteor>().ID,
                     LaunchSpeed = launchSpeed
-                }, -2);
+                }, SendTo.Others);
         }
 
         return false;

@@ -51,7 +51,7 @@ public class DebugGui : MonoBehaviour
         if (Time.timeSinceLevelLoad < _lastPingSend || Time.timeSinceLevelLoad > _lastPingSend + 1)
         {
             _lastPingSend = Time.timeSinceLevelLoad;
-            new PingMessage().Send(-1);
+            new PingMessage().Send(SendTo.All);
         }
     }
 
@@ -78,7 +78,7 @@ public class DebugGui : MonoBehaviour
     /// </summary>
     private static IEnumerator TestList()
     {
-        new ResetListMessage().Send(-1);
+        new ResetListMessage().Send(SendTo.All);
 
         for (int i = 0; i < 10; i++)
         {
@@ -86,7 +86,7 @@ public class DebugGui : MonoBehaviour
             new AddListMessage
             {
                 Value = NetworkManager.IsHost ? (i * 2) : (i * 2 + 1)
-            }.Send(-1);
+            }.Send(SendTo.All);
         }
     }
 

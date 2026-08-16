@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using MessagePack;
 using OWML.Utils;
+using QSB2.Messaging;
 using QSB2.Ownership;
 using QSB2.Patches;
 using QSB2.QObject;
@@ -144,7 +145,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 }
 
                 var qOrb = __instance.GetQObject<QOrb>();
-                qOrb.Send(new OrbDragMessage { Value = true }, -2);
+                qOrb.Send(new OrbDragMessage { Value = true }, SendTo.Others);
                 qOrb.OwnerQueue.DoAction(OwnerQueueAction.Force);
             }
         }
@@ -172,7 +173,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
             return false;
         }
 
-        qOrb.Send(new OrbDragMessage { Value = false }, -2);
+        qOrb.Send(new OrbDragMessage { Value = false }, SendTo.Others);
         qOrb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
         return true;
     }
@@ -207,7 +208,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                         {
                             SlotIndex = slotIndex,
                             PlayAudio = playAudio
-                        }, -2);
+                        }, SendTo.Others);
                         break;
                     }
                 }
@@ -219,7 +220,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 {
                     SlotIndex = -1,
                     PlayAudio = playAudio
-                }, -2);
+                }, SendTo.Others);
             }
         }
 

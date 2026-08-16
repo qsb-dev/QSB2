@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using QSB2.Messaging;
 using QSB2.Patches;
 using QSB2.QObject;
 using UnityEngine;
@@ -67,7 +68,7 @@ public class MeteorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         if (QMeteor.IsSpecialImpact(hitObject))
         {
             __instance.GetQObject<QMeteor>()
-                .Send(new MeteorSpecialImpactMessage(), -2);
+                .Send(new MeteorSpecialImpactMessage(), SendTo.Others);
         }
     }
 }

@@ -53,6 +53,6 @@ public class IdentifyMessage : Message
         {
             ID = to,
             Name = SteamFriends.GetPersonaName()
-        }.Send(-1);
+        }.Send(SendTo.All);
     }
 }

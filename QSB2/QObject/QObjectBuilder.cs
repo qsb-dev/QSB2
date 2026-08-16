@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using QSB2.Messaging;
 using QSB2.QObject.Verify;
 using QSB2.Utility;
 using QSB2.Utility.Deterministic;
@@ -51,7 +52,7 @@ public abstract class QObjectBuilder
             Created = created
         };
         if (created) msg.Count = QObjectManager.Entries[typeof(T).Hash()].QObjects.Count;
-        msg.Send(-1);
+        msg.Send(SendTo.All);
     }
 
     #endregion

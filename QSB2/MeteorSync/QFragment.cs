@@ -2,6 +2,7 @@
 using System.Linq;
 using HarmonyLib;
 using MessagePack;
+using QSB2.Messaging;
 using QSB2.Patches;
 using QSB2.QObject;
 using QSB2.Utility;
@@ -75,7 +76,7 @@ public class FragmentPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
     {
         if (!NetworkManager.IsHost) return false;
 
-        __instance.GetQObject<QFragment>().Send(new FragmentIntegrityMessage { Integrity = __instance._integrity }, -2);
+        __instance.GetQObject<QFragment>().Send(new FragmentIntegrityMessage { Integrity = __instance._integrity }, SendTo.Others);
         return true;
     }
 }

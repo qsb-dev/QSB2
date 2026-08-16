@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using QSB2.Messaging;
 using QSB2.QObject;
 using QSB2.Utility;
 using SteamTransport;
@@ -48,7 +49,7 @@ public class PositionSync(QObject.QObject qObject)
                 RelPos = RelPos,
                 RelRot = RelRot,
                 Time = Time.unscaledTime,
-            }, -2, Channels.Unreliable);
+            }, SendTo.Others, Channels.Unreliable);
         }
         else
         {

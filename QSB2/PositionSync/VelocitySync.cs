@@ -1,4 +1,5 @@
 ﻿using MessagePack;
+using QSB2.Messaging;
 using QSB2.QObject;
 using QSB2.Utility;
 using SteamTransport;
@@ -39,7 +40,7 @@ public class VelocitySync(QObject.QObject qObject)
                 RelVel = RelVel,
                 RelAngVel = RelAngVel,
                 Time = Time.unscaledTime
-            }, -2, Channels.Unreliable);
+            }, SendTo.Others, Channels.Unreliable);
         }
         else
         {

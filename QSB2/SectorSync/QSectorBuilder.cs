@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using OWML.Common;
+using QSB2.Messaging;
 using QSB2.QObject;
 using QSB2.Utility;
 using UnityEngine;
@@ -154,7 +155,7 @@ public class FakeSector : Sector
         go2.transform.SetParent(go.transform, false);
 
         var fakeSector = go2.AddComponent<FakeSector>();
-        fakeSector._name = (Name)(-1);
+        fakeSector._name = (Name)(SendTo.All);
         fakeSector._subsectors = new List<Sector>();
         fakeSector._idString = name;
         fakeSector.SetParentSector(parent);

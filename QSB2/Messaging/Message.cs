@@ -20,11 +20,11 @@ public abstract class Message
         var data = new ArraySegment<byte>(MessagePackSerializer.Serialize(rawMessage));
         if (MessageManager.DoMessageLoopback)
         {
-            if (to == -1)
+            if (to == SendTo.All)
             {
                 MessageManager.OnData(data, channelId); // send it to self also. then server will handle sending it to rest
             }
-            else if (to == -2)
+            else if (to == SendTo.Others)
             {
                 // server routing below does broadcast to everyone else
             }
@@ -49,4 +49,10 @@ public abstract class Message
     }
 
     public abstract void OnReceive(int from, int to);
+}
+
+public static class SendTo
+{
+    public const int All = -1;
+    public const int Others = -2;
 }
