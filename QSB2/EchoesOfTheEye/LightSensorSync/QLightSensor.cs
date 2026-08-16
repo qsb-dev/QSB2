@@ -2,7 +2,6 @@
 using System.Linq;
 using HarmonyLib;
 using MessagePack;
-using QSB2.Ownership;
 using QSB2.Patches;
 using QSB2.PlayerSync;
 using QSB2.QObject;
@@ -11,9 +10,9 @@ namespace QSB2.EchoesOfTheEye.LightSensorSync;
 
 public class QLightSensor : QObject<SingleLightSensor>
 {
-    public readonly List<QPlayer> Illuminators = new();
+    public readonly HashSet<QPlayer> Illuminators = new();
     public bool LocalIlluminated;
-    public List<DreamLanternController> LocalLanternList = new();
+    public List<DreamLanternController> LocalLanternList;
     public bool IsPlayerLightSensor;
 
     public override void Create()
@@ -21,11 +20,17 @@ public class QLightSensor : QObject<SingleLightSensor>
         IsPlayerLightSensor = Component.name is "CameraDetector" or "REMOTE_CameraDetector";
 
         // dont think i need to fire any events here, Start already handles that
+        // BUG: at the towers, taking away the lanterns on one side and not the other triggers darkness, even tho it shouldnt
         if (Component._startIlluminated)
         {
             foreach (var qPlayer in QObjectManager.GetQObjects<QPlayer>())
                 Illuminators.Add(qPlayer);
             LocalIlluminated = true;
+        }
+
+        if (Component._detectDreamLanterns)
+        {
+            LocalLanternList = new();
         }
 
         base.Create();
@@ -41,8 +46,8 @@ public class SensorIlluminatedMessage : QObjectMessage<QLightSensor>
 
     public override void OnReceive(QLightSensor qObject, int from, int to)
     {
-        if (Value) qObject.Illuminators.SafeAdd(NetworkManager.Connections[from].QPlayer);
-        else qObject.Illuminators.QuickRemove(NetworkManager.Connections[from].QPlayer);
+        if (Value) qObject.Illuminators.Add(NetworkManager.Connections[from].QPlayer);
+        else qObject.Illuminators.Remove(NetworkManager.Connections[from].QPlayer);
 
         var illuminated = qObject.Component._illuminated;
         qObject.Component._illuminated = qObject.Illuminators.Count > 0;
@@ -75,7 +80,6 @@ public class LightSensorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         {
             __instance.enabled = false;
             __instance._lightDetector.GetShape().enabled = false;
-            qLightSensor.OwnerQueue.DoAction(OwnerQueueAction.Remove);
             if (!__instance._preserveStateWhileDisabled)
             {
                 qLightSensor.Send(new SensorIlluminatedMessage { Value = false }, -1);
@@ -118,10 +122,13 @@ public class LightSensorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         if (qLightSensor.LocalIlluminated != prevLocalIlluminated)
             qLightSensor.Send(new SensorIlluminatedMessage { Value = qLightSensor.LocalIlluminated }, -1);
 
-        if (!qLightSensor.LocalLanternList.SequenceEqual(prevLocalLanternList))
+        if (__instance._detectDreamLanterns)
         {
-            // TODO: similar thing as above. union all local lists together to get the global list
-            // or dont? if only the player with the local list cares and no one else does, it might be fine to just have everyone track it individually 
+            if (!qLightSensor.LocalLanternList?.SequenceEqual(prevLocalLanternList) ?? false)
+            {
+                // TODO: similar thing as above. union all local lists together to get the global list
+                // or dont? if only the player with the local list cares and no one else does, it might be fine to just have everyone track it individually 
+            }
         }
 
         return false;
