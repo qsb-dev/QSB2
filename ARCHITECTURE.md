@@ -17,7 +17,7 @@ cons:
 - this includes when the player is not around. the output might not trigger when the player isnt there, so gotta make sure to do it manually on receive input in that case
 examples:
 - light sensors. they have a lit flag and list of dream lanterns. can just or/union together those inputs from all players and then each player handles the event firing themselves
-- quantum? visibility is a flag you can turn into a list. if any is not visible, event happens. might need an owner to control t
+- quantum? visibility is a flag you can turn into a list. if any is not visible, event happens. might need an owner to say where it goes
 
 
 ## lock driven
@@ -46,6 +46,8 @@ you can split a system into subsystems and use list or locks for them. e.g. quan
 - jellyfish also uses random
 - dream candles: being lit is determined entirely by light sensor. no sync needed
 - orb doors/switches: not sectored, just controlled by orb
+- interact things like gears: not lock or list. just a single event. who cares who does it first
+  - might need to lock on someone taking the interaction like slide reel or code gears
 
 
 
