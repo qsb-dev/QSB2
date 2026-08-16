@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using HarmonyLib;
 using MessagePack;
 using QSB2.Messaging;
+using QSB2.QObject;
+using QSB2.SectorSync;
 using QSB2.ShipSync;
 using QSB2.WakeUpSync;
 using UnityEngine;
@@ -19,10 +22,12 @@ public class DebugGui : MonoBehaviour
     private Vector2 _scrollPos;
     private bool _guiEnabled = true;
 
+    private int _otherPlayerToTeleportTo;
+
     private void OnGUI()
     {
         if (!_guiEnabled) return;
-        
+
         if (!NetworkManager.LocalConnectionExists) return;
 
         _scrollPos = GUILayout.BeginScrollView(_scrollPos);
@@ -58,6 +63,14 @@ public class DebugGui : MonoBehaviour
 
         if (Keyboard.current.lKey.wasPressedThisFrame)
             StartCoroutine(TestList());
+
+        if (Keyboard.current.tKey.wasPressedThisFrame)
+        {
+            var otherPlayers = NetworkManager.ConnectionIDs.Where(x => x != NetworkManager.LocalID).ToList();
+            _otherPlayerToTeleportTo = (_otherPlayerToTeleportTo + 1) % otherPlayers.Count;
+            var otherPlayer = otherPlayers[_otherPlayerToTeleportTo];
+            new DebugTeleportRequestMessage().Send(otherPlayer);
+        }
     }
 
     /// <summary>
@@ -115,5 +128,52 @@ public class PongMessage : Message
     public override void OnReceive(int from, int to)
     {
         NetworkManager.Connections[from].RTT = Time.timeSinceLevelLoad - DebugGui._lastPingSend;
+    }
+}
+
+[MessagePackObject]
+public class DebugTeleportRequestMessage : Message
+{
+    public override void OnReceive(int from, int to)
+    {
+        var qSector = NetworkManager.LocalConnection.QPlayer.RelativeToSector.QSector;
+        var body = Locator.GetPlayerBody();
+        var refBody = qSector.Component.GetOWRigidbody();
+
+        var pos = body.GetPosition();
+        new DebugTeleportResponseMessage
+        {
+            SectorId = qSector.ID,
+            RelPos = refBody.transform.ToRelPos(pos),
+            RelRot = refBody.transform.ToRelRot(body.GetRotation()),
+            DegreesY = Locator.GetPlayerCameraController().GetDegreesY(),
+            RelVel = refBody.ToRelVel(body.GetVelocity(), pos),
+            RelAngVel = refBody.ToRelAngVel(body.GetAngularVelocity())
+        }.Send(from);
+    }
+}
+
+[MessagePackObject]
+public class DebugTeleportResponseMessage : Message
+{
+    [Key(0)] public required int SectorId;
+    [Key(1)] public required Vector3 RelPos;
+    [Key(2)] public required Quaternion RelRot;
+    [Key(3)] public required float DegreesY;
+    [Key(4)] public required Vector3 RelVel;
+    [Key(5)] public required Vector3 RelAngVel;
+
+    public override void OnReceive(int from, int to)
+    {
+        var qSector = SectorId.GetQObject<QSector>();
+        var body = Locator.GetPlayerBody();
+        var refBody = qSector.Component.GetOWRigidbody();
+
+        var pos = refBody.transform.FromRelPos(RelPos);
+        body.SetPosition(pos);
+        body.SetRotation(refBody.transform.FromRelRot(RelRot));
+        Locator.GetPlayerCameraController().SetDegreesY(DegreesY);
+        body.SetVelocity(refBody.FromRelVel(RelVel, pos));
+        body.SetAngularVelocity(refBody.FromRelAngVel(RelAngVel));
     }
 }
