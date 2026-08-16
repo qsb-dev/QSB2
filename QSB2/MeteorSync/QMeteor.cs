@@ -68,7 +68,7 @@ public class MeteorPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         if (QMeteor.IsSpecialImpact(hitObject))
         {
             __instance.GetQObject<QMeteor>()
-                .Send(new MeteorSpecialImpactMessage(), SendTo.Others);
+                .Send(new MeteorSpecialImpactMessage());
         }
     }
 }

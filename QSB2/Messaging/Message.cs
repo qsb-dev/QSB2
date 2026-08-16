@@ -7,7 +7,7 @@ namespace QSB2.Messaging;
 
 public abstract class Message
 {
-    public void Send(int to, int channelId = Channels.Reliable)
+    public void Send(int to = SendTo.Others, int channelId = Channels.Reliable)
     {
         var rawMessage = new RawMessage
         {
