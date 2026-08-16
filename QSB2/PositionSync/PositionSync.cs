@@ -95,32 +95,25 @@ public class PositionSync(QObject.QObject qObject)
     /// </summary>
     public void ReferenceChanged(Transform oldRef, Transform newRef)
     {
-        return;
         if (oldRef == null) return;
 
         if (Lerp)
         {
-            // var oldRefBody = oldRef.GetAttachedOWRigidbody();
-            // var newRefBody = newRef.GetAttachedOWRigidbody();
+            var oldRefBody = oldRef.GetAttachedOWRigidbody();
+            var newRefBody = newRef.GetAttachedOWRigidbody();
 
-
-            var oldPos = oldRef.FromRelPos(RelPos);
-            var oldRot = oldRef.FromRelRot(RelRot);
-            var oldLerpedPos = qObject.Component.transform.position;
-            var oldLerpedRot = qObject.Component.transform.rotation;
-            RelPos = newRef.ToRelPos(oldPos);
-            RelRot = newRef.ToRelRot(oldRot);
-            _lerpedRelPos = newRef.ToRelPos(oldLerpedPos);
-            _lerpedRelRot = newRef.ToRelRot(oldLerpedRot);
-            _currentVel = Vector3.zero;
+            RelPos = newRef.ToRelPos(oldRef.FromRelPos(RelPos));
+            RelRot = newRef.ToRelRot(oldRef.FromRelRot(RelRot));
+            _lerpedRelPos = newRef.ToRelPos(oldRef.FromRelPos(_lerpedRelPos));
+            _lerpedRelRot = newRef.ToRelRot(oldRef.FromRelRot(_lerpedRelRot));
+            var pos = qObject.Component.transform.position;
+            _currentVel = newRefBody.ToRelVel(oldRefBody.FromRelVel(_currentVel, pos), pos);
             _currentAngVel = Quaternion.identity; // dont really know how to handle this. its less noticeable
         }
         else
         {
-            var oldPos = qObject.Component.transform.position;
-            var oldRot = qObject.Component.transform.rotation;
-            RelPos = newRef.ToRelPos(oldPos);
-            RelRot = newRef.ToRelRot(oldRot);
+            RelPos = newRef.ToRelPos(oldRef.FromRelPos(RelPos));
+            RelRot = newRef.ToRelRot(oldRef.FromRelRot(RelRot));
         }
     }
 }

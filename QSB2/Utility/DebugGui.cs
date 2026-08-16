@@ -17,9 +17,12 @@ public class DebugGui : MonoBehaviour
     private static List<int> _testList = new();
 
     private Vector2 _scrollPos;
+    private bool _guiEnabled = true;
 
     private void OnGUI()
     {
+        if (!_guiEnabled) return;
+        
         if (!NetworkManager.LocalConnectionExists) return;
 
         _scrollPos = GUILayout.BeginScrollView(_scrollPos);
@@ -50,6 +53,8 @@ public class DebugGui : MonoBehaviour
     private void Update()
     {
         if (!Keyboard.current.qKey.isPressed) return;
+
+        if (Keyboard.current.gKey.wasPressedThisFrame) _guiEnabled = !_guiEnabled;
 
         if (Keyboard.current.lKey.wasPressedThisFrame)
             StartCoroutine(TestList());

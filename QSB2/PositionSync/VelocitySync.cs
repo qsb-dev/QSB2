@@ -66,16 +66,14 @@ public class VelocitySync(QObject.QObject qObject)
     /// </summary>
     public void ReferenceChanged(Transform oldRef, Transform newRef)
     {
-        return;
         if (oldRef == null) return;
         
-        var body = qObject.Component.GetAttachedOWRigidbody();
         var newRefBody = newRef.GetAttachedOWRigidbody();
-        
-        var oldVel = body.GetVelocity();
-        var oldAngVel = body.GetAngularVelocity();
-        RelVel = newRefBody.ToRelVel(oldVel, body.GetPosition());
-        RelAngVel = newRefBody.ToRelAngVel(oldAngVel);
+        var oldRefBody = oldRef.GetAttachedOWRigidbody();
+
+        var pos = qObject.Component.transform.position;
+        RelVel = newRefBody.ToRelVel(oldRefBody.FromRelVel(RelVel, pos), pos);
+        RelAngVel = newRefBody.ToRelAngVel(oldRefBody.FromRelAngVel(RelAngVel));
     }
 }
 
