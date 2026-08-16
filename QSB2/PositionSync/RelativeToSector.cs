@@ -51,7 +51,7 @@ public class RelativeToSector(QObject.QObject qObject)
                 qObject.Send(new ChangeSectorMessage
                 {
                     SectorID = qSector.ID,
-                });
+                }, SendTo.Others);
 
                 qObject.PositionSync.Reference = sector.transform;
             }

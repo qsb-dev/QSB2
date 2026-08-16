@@ -107,7 +107,7 @@ public class MeteorLauncherPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 }
 
                 __instance.GetQObject<QMeteorLauncher>()
-                    .Send(new MeteorPreLaunchMessage());
+                    .Send(new MeteorPreLaunchMessage(), SendTo.Others);
             }
 
             if (Time.time > __instance._lastLaunchTime + __instance._launchDelay + 2.3f)
@@ -178,7 +178,7 @@ public class MeteorLauncherPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 {
                     MeteorId = meteorController.GetQObject<QMeteor>().ID,
                     LaunchSpeed = launchSpeed
-                });
+                }, SendTo.Others);
         }
 
         return false;

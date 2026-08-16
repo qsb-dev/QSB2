@@ -67,7 +67,7 @@ public class DeathPatches()// : QPatch(QPatchWhen.OnQObjectsCreated)
 					PlayerData.RevertParadoxLoopCountStates();
 				}
 
-				LoadManager.LoadScene(OWScene.Credits_Final, LoadManager.FadeType.ToWhite);
+				LoadManager.LoadScene(OWScene.Credits_Final, LoadManager.FadeType.ToWhite, 1f, true);
 				return false;
 			}
 
@@ -111,11 +111,11 @@ public class DeathPatches()// : QPatch(QPatchWhen.OnQObjectsCreated)
 		if (__instance._waitingToApplySkipLoopStyle)
 		{
 			var disableMeditate = PlayerState.IsSleepingAtCampfire() || PlayerState.IsGrabbedByGhost() || NetworkManager.LocalConnection.QPlayer.IsDead;
-            __instance._skipToNextLoopButton.GetComponent<UIStyleApplier>().ChangeState(disableMeditate ? UIElementState.DISABLED : UIElementState.NORMAL, false);
+			__instance._skipToNextLoopButton.GetComponent<UIStyleApplier>().ChangeState(disableMeditate ? UIElementState.DISABLED : UIElementState.NORMAL, false);
 			__instance._waitingToApplySkipLoopStyle = false;
 		}
 
-        if (OWInput.IsNewlyPressed(InputLibrary.pause, InputMode.All) && __instance._isOpen && MenuStackManager.SharedInstance.GetMenuCount() == 1)
+		if (OWInput.IsNewlyPressed(InputLibrary.pause, InputMode.All) && __instance._isOpen && MenuStackManager.SharedInstance.GetMenuCount() == 1)
 		{
 			__instance._pauseMenu.EnableMenu(false);
 		}

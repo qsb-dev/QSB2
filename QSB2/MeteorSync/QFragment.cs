@@ -76,7 +76,7 @@ public class FragmentPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
     {
         if (!NetworkManager.IsHost) return false;
 
-        __instance.GetQObject<QFragment>().Send(new FragmentIntegrityMessage { Integrity = __instance._integrity });
+        __instance.GetQObject<QFragment>().Send(new FragmentIntegrityMessage { Integrity = __instance._integrity }, SendTo.Others);
         return true;
     }
 }

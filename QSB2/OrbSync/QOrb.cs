@@ -145,7 +145,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 }
 
                 var qOrb = __instance.GetQObject<QOrb>();
-                qOrb.Send(new OrbDragMessage { Value = true });
+                qOrb.Send(new OrbDragMessage { Value = true }, SendTo.Others);
                 qOrb.OwnerQueue.DoAction(OwnerQueueAction.Force);
             }
         }
@@ -173,7 +173,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
             return false;
         }
 
-        qOrb.Send(new OrbDragMessage { Value = false });
+        qOrb.Send(new OrbDragMessage { Value = false }, SendTo.Others);
         qOrb.OwnerQueue.DoAction(OwnerQueueAction.Remove);
         return true;
     }
@@ -208,7 +208,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                         {
                             SlotIndex = slotIndex,
                             PlayAudio = playAudio
-                        });
+                        }, SendTo.Others);
                         break;
                     }
                 }
@@ -220,7 +220,7 @@ public class OrbPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
                 {
                     SlotIndex = -1,
                     PlayAudio = playAudio
-                });
+                }, SendTo.Others);
             }
         }
 
