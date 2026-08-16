@@ -61,74 +61,68 @@ public class MeteorLauncherPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
     [HarmonyPatch(typeof(MeteorLauncher), nameof(MeteorLauncher.FixedUpdate))]
     public static bool MeteorLauncher_FixedUpdate(MeteorLauncher __instance)
     {
-        if (NetworkManager.IsHost)
+        if (!NetworkManager.IsHost) return false;
+
+        if (__instance._launchedMeteors != null)
         {
-            if (__instance._launchedMeteors != null)
+            for (var i = __instance._launchedMeteors.Count - 1; i >= 0; i--)
             {
-                for (var i = __instance._launchedMeteors.Count - 1; i >= 0; i--)
+                if (__instance._launchedMeteors[i] == null)
                 {
-                    if (__instance._launchedMeteors[i] == null)
-                    {
-                        __instance._launchedMeteors.QuickRemoveAt(i);
-                    }
-                    else if (__instance._launchedMeteors[i].isSuspended)
-                    {
-                        __instance._meteorPool.Add(__instance._launchedMeteors[i]);
-                        __instance._launchedMeteors.QuickRemoveAt(i);
-                    }
+                    __instance._launchedMeteors.QuickRemoveAt(i);
+                }
+                else if (__instance._launchedMeteors[i].isSuspended)
+                {
+                    __instance._meteorPool.Add(__instance._launchedMeteors[i]);
+                    __instance._launchedMeteors.QuickRemoveAt(i);
                 }
             }
-
-            if (__instance._launchedDynamicMeteors != null)
-            {
-                for (var j = __instance._launchedDynamicMeteors.Count - 1; j >= 0; j--)
-                {
-                    if (__instance._launchedDynamicMeteors[j] == null)
-                    {
-                        __instance._launchedDynamicMeteors.QuickRemoveAt(j);
-                    }
-                    else if (__instance._launchedDynamicMeteors[j].isSuspended)
-                    {
-                        __instance._dynamicMeteorPool.Add(__instance._launchedDynamicMeteors[j]);
-                        __instance._launchedDynamicMeteors.QuickRemoveAt(j);
-                    }
-                }
-            }
-
-            if (__instance._initialized && Time.time > __instance._lastLaunchTime + __instance._launchDelay)
-            {
-                if (!__instance._areParticlesPlaying)
-                {
-                    __instance._areParticlesPlaying = true;
-                    foreach (var launchParticle in __instance._launchParticles)
-                    {
-                        launchParticle.Play();
-                    }
-
-                    __instance.GetQObject<QMeteorLauncher>()
-                        .Send(new MeteorPreLaunchMessage(), -2);
-                }
-
-                if (Time.time > __instance._lastLaunchTime + __instance._launchDelay + 2.3f)
-                {
-                    __instance.LaunchMeteor();
-                    __instance._lastLaunchTime = Time.time;
-                    __instance._launchDelay = Random.Range(__instance._minInterval, __instance._maxInterval);
-                    __instance._areParticlesPlaying = false;
-                    foreach (var launchParticle in __instance._launchParticles)
-                    {
-                        launchParticle.Stop();
-                    }
-                }
-            }
-
-
-            return true;
         }
-        else
+
+        if (__instance._launchedDynamicMeteors != null)
         {
-            return false;
+            for (var j = __instance._launchedDynamicMeteors.Count - 1; j >= 0; j--)
+            {
+                if (__instance._launchedDynamicMeteors[j] == null)
+                {
+                    __instance._launchedDynamicMeteors.QuickRemoveAt(j);
+                }
+                else if (__instance._launchedDynamicMeteors[j].isSuspended)
+                {
+                    __instance._dynamicMeteorPool.Add(__instance._launchedDynamicMeteors[j]);
+                    __instance._launchedDynamicMeteors.QuickRemoveAt(j);
+                }
+            }
         }
+
+        if (__instance._initialized && Time.time > __instance._lastLaunchTime + __instance._launchDelay)
+        {
+            if (!__instance._areParticlesPlaying)
+            {
+                __instance._areParticlesPlaying = true;
+                foreach (var launchParticle in __instance._launchParticles)
+                {
+                    launchParticle.Play();
+                }
+
+                __instance.GetQObject<QMeteorLauncher>()
+                    .Send(new MeteorPreLaunchMessage(), -2);
+            }
+
+            if (Time.time > __instance._lastLaunchTime + __instance._launchDelay + 2.3f)
+            {
+                __instance.LaunchMeteor();
+                __instance._lastLaunchTime = Time.time;
+                __instance._launchDelay = Random.Range(__instance._minInterval, __instance._maxInterval);
+                __instance._areParticlesPlaying = false;
+                foreach (var launchParticle in __instance._launchParticles)
+                {
+                    launchParticle.Stop();
+                }
+            }
+        }
+
+        return false;
     }
 
     [HarmonyPrefix]

@@ -71,11 +71,12 @@ public class FragmentPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
     
     [HarmonyPostfix]
     [HarmonyPatch(typeof(FragmentIntegrity), nameof(FragmentIntegrity.AddDamage))]
-    public static void FragmentIntegrity_AddDamage(FragmentIntegrity __instance)
+    public static bool FragmentIntegrity_AddDamage(FragmentIntegrity __instance)
     {
-        if (!NetworkManager.IsHost) return;
+        if (!NetworkManager.IsHost) return false;
 
         __instance.GetQObject<QFragment>().Send(new FragmentIntegrityMessage { Integrity = __instance._integrity }, -2);
+        return true;
     }
 }
 
