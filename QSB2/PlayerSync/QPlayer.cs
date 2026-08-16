@@ -44,6 +44,12 @@ public class QPlayer : QObject<Transform>, ITickable
             GameObject.Destroy(go.GetComponent<Collider>());
             Component = go.GetComponent<Transform>();
 
+            // hack until we get real player
+            var lightSensor = new GameObject("REMOTE_CameraDetector");
+            lightSensor.SetActive(false);
+            lightSensor.AddComponent<SingleLightSensor>().enabled = false;
+            lightSensor.transform.SetParent(go.transform, false);
+
             Logger.Log($"remote player for {Connection.ID} created");
         }
 
