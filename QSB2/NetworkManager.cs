@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using QSB2.Messaging;
+using QSB2.PlayerSync;
+using QSB2.ProbeSync;
 using QSB2.QObject;
 using QSB2.WakeUpSync;
 using SteamTransport;
@@ -15,6 +17,7 @@ public static class NetworkManager
     internal static Server _server; // host has this
 
     public static bool IsConnected => (_client?.IsConnected ?? false) || (_server?.IsListening ?? false);
+    public static bool IsClientConnecting => _client?.IsConnecting ?? false;
     public static bool IsHost => _server?.IsListening ?? false;
 
     public static string Address;
@@ -155,6 +158,14 @@ public static class NetworkManager
 
     /// <summary>
     /// there's time between connecting and getting local id (identify message) and getting own connection (join message)
+    /// just kidding on the last part but whatever
     /// </summary>
-    public static bool LocalConnectionExists => IsConnected && LocalID != -1 && Connections.ContainsKey(LocalID);
+    public static bool IsFullyConnected => IsConnected && LocalID != -1 && Connections.ContainsKey(LocalID);
+
+    /// <summary>
+    /// all the things i can think of are ready. we can do literally everything here
+    /// </summary>
+    public static bool IsSuperDuperInit => WakeUpManager.AllQObjectsCreated &&
+                                           QObjectManager.GetQObjects<QPlayer>().All(x => x.RelativeToSector.SectorSet) &&
+                                           QObjectManager.GetQObjects<QProbe>().All(x => x.RelativeToSector.SectorSet);
 }

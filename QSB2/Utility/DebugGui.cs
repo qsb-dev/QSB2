@@ -28,7 +28,7 @@ public class DebugGui : MonoBehaviour
     {
         if (!_guiEnabled) return;
 
-        if (!NetworkManager.LocalConnectionExists) return;
+        if (!NetworkManager.IsFullyConnected) return;
 
         _scrollPos = GUILayout.BeginScrollView(_scrollPos);
 

@@ -58,6 +58,7 @@ public static class QObjectManager
     // idk if spreading these over multiple frames will ever be necessary
     private static IEnumerator BuildersCreate()
     {
+        // wait until all the right flags are good before we create our things. coordinates with wake up sync
         yield return new WaitUntil(() => LateInitializerManager.isDoneInitializing && WakeUpManager.AllScenesSame && !WakeUpManager.HostWaitingForPlayers);
 
         var sw = Stopwatch.StartNew();

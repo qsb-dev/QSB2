@@ -29,6 +29,9 @@ public static class WakeUpManager
         if (AllQObjectsCreated) QPatchManager.Patch(QPatchWhen.OnQObjectsCreated);
         else QPatchManager.Unpatch(QPatchWhen.OnQObjectsCreated);
 
+        // BUG: one player can destroy (by looping) while another does not. either destroy here or account for that in death/loop sync
+        //      doesnt really break anything, just suddenly all multiplayer stuff will stop being multiplayer
+
         var lc = NetworkManager.LocalConnection;
         AllScenesSame = NetworkManager.Connections.Values.All(c => c.Scene == lc.Scene && c.LoadCounter == lc.LoadCounter);
     }
