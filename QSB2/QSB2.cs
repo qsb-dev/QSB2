@@ -51,6 +51,8 @@ public class QSB2 : ModBehaviour
         gameObject.AddComponent<DebugGui>();
 
         Logger.Log("qsb loaded", MessageType.Success);
+        
+        AutoStart.Go();
     }
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)

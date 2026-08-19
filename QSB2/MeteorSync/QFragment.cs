@@ -66,7 +66,8 @@ public class FragmentPatches() : QPatch(QPatchWhen.OnQObjectsCreated)
         var qFragment = __instance._detachableFragment._fragmentIntegrity.GetQObject<QFragment>();
         __instance._leashLength = qFragment.LeashLength;
     }
-
+    
+    // BUG: this shit does NOT work
     [HarmonyPrefix]
     [HarmonyPatch(typeof(FragmentIntegrity), nameof(FragmentIntegrity.AddDamage))]
     public static bool FragmentIntegrity_AddDamage(FragmentIntegrity __instance)

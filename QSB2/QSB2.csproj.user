@@ -5,4 +5,7 @@
   <PropertyGroup Condition="'$(OS)' == 'Unix'">
     <OutputPath>$(HOME)/.local/share/OuterWildsModManager/OWML/Mods/JohnCorby.QSB2</OutputPath>
   </PropertyGroup>
+    <Target Name="run outer wilds" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT'">
+        <Exec Command="powershell ./autostart.ps1" IgnoreExitCode="true" />
+    </Target>
 </Project>

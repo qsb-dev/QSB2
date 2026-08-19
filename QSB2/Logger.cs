@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using HarmonyLib;
+﻿using HarmonyLib;
 using OWML.Common;
 using OWML.Logging;
 using QSB2.Patches;
@@ -8,9 +7,6 @@ namespace QSB2;
 
 public static class Logger
 {
-    public static readonly int ProcessInstanceId = Process.GetProcessesByName(Process.GetCurrentProcess().ProcessName)
-        .IndexOf(x => x.Id == Process.GetCurrentProcess().Id);
-
     public static void Log(string msg, MessageType type = MessageType.Message) => QSB2.Instance.ModHelper.Console.WriteLine(msg, type);
 }
 
