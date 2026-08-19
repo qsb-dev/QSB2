@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gizmos", "Gizmos\Gizmos.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracy", "Tracy\Tracy.csproj", "{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TracyTest", "TracyTest\TracyTest.csproj", "{951BCDFE-03E1-4050-ABF0-9AAFBD9C5A13}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{951BCDFE-03E1-4050-ABF0-9AAFBD9C5A13}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{951BCDFE-03E1-4050-ABF0-9AAFBD9C5A13}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{951BCDFE-03E1-4050-ABF0-9AAFBD9C5A13}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{951BCDFE-03E1-4050-ABF0-9AAFBD9C5A13}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

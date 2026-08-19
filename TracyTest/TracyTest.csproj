@@ -1,5 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net48</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Copyright>Copyright © 2026 JohnCorby</Copyright>
@@ -12,10 +13,6 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" IncludeAssets="compile" />
-    </ItemGroup>
-    <ItemGroup>
-        <None Include="TracyClient.dll">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+        <ProjectReference Include="..\Tracy\Tracy.csproj" />
     </ItemGroup>
 </Project>
