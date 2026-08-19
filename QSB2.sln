@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SteamTransport", "SteamTran
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gizmos", "Gizmos\Gizmos.csproj", "{488E8CA1-19FD-4F9E-8E55-C732A923AD03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tracy", "Tracy\Tracy.csproj", "{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{488E8CA1-19FD-4F9E-8E55-C732A923AD03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{488E8CA1-19FD-4F9E-8E55-C732A923AD03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{488E8CA1-19FD-4F9E-8E55-C732A923AD03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA8A07A8-E657-4929-BD60-3F43CD4AADD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -16,6 +16,7 @@
         <PackageReference Include="MessagePack" Version="3.1.8" />
         <ProjectReference Include="..\SteamTransport\SteamTransport.csproj" />
         <ProjectReference Include="..\Gizmos\Gizmos.csproj" />
+        <ProjectReference Include="..\Tracy\Tracy.csproj" />
     </ItemGroup>
     <ItemGroup>
         <None Include="default-config.json">
