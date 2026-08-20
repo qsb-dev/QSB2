@@ -42,10 +42,10 @@ public class ProfilerPatch() : QPatch(QPatchWhen.Immediately)
         foreach (var type in Assembly.GetExecutingAssembly().GetTypes())
         {
             if (!(
-                    type.Name == "QSB2" ||
-                    // type.Name.EndsWith("Message") ||
+                    // type.Name == "QSB2" ||
+                    type.Name.EndsWith("Message") ||
                     // type.Name.EndsWith("Patch") ||
-                    // type.Name.EndsWith("Patches") ||
+                    type.Name.EndsWith("Patches") ||
                     type.Name.EndsWith("Builder")
                 )) continue;
 
