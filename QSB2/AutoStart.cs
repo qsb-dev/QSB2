@@ -20,7 +20,7 @@ public static class AutoStart
     public static IEnumerator Go()
     {
         var titleScreenManager = GameObject.FindObjectOfType<TitleScreenManager>();
-        yield return new WaitForSeconds(1); // wait for title screen stuff to exist and finish loading profile and etc
+        yield return new WaitForSeconds(10); // wait for title screen stuff to exist and finish loading profile and etc
 
         var sr = new Vector2Int(Screen.width, Screen.height);
         if (sr != new Vector2Int(800, 600))

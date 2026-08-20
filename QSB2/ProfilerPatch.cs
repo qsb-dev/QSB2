@@ -46,6 +46,7 @@ public class ProfilerPatch() : QPatch(QPatchWhen.Immediately)
                     type.Name.EndsWith("Message") ||
                     // type.Name.EndsWith("Patch") ||
                     type.Name.EndsWith("Patches") ||
+                    type.Name.EndsWith("Manager") ||
                     type.Name.EndsWith("Builder")
                 )) continue;
 
