@@ -52,7 +52,7 @@ public class QSB2 : ModBehaviour
 
         Logger.Log("qsb loaded", MessageType.Success);
         
-        AutoStart.Go();
+        StartCoroutine(AutoStart.Go());
     }
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)
