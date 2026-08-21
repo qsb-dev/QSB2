@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using HarmonyLib;
@@ -51,8 +52,9 @@ public class QSB2 : ModBehaviour
         gameObject.AddComponent<DebugGui>();
 
         Logger.Log("qsb loaded", MessageType.Success);
-        
-        StartCoroutine(AutoStart.Go());
+
+        if (Environment.GetCommandLineArgs().ElementAtOrDefault(1) == "autostart")
+            StartCoroutine(AutoStart.Go());
     }
 
     public override void SetupTitleMenu(ITitleMenuManager titleManager)
@@ -66,7 +68,7 @@ public class QSB2 : ModBehaviour
         TickableManager.Tick();
         NetworkManager.Tick();
         WakeUpManager.Tick();
-        
+
         // hack. move this to menu manager or something later. also rewrite when ui is good
         if (LoadManager.GetCurrentScene() == OWScene.TitleScreen)
         {
