@@ -56,6 +56,7 @@ public static class WakeUpManager
                 }.Send(SendTo.All);
                 Delay.RunWhen(() => Keyboard.current.enterKey.isPressed || AutoStart.BypassHostWaitingForPlayers, () =>
                 {
+                    AutoStart.BypassHostWaitingForPlayers = false;
                     new HostWaitingForPlayersMessage
                     {
                         Value = false
