@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
@@ -21,7 +22,8 @@ public class DebugGui : MonoBehaviour
 
     private Vector2 _scrollPos;
     private bool _guiEnabled = true;
-    private bool _showQObjects = false;
+    private bool _showQObjects;
+    public static bool ShowGizmos;
 
     private int _otherPlayerToTeleportTo;
 
@@ -49,30 +51,37 @@ public class DebugGui : MonoBehaviour
         GUILayout.Label(_testList.Join());
 
         GUILayout.EndScrollView();
-
-        if (Time.timeSinceLevelLoad < _lastPingSend || Time.timeSinceLevelLoad > _lastPingSend + 1)
-        {
-            _lastPingSend = Time.timeSinceLevelLoad;
-            new PingMessage().Send(SendTo.All);
-        }
     }
 
     private void Update()
     {
-        if (!Keyboard.current.qKey.isPressed) return;
-
-        if (Keyboard.current.shiftKey.isPressed && Keyboard.current.gKey.wasPressedThisFrame) _showQObjects = !_showQObjects;
-        else if (Keyboard.current.gKey.wasPressedThisFrame) _guiEnabled = !_guiEnabled;
-
-        if (Keyboard.current.lKey.wasPressedThisFrame)
-            StartCoroutine(TestList());
-
-        if (Keyboard.current.tKey.wasPressedThisFrame)
+        if (!NetworkManager.IsFullyConnected) return;
+        
+        if (Keyboard.current.qKey.isPressed)
         {
-            var otherPlayers = NetworkManager.ConnectionIDs.Where(x => x != NetworkManager.LocalID).ToList();
-            _otherPlayerToTeleportTo = (_otherPlayerToTeleportTo + 1) % otherPlayers.Count;
-            var otherPlayer = otherPlayers[_otherPlayerToTeleportTo];
-            new DebugTeleportRequestMessage().Send(otherPlayer);
+            if (Keyboard.current.gKey.wasPressedThisFrame) _guiEnabled = !_guiEnabled;
+            if (Keyboard.current.hKey.wasPressedThisFrame) _showQObjects = !_showQObjects;
+            if (Keyboard.current.jKey.wasPressedThisFrame) ShowGizmos = !ShowGizmos;
+
+            if (Keyboard.current.lKey.wasPressedThisFrame)
+                StartCoroutine(TestList());
+
+            if (Keyboard.current.tKey.wasPressedThisFrame)
+            {
+                var otherPlayers = NetworkManager.ConnectionIDs.Where(x => x != NetworkManager.LocalID).ToList();
+                _otherPlayerToTeleportTo = (_otherPlayerToTeleportTo + 1) % otherPlayers.Count;
+                var otherPlayer = otherPlayers[_otherPlayerToTeleportTo];
+                new DebugTeleportRequestMessage().Send(otherPlayer);
+            }
+        }
+
+        if (_guiEnabled)
+        {
+            if (Time.timeSinceLevelLoad < _lastPingSend || Time.timeSinceLevelLoad > _lastPingSend + 1)
+            {
+                _lastPingSend = Time.timeSinceLevelLoad;
+                new PingMessage().Send(SendTo.All);
+            }
         }
     }
 
