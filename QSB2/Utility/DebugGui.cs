@@ -21,6 +21,7 @@ public class DebugGui : MonoBehaviour
 
     private Vector2 _scrollPos;
     private bool _guiEnabled = true;
+    private bool _showQObjects = false;
 
     private int _otherPlayerToTeleportTo;
 
@@ -40,8 +41,9 @@ public class DebugGui : MonoBehaviour
             GUILayout.Label($"rtt {connection.RTT * 1000:F1}ms");
             GUILayout.Label($"time {connection.Time} diff {connection.Time - NetworkManager.LocalConnection.Time}");
             GUILayout.Label($"scene {connection.Scene} counter {connection.LoadCounter}");
-            GUILayout.Label($"created {connection.QObjectsCreated.Join()}");
-            GUILayout.Label($"sectors: player {connection.QPlayer?.PositionSync?.Reference} | probe {connection.QProbe?.PositionSync?.Reference} | ship {QShip.Instance?.PositionSync?.Reference}");
+            if (_showQObjects)
+                GUILayout.Label(connection.QObjectsCreated.Join(delimiter: "\n"));
+            GUILayout.Label($"sectors: <b>player</b> {connection.QPlayer?.PositionSync?.Reference} | <b>probe</b> {connection.QProbe?.PositionSync?.Reference} | <b>ship</b> {QShip.Instance?.PositionSync?.Reference}");
         }
 
         GUILayout.Label(_testList.Join());
@@ -59,7 +61,8 @@ public class DebugGui : MonoBehaviour
     {
         if (!Keyboard.current.qKey.isPressed) return;
 
-        if (Keyboard.current.gKey.wasPressedThisFrame) _guiEnabled = !_guiEnabled;
+        if (Keyboard.current.shiftKey.isPressed && Keyboard.current.gKey.wasPressedThisFrame) _showQObjects = !_showQObjects;
+        else if (Keyboard.current.gKey.wasPressedThisFrame) _guiEnabled = !_guiEnabled;
 
         if (Keyboard.current.lKey.wasPressedThisFrame)
             StartCoroutine(TestList());
