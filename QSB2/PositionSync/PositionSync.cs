@@ -70,6 +70,7 @@ public class PositionSync(QObject.QObject qObject)
         }
         else
         {
+            // TODO: this is always opposite of lerp. just have non lerp mode set position in message receive
             if (OccasionalMode) return;
 
             if (Lerp)
@@ -106,7 +107,7 @@ public class PositionSync(QObject.QObject qObject)
         _lerpedRelRot = RelRot;
         _currentVel = Vector3.zero;
         _currentAngVel = Quaternion.identity;
-        
+
         // TODO: turn into teleport message that instantly sends over location, velocity, and sector data
     }
 

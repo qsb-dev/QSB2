@@ -14,7 +14,7 @@ public abstract class QObject
     public int ID;
     public Component Component;
 
-    #region mixins
+    #region components
 
     // so many things reference each other here, but flat structure is way easier to read
     public PositionSync.PositionSync PositionSync;
@@ -22,6 +22,7 @@ public abstract class QObject
     public Owner Owner;
     public OwnerQueue OwnerQueue;
     public RelativeToSector RelativeToSector;
+    public ValueSync[] ValueSyncs;
 
     #endregion
 
