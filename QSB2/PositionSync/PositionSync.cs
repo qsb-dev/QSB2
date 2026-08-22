@@ -45,6 +45,11 @@ public class PositionSync(QObject.QObject qObject)
             Popcron.Gizmos.Line(qObject.Component.transform.position, Reference.position, Color.cyan);
         }
 
+        if (DebugGui.ShowLabels)
+        {
+            DebugGui.DrawLabel(qObject.Component.transform, $"i am qobject {qObject.GetType().Name}");
+        }
+
         if (qObject.Owner.ID == -1) return; // no owner = do nothing
 
         if (Reference == null) return; // happens with RelativeToSector usually

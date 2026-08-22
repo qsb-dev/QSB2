@@ -37,6 +37,16 @@ public static class Extensions
     public static int Hash(this Type type) => type.FullName.GetHashCode();
 
 
+    public static float Map(this float value, float inputFrom, float inputTo, float outputFrom, float outputTo, bool clamp)
+    {
+        var mappedValue = (value - inputFrom) / (inputTo - inputFrom) * (outputTo - outputFrom) + outputFrom;
+
+        return clamp
+            ? Mathf.Clamp(mappedValue, outputTo, outputFrom)
+            : mappedValue;
+    }
+
+
     public static TSource MinBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> keySelector)
     {
         var comparer = Comparer<TKey>.Default;
