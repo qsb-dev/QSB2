@@ -1,5 +1,4 @@
 using System;
-using System.Buffers;
 using UnityEngine;
 
 namespace Popcron
@@ -8,19 +7,10 @@ namespace Popcron
     {
         private static string _prefsKey = null;
         private static int? _bufferSize = null;
-        private static bool? _enabled = null;
         private static float? _dashGap = null;
-        private static bool? _cull = null;
-        private static int? _pass = null;
         private static Vector3? _offset = null;
 
         private static Vector3[] buffer = new Vector3[BufferSize];
-
-        /// <summary>
-        /// By default, it will always render to scene view camera and the main camera.
-        /// Subscribing to this allows you to whitelist your custom cameras.
-        /// </summary>
-        public static Func<Camera, bool> CameraFilter = cam => false;
 
         private static string PrefsKey
         {
@@ -35,10 +25,6 @@ namespace Popcron
             }
         }
 
-        /// <summary>
-        /// The size of the total gizmos buffer.
-        /// Default is 4096.
-        /// </summary>
         public static int BufferSize
         {
             get
@@ -64,34 +50,6 @@ namespace Popcron
             }
         }
 
-        /// <summary>
-        /// Toggles wether the gizmos could be drawn or not.
-        /// </summary>
-        public static bool Enabled
-        {
-            get
-            {
-                if (_enabled == null)
-                {
-                    _enabled = PlayerPrefs.GetInt($"{PrefsKey}.Enabled", 1) == 1;
-                }
-
-                return _enabled.Value;
-            }
-            set
-            {
-                if (_enabled != value)
-                {
-                    _enabled = value;
-                    PlayerPrefs.SetInt($"{PrefsKey}.Enabled", value ? 1 : 0);
-                }
-            }
-        }
-
-        /// <summary>
-        /// The size of the gap when drawing dashed elements.
-        /// Default gap size is 0.1
-        /// </summary>
         public static float DashGap
         {
             get
@@ -113,89 +71,12 @@ namespace Popcron
             }
         }
 
-        [Obsolete("This property is obsolete. Use FrustumCulling instead.", false)]
-        public static bool Cull
-        {
-            get
-            {
-                return FrustumCulling;
-            }
-            set
-            {
-                FrustumCulling = value;
-            }
-        }
-
-        [Obsolete("This property is obsolete. Subscribe to CameraFilter predicate instead and return true for your custom camera.", false)]
-        public static Camera Camera
-        {
-            get => null;
-            set
-            {
-
-            }
-        }
-
-        /// <summary>
-        /// Should the camera not draw elements that are not visible?
-        /// </summary>
-        public static bool FrustumCulling
-        {
-            get
-            {
-                if (_cull == null)
-                {
-                    _cull = PlayerPrefs.GetInt($"{PrefsKey}.FrustumCulling", 1) == 1;
-                }
-
-                return _cull.Value;
-            }
-            set
-            {
-                if (_cull != value)
-                {
-                    _cull = value;
-                    PlayerPrefs.SetInt($"{PrefsKey}.FrustumCulling", value ? 1 : 0);
-                }
-            }
-        }
-
-        /// <summary>
-        /// The material being used to render.
-        /// </summary>
         public static Material Material
         {
-            get => GizmosInstance.Material;
-            set => GizmosInstance.Material = value;
+            get { return GizmosInstance.Material; }
+            set { GizmosInstance.Material = value; }
         }
 
-        /// <summary>
-        /// Rendering pass to activate.
-        /// </summary>
-        public static int Pass
-        {
-            get
-            {
-                if (_pass == null)
-                {
-                    _pass = PlayerPrefs.GetInt($"{PrefsKey}.Pass", 0);
-                }
-
-                return _pass.Value;
-            }
-            set
-            {
-                if (_pass != value)
-                {
-                    _pass = value;
-                    PlayerPrefs.SetInt($"{PrefsKey}.Pass", value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Global offset for all points. Default is (0, 0, 0).
-        /// </summary>
         public static Vector3 Offset
         {
             get
@@ -230,149 +111,99 @@ namespace Popcron
             }
         }
 
-        /// <summary>
-        /// Draws an element onto the screen.
-        /// </summary>
-        public static void Draw<T>(Color? color, bool dashed, params object[] args) where T : Drawer
+        public static void Draw<T>(Color? color, params object[] args) where T : Drawer
         {
-            if (!Enabled)
-            {
-                return;
-            }
-
             Drawer drawer = Drawer.Get<T>();
             if (drawer != null)
             {
                 int points = drawer.Draw(ref buffer, args);
 
                 //copy from buffer and add to the queue
-                Vector3[] array = ArrayPool<Vector3>.Shared.Rent(points);
+                Vector3[] array = new Vector3[points];
                 Array.Copy(buffer, array, points);
-                GizmosInstance.Submit(array, color, dashed);
-                ArrayPool<Vector3>.Shared.Return(array);
+                GizmosInstance.Submit(array, color);
             }
         }
 
-        /// <summary>
-        /// Draws an array of lines. Useful for things like paths.
-        /// </summary>
-        public static void Lines(Vector3[] lines, Color? color = null, bool dashed = false)
+        public static void Lines(Vector3[] lines, Color? color = null)
         {
-            if (!Enabled)
-            {
-                return;
-            }
-
-            GizmosInstance.Submit(lines, color, dashed);
+            GizmosInstance.Submit(lines, color);
         }
 
-        /// <summary>
-        /// Draw line in world space.
-        /// </summary>
-        public static void Line(Vector3 a, Vector3 b, Color? color = null, bool dashed = false)
+        public static void Line(Vector3 a, Vector3 b, Color? color = null)
         {
-            Draw<LineDrawer>(color, dashed, a, b);
+            Draw<LineDrawer>(color, a, b);
         }
 
-        /// <summary>
-        /// Draw square in world space.
-        /// </summary>
-        public static void Square(Vector2 position, Vector2 size, Color? color = null, bool dashed = false)
+        public static void Square(Vector2 position, Vector2 size, Color? color = null)
         {
-            Square(position, Quaternion.identity, size, color, dashed);
+            Square(position, Quaternion.identity, size, color);
         }
 
-        /// <summary>
-        /// Draw square in world space with float diameter parameter.
-        /// </summary>
-        public static void Square(Vector2 position, float diameter, Color? color = null, bool dashed = false)
+        public static void Square(Vector2 position, float diameter, Color? color = null)
         {
-            Square(position, Quaternion.identity, Vector2.one * diameter, color, dashed);
+            Square(position, Quaternion.identity, Vector2.one * diameter, color);
         }
 
-        /// <summary>
-        /// Draw square in world space with a rotation parameter.
-        /// </summary>
-        public static void Square(Vector2 position, Quaternion rotation, Vector2 size, Color? color = null, bool dashed = false)
+        public static void Square(Vector2 position, Quaternion rotation, Vector2 size, Color? color = null)
         {
-            Draw<SquareDrawer>(color, dashed, position, rotation, size);
+            Draw<SquareDrawer>(color, position, rotation, size);
         }
 
-        /// <summary>
-        /// Draws a cube in world space.
-        /// </summary>
-        public static void Cube(Vector3 position, Quaternion rotation, Vector3 size, Color? color = null, bool dashed = false)
+        public static void Cube(Vector3 position, Quaternion rotation, Vector3 size, Color? color = null)
         {
-            Draw<CubeDrawer>(color, dashed, position, rotation, size);
+            Draw<CubeDrawer>(color, position, rotation, size);
         }
 
-        /// <summary>
-        /// Draws a rectangle in screen space.
-        /// </summary>
-        public static void Rect(Rect rect, Camera camera, Color? color = null, bool dashed = false)
+        public static void Rect(Rect rect, Camera camera, Color? color = null)
         {
             rect.y = Screen.height - rect.y;
             Vector2 corner = camera.ScreenToWorldPoint(new Vector2(rect.x, rect.y - rect.height));
-            Draw<SquareDrawer>(color, dashed, corner + rect.size * 0.5f, Quaternion.identity, rect.size);
+            Draw<SquareDrawer>(color, corner + (rect.size * 0.5f), Quaternion.identity, rect.size);
         }
 
-        /// <summary>
-        /// Draws a representation of a bounding box.
-        /// </summary>
-        public static void Bounds(Bounds bounds, Color? color = null, bool dashed = false)
+        public static void Bounds(Bounds bounds, Color? color = null)
         {
-            Draw<CubeDrawer>(color, dashed, bounds.center, Quaternion.identity, bounds.size);
+            Draw<CubeDrawer>(color, bounds.center, Quaternion.identity, bounds.size);
         }
 
-        /// <summary>
-        /// Draws a cone similar to the one that spot lights draw.
-        /// </summary>
-        public static void Cone(Vector3 position, Quaternion rotation, float length, float angle, Color? color = null, bool dashed = false, int pointsCount = 16)
+        public static void Cone(Vector3 position, Quaternion rotation, float length, float angle, Color? color = null, int pointsCount = 16)
         {
             //draw the end of the cone
             float endAngle = Mathf.Tan(angle * 0.5f * Mathf.Deg2Rad) * length;
             Vector3 forward = rotation * Vector3.forward;
-            Vector3 endPosition = position + forward * length;
+            Vector3 endPosition = position + (forward * length);
             float offset = 0f;
-            Draw<PolygonDrawer>(color, dashed, endPosition, pointsCount, endAngle, offset, rotation);
+            Draw<PolygonDrawer>(color, endPosition, pointsCount, endAngle, offset, rotation);
 
             //draw the 4 lines
             for (int i = 0; i < 4; i++)
             {
                 float a = i * 90f * Mathf.Deg2Rad;
                 Vector3 point = rotation * new Vector3(Mathf.Cos(a), Mathf.Sin(a)) * endAngle;
-                Line(position, position + point + forward * length, color, dashed);
+                Line(position, position + point + (forward * length), color);
             }
         }
 
-        /// <summary>
-        /// Draws a sphere at position with specified radius.
-        /// </summary>
-        public static void Sphere(Vector3 position, float radius, Color? color = null, bool dashed = false, int pointsCount = 16)
+        public static void Sphere(Vector3 position, float radius, Color? color = null, int pointsCount = 16)
         {
             float offset = 0f;
-            Draw<PolygonDrawer>(color, dashed, position, pointsCount, radius, offset, Quaternion.Euler(0f, 0f, 0f));
-            Draw<PolygonDrawer>(color, dashed, position, pointsCount, radius, offset, Quaternion.Euler(90f, 0f, 0f));
-            Draw<PolygonDrawer>(color, dashed, position, pointsCount, radius, offset, Quaternion.Euler(0f, 90f, 90f));
+            Draw<PolygonDrawer>(color, position, pointsCount, radius, offset, Quaternion.Euler(0f, 0f, 0f));
+            Draw<PolygonDrawer>(color, position, pointsCount, radius, offset, Quaternion.Euler(90f, 0f, 0f));
+            Draw<PolygonDrawer>(color, position, pointsCount, radius, offset, Quaternion.Euler(0f, 90f, 90f));
         }
 
-        /// <summary>
-        /// Draws a circle in world space and billboards towards the camera.
-        /// </summary>
-        public static void Circle(Vector3 position, float radius, Camera camera, Color? color = null, bool dashed = false, int pointsCount = 16)
+        public static void Circle(Vector3 position, float radius, Camera camera, Color? color = null, int pointsCount = 16)
         {
             float offset = 0f;
             Quaternion rotation = Quaternion.LookRotation(position - camera.transform.position);
-            Draw<PolygonDrawer>(color, dashed, position, pointsCount, radius, offset, rotation);
+            Draw<PolygonDrawer>(color, position, pointsCount, radius, offset, rotation);
         }
 
-        /// <summary>
-        /// Draws a circle in world space with a specified rotation.
-        /// </summary>
-        public static void Circle(Vector3 position, float radius, Quaternion rotation, Color? color = null, bool dashed = false, int pointsCount = 16)
+        public static void Circle(Vector3 position, float radius, Quaternion rotation, Color? color = null, int pointsCount = 16)
         {
             float offset = 0f;
-            Draw<PolygonDrawer>(color, dashed, position, pointsCount, radius, offset, rotation);
+            Draw<PolygonDrawer>(color, position, pointsCount, radius, offset, rotation);
         }
     }
 }
