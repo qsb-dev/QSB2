@@ -60,7 +60,10 @@ public class DebugGui : MonoBehaviour
             {
                 style.fontSize = size;
                 var rectSize = style.CalcSize(new GUIContent(label));
-                GUI.Label(new Rect(pos - rectSize / 2, rectSize), label, style);
+                var rectPos = pos;
+                rectPos.x -= rectSize.x / 2;
+                rectPos.y -= rectSize.y;
+                GUI.Label(new Rect(rectPos, rectSize), label, style);
             }
 
             _labels.Clear();
