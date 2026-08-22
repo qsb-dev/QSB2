@@ -127,6 +127,7 @@ public class PositionSync(QObject.QObject qObject)
             _lerpedRelPos = newRef.ToRelPos(oldRef.FromRelPos(_lerpedRelPos));
             _lerpedRelRot = newRef.ToRelRot(oldRef.FromRelRot(_lerpedRelRot));
             var pos = qObject.Component.transform.position;
+            // BUG: this seems to not work at all. zero values might just be better
             _currentVel = newRefBody.ToRelVel(oldRefBody.FromRelVel(_currentVel, pos), pos);
             _currentAngVel = Quaternion.identity; // dont really know how to handle this. its less noticeable
         }

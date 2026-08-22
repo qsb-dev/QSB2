@@ -65,6 +65,7 @@ public class RelativeToSector(QObject.QObject qObject)
         else
         {
             // could have all of this be in message receive
+            // BUG: doing this here means that sometimes we'll get position relative to old reference for a bit
             if (QSector == null) return;
 
             var sector = QSector.Component;
