@@ -76,3 +76,18 @@ that sounds more maleable and easier to handle
 UPDATE: i have done this with flags and sync points. way easier than a state machine.
 
 also, updating object builders and objects is the same thing. we only needed to wait for other objects, and we can just use a delay.runwhen for that
+
+
+
+# join protocol
+- client connects
+- server steam onconnected event happens
+- server sends client identify event
+  - tells player who they are
+  - version info
+  - holds minimum initial state - anything that can happen before player join (e.g. other players joining)
+- client, if good, sends join message to everyone. if bad, just disconnect
+- join message tells everyone of player's existance
+- player is fully connected at this point. if needed, we can easily put more things between connect and join (for example, save data)
+  - TODO: separate out the qsb version. we want this data communication to never change across versions so that every qsb version can gracefully disconnect
+  - if we cant do that check and kick, then clients of different versions will try talking to eachother and things will explode
