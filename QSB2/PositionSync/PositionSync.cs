@@ -28,6 +28,23 @@ public class PositionSync(QObject.QObject qObject)
 
     public void Tick()
     {
+        if (DebugGui.ShowGizmos && Reference != null)
+        {
+            /*
+             * Red Cube = Where visible object should be
+             * Green cube = Where visible object is
+             * Red Line = Connection between Red Cube and Green Cube
+             * Magenta cube = Reference transform
+             * Cyan Line = Connection between Green cube and Magenta cube
+             */
+
+            Popcron.Gizmos.Cube(Reference.FromRelPos(RelPos), Reference.FromRelRot(RelRot), Vector3.one / 8, Color.red);
+            Popcron.Gizmos.Cube(qObject.Component.transform.position, qObject.Component.transform.rotation, Vector3.one / 6, Color.green);
+            Popcron.Gizmos.Line(Reference.FromRelPos(RelPos), qObject.Component.transform.position, Color.red);
+            Popcron.Gizmos.Cube(Reference.position, Reference.rotation, Vector3.one / 8, Color.magenta);
+            Popcron.Gizmos.Line(qObject.Component.transform.position, Reference.position, Color.cyan);
+        }
+        
         if (qObject.Owner.ID == -1) return; // no owner = do nothing
 
         if (Reference == null) return; // happens with RelativeToSector usually
@@ -80,23 +97,6 @@ public class PositionSync(QObject.QObject qObject)
                 qObject.Component.transform.position = Reference.FromRelPos(_lerpedRelPos);
                 qObject.Component.transform.rotation = Reference.FromRelRot(_lerpedRelRot);
             }
-        }
-
-        if (DebugGui.ShowGizmos)
-        {
-            /*
-             * Red Cube = Where visible object should be
-             * Green cube = Where visible object is
-             * Red Line = Connection between Red Cube and Green Cube
-             * Magenta cube = Reference transform
-             * Cyan Line = Connection between Green cube and Magenta cube
-             */
-
-            Popcron.Gizmos.Cube(Reference.FromRelPos(RelPos), Reference.FromRelRot(RelRot), Vector3.one / 8, Color.red);
-            Popcron.Gizmos.Cube(qObject.Component.transform.position, qObject.Component.transform.rotation, Vector3.one / 6, Color.green);
-            Popcron.Gizmos.Line(Reference.FromRelPos(RelPos), qObject.Component.transform.position, Color.red);
-            Popcron.Gizmos.Cube(Reference.position, Reference.rotation, Vector3.one / 8, Color.magenta);
-            Popcron.Gizmos.Line(qObject.Component.transform.position, Reference.position, Color.cyan);
         }
     }
 
