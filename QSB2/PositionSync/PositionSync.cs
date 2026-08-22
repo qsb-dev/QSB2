@@ -44,7 +44,7 @@ public class PositionSync(QObject.QObject qObject)
             Popcron.Gizmos.Cube(Reference.position, Reference.rotation, Vector3.one / 8, Color.magenta);
             Popcron.Gizmos.Line(qObject.Component.transform.position, Reference.position, Color.cyan);
         }
-        
+
         if (qObject.Owner.ID == -1) return; // no owner = do nothing
 
         if (Reference == null) return; // happens with RelativeToSector usually
@@ -106,6 +106,8 @@ public class PositionSync(QObject.QObject qObject)
         _lerpedRelRot = RelRot;
         _currentVel = Vector3.zero;
         _currentAngVel = Quaternion.identity;
+        
+        // TODO: turn into teleport message that instantly sends over location, velocity, and sector data
     }
 
     /// <summary>

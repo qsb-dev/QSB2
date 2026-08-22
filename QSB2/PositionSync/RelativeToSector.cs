@@ -53,13 +53,18 @@ public class RelativeToSector(QObject.QObject qObject)
                     SectorID = qSector.ID,
                 }, SendTo.Others);
 
-                qObject.PositionSync.Reference = sector.transform;
+                var oldRef = qObject.PositionSync.Reference;
+                var newRef = sector.transform;
+                qObject.PositionSync.Reference = newRef;
+                qObject.PositionSync.ReferenceChanged(oldRef, newRef);
+                qObject.VelocitySync?.ReferenceChanged(oldRef, newRef);
             }
 
             QSector = qSector;
         }
         else
         {
+            // could have all of this be in message receive
             if (QSector == null) return;
 
             var sector = QSector.Component;
