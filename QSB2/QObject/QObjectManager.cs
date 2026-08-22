@@ -64,6 +64,8 @@ public static class QObjectManager
         var sw = Stopwatch.StartNew();
         foreach (var builder in _builders)
         {
+            if (!NetworkManager.IsConnected) yield break;
+            
             try
             {
                 builder.Create();
@@ -87,6 +89,8 @@ public static class QObjectManager
         var sw = Stopwatch.StartNew();
         foreach (var builder in _builders)
         {
+            if (!NetworkManager.IsConnected) yield break;
+            
             try
             {
                 builder.Destroy();
