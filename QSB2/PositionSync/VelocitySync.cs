@@ -45,7 +45,7 @@ public class VelocitySync(QObject.QObject qObject)
         else
         {
             // non owner - sync to unity component
-            if (body is ShipBody) ShipBody_SetVelocity(body, refBody.FromRelVel(RelVel, body.GetPosition()));
+            if (body is ShipBody or ShuttleBody) ShipBody_SetVelocity(body, refBody.FromRelVel(RelVel, body.GetPosition()));
             else body.SetVelocity(refBody.FromRelVel(RelVel, body.GetPosition()));
             body.SetAngularVelocity(refBody.FromRelAngVel(RelAngVel));
         }
