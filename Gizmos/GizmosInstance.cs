@@ -84,6 +84,7 @@ namespace Popcron
                     defaultMaterial.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
                     defaultMaterial.SetInt("_Cull", (int)CullMode.Off);
                     defaultMaterial.SetInt("_ZWrite", 0);
+                    defaultMaterial.SetInt("_ZTest", (int)CompareFunction.Always); // CHANGED
                 }
 
                 return defaultMaterial;

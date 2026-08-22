@@ -48,7 +48,7 @@ public class QSB2 : ModBehaviour
 
         QPatchManager.Patch(QPatchWhen.Immediately);
 
-        // Gizmos.CameraFilter = _ => true;
+        Gizmos.CameraFilter = _ => true;
         gameObject.AddComponent<DebugGui>();
 
         Logger.Log("qsb loaded", MessageType.Success);

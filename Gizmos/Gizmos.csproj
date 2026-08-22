@@ -11,6 +11,5 @@
     </PropertyGroup>
     <ItemGroup>
         <PackageReference Include="OuterWildsGameLibs" Version="1.1.16.1372" IncludeAssets="compile" />
-        <PackageReference Include="MessagePack" Version="3.1.8" IncludeAssets="compile" /> <!--fixes ArrayPool error with publicizer being weird-->
     </ItemGroup>
 </Project>
