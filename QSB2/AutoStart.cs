@@ -56,7 +56,6 @@ public static class AutoStart
             NetworkManager.Connect();
         }
 
-        // TODO: test to see if this breaks if we do this before fully connected
         yield return new WaitUntil(() => NetworkManager.IsConnected);
 
         BypassHostWaitingForPlayers = true;

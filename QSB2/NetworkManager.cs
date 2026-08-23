@@ -16,7 +16,10 @@ public static class NetworkManager
     internal static Client _client; // nonhost has this
     internal static Server _server; // host has this
 
-    public static bool IsConnected => (_client?.IsConnected ?? false) || (_server?.IsListening ?? false);
+    /// <summary>
+    /// connected without considering identify + join
+    /// </summary>
+    public static bool IsPartiallyConnected => (_client?.IsConnected ?? false) || (_server?.IsListening ?? false);
     public static bool IsClientConnecting => _client?.IsConnecting ?? false;
     public static bool IsHost => _server?.IsListening ?? false;
 
@@ -156,11 +159,7 @@ public static class NetworkManager
 
     public static Connection LocalConnection => Connections[LocalID];
 
-    /// <summary>
-    /// there's time between connecting and getting local id (identify message) and getting own connection (join message)
-    /// just kidding on the last part but whatever
-    /// </summary>
-    public static bool IsFullyConnected => IsConnected && LocalID != -1 && Connections.ContainsKey(LocalID);
+    public static bool IsConnected => IsPartiallyConnected && Connections.Count > 0;
 
     /// <summary>
     /// all the things i can think of are ready. we can do literally everything here

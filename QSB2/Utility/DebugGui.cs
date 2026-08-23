@@ -29,7 +29,7 @@ public class DebugGui : MonoBehaviour
 
     private void OnGUI()
     {
-        if (!NetworkManager.IsFullyConnected) return;
+        if (!NetworkManager.IsConnected) return;
 
         if (_showMainView)
         {
@@ -72,7 +72,7 @@ public class DebugGui : MonoBehaviour
 
     private void Update()
     {
-        if (!NetworkManager.IsFullyConnected) return;
+        if (!NetworkManager.IsConnected) return;
 
         if (Keyboard.current.qKey.isPressed)
         {
